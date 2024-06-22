@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.tab-indicator {
+  transition: transform 0.5s ease-in-out;
+  transform-origin: center;
+  transform: perspective(600px) rotateY(0deg);
+}
+
+.tab-indicator.active {
+  transform: perspective(600px) rotateY(360deg);
+}

@@ -1,48 +1,50 @@
+import { useState } from "react";
+import Switches from "../components/category-switch";
+
 const Create_Category = () => {
+  const [tab,setTab]=useState("tab1");
   return (
-    <div className="p-5  flex flex-col content-center justify-center items-center w-full">
-      <div className="flex flex-col gap-5 bg-[#e7e5e592] p-10 rounded-[7px]">
-        <div className="flex flex-col gap-1">
-          <label className="text-[#303030] text-[15px] font-[600]">
-            Main Category
-          </label>
-          <input
-            className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
-            type="text"
-          />
+    <div className="p-5 flex flex-wrap justify-center gap-5 content-center items-stretch w-full">
+      <div className="flex flex-col gap-5 w-auto bg-[#e7e5e592] p-10 rounded-[7px]">
+        <div className="flex   flex-wrap gap-3 bg-[#5b595958] rounded-[5px] ">
+        {tablist.map((item, index) => {
+  return (
+    <div
+      key={index}
+      onClick={() => setTab(item.value)}
+      className={`cursor-pointer py-2 px-4 font-semibold transition-all duration-300 ease-in-out transform ${
+        tab === item.value
+          ? "bg-[#333] text-[#fff] rounded-[5px] scale-105 opacity-100"
+          : "bg-transparent text-[#242424] scale-100 opacity-75"
+      }`}
+    >
+      {item.name}
+    </div>
+  );
+})}
         </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[#303030] text-[15px] font-[600] px-2 py-1">
-            Category
-          </label>
-          <input
-            className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
-            type="text"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[#303030] text-[15px] font-[600]">
-            Sub Category
-          </label>
-          <input
-            className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
-            type="text"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[#303030] text-[15px] font-[600]">
-            Low Category
-          </label>
-          <input
-            className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1 "
-            type="text"
-          />
-        </div>
-        <button className="bg-[#5a83bd] p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]">
-          save
-        </button>
+        <Switches value={tab} />
       </div>
     </div>
   );
 };
 export default Create_Category;
+interface tablistprops {
+  name: string;
+  value: string;
+}
+const tablist:tablistprops[]=[
+  {
+    name:"Main Category", value:"tab1"
+  },
+  {
+    name:"Sub-Category", value:"tab2"
+  },
+  {
+    name:"Sub Sub-Category", value:"tab3"
+  },
+  {
+    name:"Inner Category", value:"tab4"
+  },
+]
+

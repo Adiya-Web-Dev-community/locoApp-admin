@@ -39,7 +39,7 @@ const sidebarData: SidebarItem[] = [
     name: "Category",
     path: "/category",
   },
-  { name: "Create Category", path: "/create-category" },
+  { name: "Create Blog Category", path: "/create-blogcategory" },
   {
     name: "TDS Category",
     path: "/tds-category",

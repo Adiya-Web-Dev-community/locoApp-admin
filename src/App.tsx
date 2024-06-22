@@ -25,7 +25,7 @@ function App() {
           element: <Category />,
         },
         {
-          path:"/create-category",
+          path:"/create-blogcategory",
           element:<Create_Category/>
         }
       ],
