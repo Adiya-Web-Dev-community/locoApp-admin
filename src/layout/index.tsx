@@ -7,7 +7,7 @@ interface Props{
 const Layout=({ children }: Props)=>{
  
     return(
-        <div className='flex flex-row'>
+        <div className='flex flex-row '>
             <Sidebar/>
             <div className='h-screen overflow-auto'>
             {children}

@@ -2,26 +2,26 @@ import { useState } from "react";
 import Switches from "../components/category-switch";
 
 const Create_Category = () => {
-  const [tab,setTab]=useState("tab1");
+  const [tab, setTab] = useState("tab1");
   return (
-    <div className="p-5 flex flex-wrap justify-center gap-5 content-center items-stretch w-full">
-      <div className="flex flex-col gap-5 w-auto bg-[#e7e5e592] p-10 rounded-[7px]">
+    <div className="p-5 flex flex-wrap  gap-5   w-full  ">
+      <div className="flex flex-col gap-5 w-full bg-[#e7e5e592] p-10 rounded-[7px]">
         <div className="flex   flex-wrap gap-3 bg-[#5b595958] rounded-[5px] ">
-        {tablist.map((item, index) => {
-  return (
-    <div
-      key={index}
-      onClick={() => setTab(item.value)}
-      className={`cursor-pointer py-2 px-4 font-semibold transition-all duration-300 ease-in-out transform ${
-        tab === item.value
-          ? "bg-[#333] text-[#fff] rounded-[5px] scale-105 opacity-100"
-          : "bg-transparent text-[#242424] scale-100 opacity-75"
-      }`}
-    >
-      {item.name}
-    </div>
-  );
-})}
+          {tablist.map((item, index) => {
+            return (
+              <div
+                key={index}
+                onClick={() => setTab(item.value)}
+                className={`cursor-pointer py-2 px-4 font-semibold transition-all duration-300 ease-in-out transform ${
+                  tab === item.value
+                    ? "bg-[#333] text-[#fff] rounded-[5px] scale-105 opacity-100"
+                    : "bg-transparent text-[#242424] scale-100 opacity-75"
+                }`}
+              >
+                {item.name}
+              </div>
+            );
+          })}
         </div>
         <Switches value={tab} />
       </div>
@@ -33,18 +33,21 @@ interface tablistprops {
   name: string;
   value: string;
 }
-const tablist:tablistprops[]=[
+const tablist: tablistprops[] = [
   {
-    name:"Main Category", value:"tab1"
+    name: "Main Category",
+    value: "tab1",
   },
   {
-    name:"Sub-Category", value:"tab2"
+    name: "Sub-Category",
+    value: "tab2",
   },
   {
-    name:"Sub Sub-Category", value:"tab3"
+    name: "Sub Sub-Category",
+    value: "tab3",
   },
   {
-    name:"Inner Category", value:"tab4"
+    name: "Inner Category",
+    value: "tab4",
   },
-]
-
+];
