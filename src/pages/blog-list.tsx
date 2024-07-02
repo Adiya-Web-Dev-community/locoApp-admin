@@ -1,69 +1,42 @@
 import EditICONSVG from "../assets/SVG/editICON";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import { useNavigate } from "react-router-dom";
+import { useDeletePostMutation, useGetDataQuery } from "../api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BlogSTyepes } from "../types";
+import React from "react";
 
 const BlogList = () => {
   const navigate = useNavigate();
-  const teamMembers = [
-    {
-      name: "Olivia Rhye",
-      age: 31,
-      job: "Product Design",
-      email: "olivia@gmail.com",
-      username: "@olivia",
-    },
-    {
-      name: "Phoenix Baker",
-      age: 18,
-      job: "Software Engineer",
-      email: "phoenix@gmail.com",
-      username: "@phoenix",
-    },
-    {
-      name: "Lana Steiner",
-      age: 26,
-      job: "Graphic Design",
-      email: "lana26@gmail.com",
-      username: "@lana",
-    },
-    {
-      name: "Demi Wilkison",
-      age: 20,
-      job: "Targetologist",
-      email: "demi20@gmail.com",
-      username: "@demi",
-    },
-    {
-      name: "Candice Wu",
-      age: 24,
-      job: "UX/UI Designer",
-      email: "cardice@gmail.com",
-      username: "@cardice",
-    },
-    {
-      name: "Natali Craig",
-      age: 19,
-      job: "Motion Designer",
-      email: "natali@gmail.com",
-      username: "@natali",
-    },
-    {
-      name: "Drew Cano",
-      age: 26,
-      job: "Business Analytic",
-      email: "drew02@gmail.com",
-      username: "@drew",
-    },
-    {
-      name: "Orlando Diggs",
-      age: 28,
-      job: "Interior Designer",
-      email: "orlando@gmail.com",
-      username: "@orlando",
-    },
-  ];
+  const [deletePost] = useDeletePostMutation();
+  const { data:response,refetch } = useGetDataQuery({ url: "/blog/getallblogs" });
+  const handleDelete = async (id:string) => {
+    const confirmed = window.confirm("Are you sure you want to continue?");
+    if (confirmed) {
+      try {
+        const response = await deletePost({
+          url: `/blog/delete-blog/${id}`,
+        });
+        if (response.data.success) {
+          toast.success(response?.data?.message, {
+            autoClose: 3000,
+          });
+          refetch();
+        } else {
+          toast.error("Failed to delete category");
+        }
+      } catch (error) {
+        toast.error("Something went wrong");
+      }
+    }
+  };
+  console.log("blog data>>",response)
   return (
+  <React.Fragment>
+      <ToastContainer/>
     <div className="flex justify-center p-4 w-full">
+    
       <div className="w-full">
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">
@@ -76,29 +49,32 @@ const BlogList = () => {
               </tr>
             </thead>
             <tbody className="w-full">
-              {teamMembers.map((member, index) => (
+              {response?.data?.map((member: BlogSTyepes, index: number) => (
                 <tr
                   key={index}
                   className="group hover:bg-gray-50 flex flex-row justify-between   border-b px-4"
                 >
                   <td className="py-2 px-4  flex items-center">
-                    {" "}
                     <img
-                      src={`https://i.pravatar.cc/150?img=${index + 1}`}
-                      alt={member.name}
+                      src={member?.thumnail}
+                      alt={member.title}
                       className="w-10 h-10 rounded-full mr-3"
                     />
                   </td>
-                  <td className="py-2 px-4 ">{member.name}</td>
+                  <td className="py-2 px-4 ">{member?.title}</td>
 
-                  <td className="py-2 px-4 ">20/02/2024</td>
+                  <td className="py-2 px-4">
+                    {member?.createdAt
+                      ? new Date(member?.createdAt).toLocaleDateString()
+                      : ""}
+                  </td>
                   <td className="py-2 px-4  flex gap-5 space-x-2">
-                    <button className="">
+                    <button className="" onClick={()=>handleDelete(member?._id)}>
                       <DeleteICONSVG heignt={20} width={20} fill={"#fe2828"} />
                     </button>
                     <button
                       onClick={() =>
-                        navigate(`/update-blog/${"hghg&gyyv7bh88b"}`)
+                        navigate(`/update-blog/${member?._id}`)
                       }
                     >
                       <EditICONSVG heignt={20} width={20} fill={"#5b5a5a"} />
@@ -111,6 +87,7 @@ const BlogList = () => {
         </div>
       </div>
     </div>
+    </React.Fragment>
   );
 };
 export default BlogList;

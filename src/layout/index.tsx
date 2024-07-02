@@ -9,7 +9,7 @@ const Layout=({ children }: Props)=>{
     return(
         <div className='flex flex-row '>
             <Sidebar/>
-            <div className='h-screen overflow-auto'>
+            <div className='h-screen overflow-auto '>
             {children}
             </div>
             <Outlet/>

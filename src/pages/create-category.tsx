@@ -4,9 +4,9 @@ import Switches from "../components/category-switch";
 const Create_Category = () => {
   const [tab, setTab] = useState("tab1");
   return (
-    <div className="p-5 flex flex-wrap  gap-5   w-full  ">
-      <div className="flex flex-col gap-5 w-full bg-[#e7e5e592] p-10 rounded-[7px]">
-        <div className="flex   flex-wrap gap-3 bg-[#5b595958] rounded-[5px] ">
+    <div className="p-5 flex flex-wrap  gap-5   w-full bg-gray-100  ">
+      <div className="flex flex-col gap-5 w-full  p-10 rounded-[7px]">
+        <div className=" w-auto flex   flex-wrap gap-3 bg-white rounded-[5px] ">
           {tablist.map((item, index) => {
             return (
               <div
