@@ -2,6 +2,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import BlogICONSVG from "../assets/SVG/blogICON";
 import CategoryICONSVG from "../assets/SVG/categoryICON";
 import VideoICONSVG from "../assets/SVG/videoICON";
+import AwareNessSVG from "../assets/SVG/arenessICON";
+import SponorSVG from "../assets/SVG/sponsor.ICON";
+import DocumentSVG from "../assets/SVG/documentICON";
+import UserSVG from "../assets/SVG/userICON";
 const Sidebar = () => {
   const router = useNavigate();
   const location = useLocation();
@@ -62,24 +66,24 @@ const sidebarData: SidebarItem[] = [
     icon: <CategoryICONSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
-    name: "Operations",
-    path: "/operations",
-    icon: "",
+    name: "Awareness",
+    path: "/awareness",
+    icon: <AwareNessSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
-    name: "Phase Full Message",
-    path: "/phse-message",
-    icon: "",
+    name: "Sponsor",
+    path: "/sponsor",
+    icon: <SponorSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
-    name: "Image & Location",
-    path: "/image-location",
-    icon: "",
+    name: "Important Document",
+    path: "/important-document",
+    icon: <DocumentSVG width={20} heignt={20} fill={"#9ca3af"}/>,
   },
   {
-    name: "Loco Failiure Cases",
-    path: "/loco-failure",
-    icon: "",
+    name: "Users",
+    path: "/users",
+    icon: <UserSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
     name: "Railway History",

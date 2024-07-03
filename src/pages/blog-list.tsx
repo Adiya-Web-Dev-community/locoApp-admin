@@ -6,11 +6,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BlogSTyepes } from "../types";
 import React from "react";
+import Loader from "../components/loader";
 
 const BlogList = () => {
   const navigate = useNavigate();
   const [deletePost] = useDeletePostMutation();
-  const { data:response,refetch } = useGetDataQuery({ url: "/blog/getallblogs" });
+  const { data:response,refetch, isLoading } = useGetDataQuery({ url: "/blog/getallblogs" });
   const handleDelete = async (id:string) => {
     const confirmed = window.confirm("Are you sure you want to continue?");
     if (confirmed) {
@@ -34,6 +35,7 @@ const BlogList = () => {
   console.log("blog data>>",response)
   return (
   <React.Fragment>
+    {isLoading &&<Loader/>}
       <ToastContainer/>
     <div className="flex justify-center p-4 w-full">
     

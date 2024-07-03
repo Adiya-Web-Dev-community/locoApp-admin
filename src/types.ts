@@ -67,3 +67,15 @@ export interface videosTypes{
     updatedAt:string;
     createdAt:string;
 }
+
+export interface UserTypes{
+    _id:string;
+    image:string;
+    name:string;
+    mobile:number;
+    email:string;
+    createdAt:string;
+    role:string;
+    isVerify:boolean;
+
+}

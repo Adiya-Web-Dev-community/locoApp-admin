@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { BlogCategory, subSubCategories, subcategory } from "../types";
+import Loader from "./loader";
 
 interface Props {
   value: string;
@@ -35,7 +36,7 @@ const Tab1: React.FC = () => {
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
-  const { data, refetch } = useGetDataQuery({ url: "/get-blog-category" });
+  const { data, refetch, isLoading } = useGetDataQuery({ url: "/get-blog-category" });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState<string>("");
   const [createData, setCreateData] = useState<string>("");
@@ -114,8 +115,10 @@ const Tab1: React.FC = () => {
 
   return (
     <React.Fragment>
+  
       <ToastContainer />
       <div className="flex flex-row gap-2 w-full">
+      {isLoading &&<Loader/>}
         <div className="flex flex-col gap-5 bg-[#ffffff] p-10 rounded-[7px] w-full">
           <h3 className="text-[18px] font-[600] text-center">
             Create Main Category
@@ -222,7 +225,7 @@ const Tab2: React.FC = () => {
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
-  const { data, refetch } = useGetDataQuery({ url: "/get-blog-category" });
+  const { data, refetch, isLoading } = useGetDataQuery({ url: "/get-blog-category" });
   const [editId, setEditId] = useState<editprops>({
     mainId: "",
     subId: "",
@@ -312,6 +315,7 @@ const Tab2: React.FC = () => {
   };
   return (
     <div className="flex flex-row gap-2 w-full ">
+      {isLoading &&<Loader/>}
       <ToastContainer />
       <div className="flex flex-col gap-5 bg-[#ffffff] p-10 rounded-[7px] w-full">
         <h3 className=" text-[18px] font-[600] text-center">
@@ -498,7 +502,7 @@ const Tab3: React.FC = () => {
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
-  const { data, refetch } = useGetDataQuery({ url: "/get-blog-category" });
+  const { data, refetch, isLoading } = useGetDataQuery({ url: "/get-blog-category" });
 
   const [subData, setSubData] = useState<BlogCategory[]>([]);
   const [createSubCategory, setCreateSubCategory] = useState<StateProp>({
@@ -624,6 +628,7 @@ const Tab3: React.FC = () => {
 
   return (
     <div className="flex flex-row gap-2 w-full">
+      {isLoading &&<Loader/>}
       <ToastContainer />
       <div className="flex flex-col gap-5 bg-[#ffffff] p-10 rounded-[7px] w-full">
         <h3 className="text-[18px] font-[600] text-center">
@@ -839,7 +844,7 @@ const Tab3: React.FC = () => {
                                           category?._id,
                                           sub?._id,
                                           subSub?._id,
-                                          sub?.name
+                                          subSub?.name
                                         )
                                       }
                                     >
@@ -884,7 +889,7 @@ const Tab4: React.FC = () => {
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
-  const { data, refetch } = useGetDataQuery({ url: "/get-blog-category" });
+  const { data, refetch, isLoading } = useGetDataQuery({ url: "/get-blog-category" });
 
   const [subData, setSubData] = useState<subcategory[]>([]);
   const [subSubData, setSubSubData] = useState<subSubCategories[]>([]);
@@ -1036,6 +1041,7 @@ const Tab4: React.FC = () => {
 
   return (
     <div className="flex flex-row gap-2 w-full">
+      {isLoading &&<Loader/>}
       <ToastContainer />
       <div className="flex flex-col gap-5 bg-[#ffff] p-10 rounded-[7px] w-full">
         <h3 className=" text-[18px] font-[600] text-center">
@@ -1107,9 +1113,9 @@ const Tab4: React.FC = () => {
         <button
           onClick={handleCreate}
           disabled={
-            !createInnerCategory?.mainId &&
-            !createInnerCategory?.subId &&
-            !createInnerCategory?.subSubId &&
+            !createInnerCategory?.mainId ||
+            !createInnerCategory?.subId ||
+            !createInnerCategory?.subSubId ||
             !createInnerCategory?.name
           }
           className={`${

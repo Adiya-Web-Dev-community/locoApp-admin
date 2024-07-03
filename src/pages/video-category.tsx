@@ -10,6 +10,7 @@ import {
   useCreatePostMutation,
 } from "../api";
 import { VideoCategorys } from "../types";
+import Loader from "../components/loader";
 
 interface StateProps {
   _id: string;
@@ -72,7 +73,7 @@ const VideoCategory: React.FC = () => {
   const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
   const [deletePost] = useDeletePostMutation();
-  const { data, refetch } = useGetDataQuery({ url: "/video/get-category" });
+  const { data, refetch, isLoading } = useGetDataQuery({ url: "/video/get-category" });
 
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -141,8 +142,9 @@ const VideoCategory: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  return (
-    <div className="relative p-4 w-full">
+  return (<React.Fragment>{isLoading &&<Loader/>}
+    <div className="relative p-4 w-full bg-blue-100">
+
       <ToastContainer />
       <Modal
         isOpen={isCreateModalOpen}
@@ -197,6 +199,7 @@ const VideoCategory: React.FC = () => {
         </div>
       </div>
     </div>
+    </React.Fragment>
   );
 };
 

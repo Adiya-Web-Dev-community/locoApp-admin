@@ -5,11 +5,13 @@ import "react-quill/dist/quill.snow.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
+import Loader from "../components/loader";
+import uploadImage from "../firebase_image/image";
 const UpdateBlog = () => {
   const [updatePost] = useUpdatePostMutation();
 
   const { id } = useParams();
-  const { data } = useGetDataQuery({ url: `/blog/get-blog-using-Id/${id}` });
+  const { data,isLoading } = useGetDataQuery({ url: `/blog/get-blog-using-Id/${id}` });
   const [state,setState]=useState({
     title:"",
     thumnail:"",
@@ -36,6 +38,24 @@ const handleChanges=(name:string,value:string)=>{
     setState({ ...state, [name]: value });
   }
 }
+const [progressStatus, setProgressStatus] = useState<number | null>(null);
+  
+const handleImageChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
+  const selectedFile = e.target?.files?.[0];
+  if (selectedFile) {
+    try {
+      const imageUrl = await uploadImage(
+        selectedFile.name,
+        selectedFile,
+        setProgressStatus
+      );
+      setState({ ...state, thumnail: imageUrl });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast.error('Error uploading image');
+    }
+}
+};
 const HandleUpdate=useCallback(async()=>{
   try {
     const response = await updatePost({
@@ -56,6 +76,7 @@ const HandleUpdate=useCallback(async()=>{
 },[id, state, updatePost])
   return (
     <div className="p-5  w-full bg-[#e7e5e592]">
+        {isLoading &&<Loader/>}
      <ToastContainer/>
       <div className="flex flex-col gap-5 border border-[#8d8787f5] p-10 rounded-[7px]">
         <div className="w-full flex flex-col gap-1">
@@ -67,15 +88,32 @@ const HandleUpdate=useCallback(async()=>{
             className="border border-[#b9b4b4da] bg-[#e7e5e592] outline-none p-1 rounded-[7px]"
           />
         </div>
-        <div className="w-full flex flex-col gap-1">
-          <label>Thumnail</label>
-          <input
-          // value={state?.thumnail}
-         
-            type="file"
-            className="border border-[#b9b4b4da] bg-[#e7e5e592] outline-none p-1 rounded-[7px]"
-          />
-        </div>
+        <div className=" flex flex-row gap-5 relative outline-none mb-6">
+          <div className="w-full ">
+            <label className="block text-gray-700 font-semibold mb-2">Profile Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full border-[#b9b4b4da] bg-[#e7e5e592] p-3 border outline-none  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {progressStatus !== null && progressStatus !== 0 && (
+                  <>
+                    <div className="pt-2 inset-0 z-10 flex flex-row gap-2 items-end">
+                      <p className='text-black text-[12px]'>uploading</p>
+                      <div
+                        className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                        style={{ width: `${progressStatus}%` }}
+                     
+                      ></div>
+                    </div>
+                  </>
+                )}
+                </div>
+                {
+                  state?.thumnail&&<img src={state?.thumnail} alt={state?.title} className="rounded-[5px] max-w-[300px] max-h-[200px]"/>
+                }
+          </div>
         <div>
           <ReactQuill
             theme="snow"

@@ -7,16 +7,18 @@ import { useCreatePostMutation, useGetDataQuery } from "../api";
 import { VideoCategorys } from "../types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/loader";
+import uploadVideo from "../firebase_video/video";
 const UploadVideo = () => {
   const [createPost] = useCreatePostMutation();
-  const { data } = useGetDataQuery({ url: "/video/get-category" });
+  const { data,isLoading } = useGetDataQuery({ url: "/video/get-category" });
   const [state, setState] = useState({
     title: "",
     slug: "",
     category: "",
-    url: "https://youtu.be/B-L4GMFPQkY",
+    url: "",
     tags: "",
-    dectription: "",
+    description: "",
   });
   const navigate = useNavigate();
   const makeSlug = (value: string) => {
@@ -26,18 +28,29 @@ const UploadVideo = () => {
     if (name === "title") {
       setState((prev) => ({ ...prev, [name]: value, slug: makeSlug(value) }));
     } else {
-      setState((prev) => ({ ...prev, [name]: value, slug: makeSlug(value) }));
+      setState((prev) => ({ ...prev, [name]: value}));
     }
   };
 
   const [external, setExternal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
+  const [progressStatus, setProgressStatus] = useState<number | null>(null);
+  const handleFileUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target?.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setState((prev) => ({ ...prev, url: url }));
-    }
+      try {
+        const videourl = await uploadVideo(
+          file.name,
+          file,
+          setProgressStatus
+        );
+
+        setState((prev) => ({ ...prev, url: videourl }));
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast.error('Error uploading Video');
+      }
+  }
   };
   const HanldeCreate = async () => {
     try {
@@ -56,7 +69,7 @@ const UploadVideo = () => {
           category: "",
           url: "",
           tags: "",
-          dectription: "",
+          description: "",
         });
       } else {
         toast.error("Failed to create Sub category");
@@ -67,6 +80,7 @@ const UploadVideo = () => {
   };
   return (
     <div className="p-5  w-full bg-[#e7e5e592]">
+        {isLoading &&<Loader/>}
       <ToastContainer />
       <button
         onClick={() => navigate("/video")}
@@ -94,7 +108,7 @@ const UploadVideo = () => {
             >
               <option value={""}>Select</option>
               {data?.map((item: VideoCategorys, index: number) => {
-                return <option key={index}>{item?.category}</option>;
+                return <option key={index} value={item?.category}>{item?.category}</option>;
               })}
             </select>
           </div>
@@ -108,7 +122,7 @@ const UploadVideo = () => {
             type="checkbox"
           />
         </div>
-        <div className="flex gap-5 w-full">
+        <div className="  flex justify-between w-full">
           {external ? (
             <>
               <label htmlFor="">URL:</label>
@@ -120,7 +134,7 @@ const UploadVideo = () => {
               />
             </>
           ) : (
-            <>
+            <div>
               <label>Upload Video:</label>
               <input
                 ref={fileInputRef}
@@ -129,17 +143,29 @@ const UploadVideo = () => {
                 className="w-full h-[40px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
                 type="file"
               />
-            </>
+                {progressStatus !== null && progressStatus !== 0 && (
+                  <>
+                    <div className="pt-2 inset-0 z-10 flex flex-row gap-2 items-end">
+                      <p className='text-black text-[12px]'>uploading</p>
+                      <div
+                        className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                        style={{ width: `${progressStatus}%` }}
+                     
+                      ></div>
+                    </div>
+                  </>
+                )}
+            </div>
           )}
-          <ReactPlayer url={state?.url} width="600px" height="200px" controls />
+          <ReactPlayer url={state?.url} width="400px" height="200px" controls />
         </div>
 
         <div className="flex gap-5 w-full">
           <label>Description:</label>
           <ReactQuill
             theme="snow"
-            value={state?.dectription}
-            onChange={(content: string) => HandleChange("dectription", content)}
+            value={state?.description}
+            onChange={(content: string) => HandleChange("description", content)}
             className="h-60  rounded-[7px] w-full"
           />
         </div>

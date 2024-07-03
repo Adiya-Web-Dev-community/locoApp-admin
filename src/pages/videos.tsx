@@ -3,13 +3,15 @@ import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { useGetDataQuery } from "../api";
 import { videosTypes } from "../types";
+import Loader from "../components/loader";
 
 const Video = () => {
   const navigate = useNavigate();
-  const { data } = useGetDataQuery({ url: "/video/get-all-video" });
+  const { data, isLoading } = useGetDataQuery({ url: "/video/get-all-video" });
   return (
-    <div className="flex justify-center p-4 w-full">
-      <div className="w-full">
+    <div className="flex bg-blue-100 justify-center p-4 w-full">
+      {isLoading&&<Loader/>}
+      <div className="w-full ">
         <button
           onClick={() => navigate("/upload-video")}
           className="my-4 bg-[#333] text-[#f8f8f8] px-4 py-1 rounded-[7px]"
@@ -44,7 +46,7 @@ const Video = () => {
                       <DeleteICONSVG heignt={20} width={20} fill={"#fe2828"} />
                     </button>
                     <button
-                      onClick={() => navigate(`/video/${"hghg&gyyv7bh88b"}`)}
+                      onClick={() => navigate(`/video/${item?._id}`)}
                     >
                       <EditICONSVG heignt={20} width={20} fill={"#5b5a5a"} />
                     </button>

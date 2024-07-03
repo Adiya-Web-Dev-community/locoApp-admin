@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useCreatePostMutation } from "../api/index";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/loader";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface LoginData {
   email: string;
@@ -16,12 +19,13 @@ const Login = () => {
     password: "",
     role: "admin",
   });
-
+const [isLoading,setLoader]=useState<boolean>(false)
   const handleChange = (name: string, value: string) => {
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
   const HandleClik = async () => {
+    setLoader(true)
     const data = await createPost({
       data: logindata,
       path: "login",
@@ -29,16 +33,23 @@ const Login = () => {
     console.log("afterlogin data>>", data);
     if (data?.data?.success) {
       localStorage.setItem("user", data?.data?.token);
-
-      // Delay navigation by 2 seconds (2000 milliseconds)
+      toast.success("You have been Logged in", {
+        autoClose: 3000,
+      });
       setTimeout(() => {
-        navigate("/");
+        setLoader(false)
+        window.location.reload();
       }, 2000);
+    } else{
+      setLoader(false)
+      toast.error("Some eror occure check your cridential");
     }
   };
 
   return (
     <div className="p-5 flex flex-col items-center justify-center content-center w-full h-full">
+      <ToastContainer/>
+      {isLoading &&<Loader/>}
       <div className="flex flex-col gap-5 bg-[#e7e5e592] p-10 rounded-[7px]">
         <h3 className="text-[18px] font-[600] text-center">Login</h3>
         <div className="flex flex-col gap-1">

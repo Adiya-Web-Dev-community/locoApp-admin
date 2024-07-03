@@ -16,6 +16,9 @@ import Video from "./pages/videos";
 import UploadVideo from "./pages/uploadvideo";
 import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
+import Users from "./pages/users";
+import UserUpdate from "./components/user-update";
+
 
 function App() {
   const token = localStorage.getItem("user");
@@ -58,6 +61,16 @@ function App() {
               path: "video",
               element: <Video />,
             },
+            {
+              path:"users",
+              element:<Users/>,
+             
+            },
+            {
+              path: "users/:id",
+              element: <UserUpdate />,
+            },
+  
             {
               path: "video/:id",
               element: <UpdateVideo />,

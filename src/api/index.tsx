@@ -1,14 +1,12 @@
 
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-console.log(import.meta.env.VITE_API_BASE_URL);
-
  export const APIS = createApi({
   reducerPath: "webBuilderApi",
   baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_API_BASE_URL }),
   endpoints: (builder) => ({
     createPost: builder.mutation({
       query: (newPost) => {
-        const token = localStorage.getItem("user-info");
+        const token = localStorage.getItem("user");
         return {
           url: newPost.path,
           method: "POST",
@@ -21,7 +19,7 @@ console.log(import.meta.env.VITE_API_BASE_URL);
     }),
     updatePost: builder.mutation({
       query: (newPost) => {
-        const tokenn = localStorage.getItem("user-info");
+        const tokenn = localStorage.getItem("user");
         return {
           url: newPost.path,
           method: newPost?.method || "PUT",
@@ -34,7 +32,7 @@ console.log(import.meta.env.VITE_API_BASE_URL);
     }),
     getData: builder.query({
       query: (path) => {
-        const token = localStorage.getItem("user-info");
+        const token = localStorage.getItem("user");
         return {
           url: path.url,
           method: "GET",
@@ -46,7 +44,7 @@ console.log(import.meta.env.VITE_API_BASE_URL);
     }),
     deletePost: builder.mutation({
       query: (newPost) => {
-        const tokenn = localStorage.getItem("user-info");
+        const tokenn = localStorage.getItem("user");
         return {
           url: newPost.url,
           method: "DELETE",
