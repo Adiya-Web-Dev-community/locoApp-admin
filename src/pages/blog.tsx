@@ -1,5 +1,4 @@
 import { useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate } from "react-router-dom";
 import { useCreatePostMutation, useGetDataQuery } from "../api";
@@ -7,10 +6,13 @@ import { BlogCategory } from "../types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import uploadImage from "../firebase_image/image";
+import TextEditor from "../components/textEditor";
+
 interface Props {
   _id: string;
   name: string;
 }
+
 interface StateProps {
   mainId: string;
   subid: string;
@@ -33,6 +35,7 @@ interface popostate {
 }
 
 const Category = () => {
+ 
   const [createPost] = useCreatePostMutation();
 
   const { data } = useGetDataQuery({ url: "/get-blog-category" });
@@ -193,7 +196,7 @@ const HandleCreate=async()=>{
 
   return (
     <div className="p-5  w-full bg-blue-100">
-      <ToastContainer/>
+      <ToastContainer />
       <button
         onClick={() => navigate("/blogs")}
         className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
@@ -266,7 +269,9 @@ const HandleCreate=async()=>{
         </div>
         <div className=" flex flex-row gap-5 relative outline-none mb-6">
           <div className="w-full ">
-            <label className="block text-gray-700 font-semibold mb-2">Profile Image</label>
+            <label className="block text-gray-700 font-semibold mb-2">
+              Profile Image
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -274,40 +279,37 @@ const HandleCreate=async()=>{
               className="w-full border-[#b9b4b4da] bg-[#e7e5e592] p-3 border outline-none  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {progressStatus !== null && progressStatus !== 0 && (
-                  <>
-                    <div className="pt-2 inset-0 z-10 flex flex-row gap-2 items-end">
-                      <p className='text-black text-[12px]'>uploading</p>
-                      <div
-                        className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
-                        style={{ width: `${progressStatus}%` }}
-                     
-                      ></div>
-                    </div>
-                  </>
-                )}
+              <>
+                <div className="pt-2 inset-0 z-10 flex flex-row gap-2 items-end">
+                  <p className="text-black text-[12px]">uploading</p>
+                  <div
+                    className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                    style={{ width: `${progressStatus}%` }}
+                  ></div>
                 </div>
-                {
-                  state?.thumnail&&<img src={state?.thumnail} alt={state?.title} className="rounded-[5px] max-w-[300px] max-h-[200px]"/>
-                }
+              </>
+            )}
           </div>
-        <div>
-          <ReactQuill
-            theme="snow"
-            value={state?.content}
-            onChange={(content: string) => HandleChange("content", content)}
-            className="h-60  rounded-[7px]"
-          />
+          {state?.thumnail && (
+            <img
+              src={state?.thumnail}
+              alt={state?.title}
+              className="rounded-[5px] max-w-[300px] max-h-[200px]"
+            />
+          )}
         </div>
+    
+<TextEditor value={state?.content} OnChangeEditor={(e:string)=>HandleChange("content", e)}/>
         <button
-        onClick={HandleCreate}
+          onClick={HandleCreate}
           disabled={
-            !state?.thumbnail ||
+            !state?.thumnail ||
             !state?.maincategory ||
             !state?.title ||
             !state?.content
           }
           className={`${
-            state?.thumbnail &&
+            state?.thumnail &&
             state?.maincategory &&
             state?.title &&
             state?.content
@@ -322,3 +324,4 @@ const HandleCreate=async()=>{
   );
 };
 export default Category;
+

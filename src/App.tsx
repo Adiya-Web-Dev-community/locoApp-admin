@@ -18,7 +18,7 @@ import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
 import Users from "./pages/users";
 import UserUpdate from "./components/user-update";
-
+import 'react-quill/dist/quill.snow.css'; 
 
 function App() {
   const token = localStorage.getItem("user");
