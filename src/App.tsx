@@ -18,12 +18,13 @@ import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
 import Users from "./pages/users";
 import UserUpdate from "./components/user-update";
+
 import ForgetPassword from "./pages/ForgetPassword";
 import Authentication from "./pages/Authentication";
 import ResetPassword from "./pages/ResetPassword";
 import ErrorElement from "./pages/ErrorElement";
 import Awareness from "./pages/Awareness";
-import AwarenessCategory from "./pages/AwarenessCategory";
+// import AwarenessCategory from "./pages/AwarenessCategory";
 import CreatAwareness from "./forms/CreatAwareness";
 
 function App() {

@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
 import Loader from "../components/loader";
 import uploadImage from "../firebase_image/image";
+import TextEditor from "../components/textEditor";
 const UpdateBlog = () => {
   const [updatePost] = useUpdatePostMutation();
 
@@ -114,14 +115,8 @@ const HandleUpdate=useCallback(async()=>{
                   state?.thumnail&&<img src={state?.thumnail} alt={state?.title} className="rounded-[5px] max-w-[300px] max-h-[200px]"/>
                 }
           </div>
-        <div>
-          <ReactQuill
-            theme="snow"
-            value={state?.content}
-            onChange={(content: string) => handleChanges("content",content)}
-            className="h-60  rounded-[7px]"
-          />
-        </div>
+       
+        <TextEditor value={state?.content} OnChangeEditor={(e:string)=>handleChanges("content", e)}/>
         <div className=" w-full text-center flex justify-center ">
           <button disabled={!state?.title&&!state?.thumnail&&!state?.content} onClick={HandleUpdate} className={`${state?.title&&state?.thumnail&&state?.content?"bg-[#5a83bd]":"bg-gray-500"}  px-3 mt-8 py-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}>
             update
