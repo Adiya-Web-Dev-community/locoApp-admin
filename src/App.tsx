@@ -18,7 +18,13 @@ import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
 import Users from "./pages/users";
 import UserUpdate from "./components/user-update";
-
+import ForgetPassword from "./pages/ForgetPassword";
+import Authentication from "./pages/Authentication";
+import ResetPassword from "./pages/ResetPassword";
+import ErrorElement from "./pages/ErrorElement";
+import Awareness from "./pages/Awareness";
+import AwarenessCategory from "./pages/AwarenessCategory";
+import CreatAwareness from "./forms/CreatAwareness";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -27,8 +33,27 @@ function App() {
   const route = createBrowserRouter([
     {
       path: "/login",
-      element: !isValidToken ? <Login /> : <Navigate to="/" />,
+      element: !isValidToken ? <Authentication /> : <Navigate to="/" />,
+      children: [
+        // {
+        //   path: "register",
+        //   element: <RegisterUser />,
+        // },
+        {
+          path: "",
+          element: <Login />,
+        },
+        {
+          path: "forgot-password",
+          element: <ForgetPassword />,
+        },
+        {
+          path: "reset-password",
+          element: <ResetPassword />,
+        },
+      ],
     },
+
     {
       path: "/",
       element: <PrivateRoute token={isValidToken} />,
@@ -36,6 +61,7 @@ function App() {
         {
           path: "",
           element: <Layout />,
+          errorElement: <ErrorElement />,
           children: [
             {
               path: "blog",
@@ -62,15 +88,14 @@ function App() {
               element: <Video />,
             },
             {
-              path:"users",
-              element:<Users/>,
-             
+              path: "users",
+              element: <Users />,
             },
             {
               path: "users/:id",
               element: <UserUpdate />,
             },
-  
+
             {
               path: "video/:id",
               element: <UpdateVideo />,
@@ -78,6 +103,18 @@ function App() {
             {
               path: "upload-video",
               element: <UploadVideo />,
+            },
+            {
+              path: "awareness",
+              element: <Awareness />,
+            },
+            {
+              path: "creat-awareness",
+              element: <CreatAwareness />,
+            },
+            {
+              path: "awareness/:id",
+              element: <CreatAwareness />,
             },
           ],
         },
