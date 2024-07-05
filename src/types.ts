@@ -79,3 +79,18 @@ export interface UserTypes{
     isVerify:boolean;
 
 }
+
+export interface AwarenessType {
+    _id: string;
+    title: string;
+    category: string;
+    createdAt: string;
+    image: string;
+  }
+
+  export interface ImpLinkDocs{
+    _id:string,
+    link:string,
+    donwloadable:string,
+    createdAt: string;
+  }

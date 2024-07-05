@@ -4,6 +4,7 @@ import { IoIosSend } from "react-icons/io";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
+import Loader from "../components/loader";
 
 const AwarenessCategory = () => {
   const [categorysData, setCategoryData] = useState([
@@ -106,6 +107,7 @@ const AwarenessCategory = () => {
           setCategoryForm={setCategoryForm}
         />
       )}
+       {isLoading && <Loader />}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
           isOpen={isModalOpen}

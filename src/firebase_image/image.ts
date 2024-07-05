@@ -41,7 +41,6 @@ const uploadImage = async (
         return downloadURL;
       }
     );
-
     await uploadTask;
 
     return getDownloadURL(uploadTask.snapshot.ref);
