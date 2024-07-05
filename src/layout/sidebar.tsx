@@ -11,7 +11,7 @@ const Sidebar = () => {
   const location = useLocation();
   const pathName = location.pathname;
   return (
-    <div className="w-64 h-screen bg-white shadow-md p-5 flex flex-col">
+    <div className="flex flex-col w-64 h-screen p-5 bg-white shadow-md">
       <div className="menu-item flex items-center p-2 mb-2  text-blue-900  cursor-pointer border-b-2 text-[20px] font-[600]">
         Loco App Admin
       </div>
@@ -27,7 +27,7 @@ const Sidebar = () => {
                 : "text-black hover:bg-gray-100"
             } menu-item flex items-center p-2 mb-2 rounded-md   cursor-pointer`}
           >
-            <span className="icon mr-2">{item?.icon}</span>
+            <span className="mr-2 icon">{item?.icon}</span>
             <span className="text ">{item?.name}</span>
           </div>
         );
@@ -71,6 +71,11 @@ const sidebarData: SidebarItem[] = [
     icon: <AwareNessSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
+    name: "Awareness Category",
+    path: "/awareness-category",
+    icon: <AwareNessSVG width={20} heignt={20} fill={"#9ca3af"} />,
+  },
+  {
     name: "Sponsor",
     path: "/sponsor",
     icon: <SponorSVG width={20} heignt={20} fill={"#9ca3af"} />,
@@ -78,7 +83,7 @@ const sidebarData: SidebarItem[] = [
   {
     name: "Important Document",
     path: "/important-document",
-    icon: <DocumentSVG width={20} heignt={20} fill={"#9ca3af"}/>,
+    icon: <DocumentSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
     name: "Users",

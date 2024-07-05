@@ -1,193 +1,135 @@
-import React, { useState } from "react";
-import { useCreatePostMutation, useGetDataQuery } from "../api";
-import uploadImage from "../firebase_image/image";
-import { ToastContainer, toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import ReactQuill from "react-quill";
+import { useState } from "react";
+import { TiArrowBackOutline } from "react-icons/ti";
+import { useDispatch } from "react-redux";
+import { useUpdatePostMutation } from "../api";
+import { toast } from "react-toastify";
 
-interface Props {
-  _id: string;
-  name: string;
-}
-interface StateProps {
-  mainId: string;
-  subid: string;
-  subsubid: string;
-  innerid: string;
-  maincategory: string;
-  subcategory: string;
-  subsubcategory: string;
-  innercategory: string;
-  title: string;
-  slug: string;
-  thumnail: string;
-  content: string;
-}
-interface popostate {
-  maincategoryData: Props[];
-  subcategoryData: Props[];
-  subsubcategoryData: Props[];
-  innercategoryData: Props[];
-}
+const AwarenessCategoryForm = ({
+  isCategoryForm,
+  setCategoryForm,
+  singleCategory,
+  // refetch,
+}) => {
+  console.log(singleCategory);
 
-const AwarenessCategoryForm = () => {
-  const [createPost] = useCreatePostMutation();
-
-  const { data, isLoading, error } = useGetDataQuery({
-    url: "/awareness/category",
+  const [categoryDataForm, setCategoryDataForm] = useState({
+    categoryName: singleCategory ? singleCategory.name : "",
   });
-  console.log(data, error, "category Awar");
 
-  const [state, setState] = useState<StateProps>({
-    maincategory: "",
-    mainId: "",
-    subid: "",
-    subsubid: "",
-    innerid: "",
-    subcategory: "",
-    subsubcategory: "",
-    innercategory: "",
-    title: "",
-    slug: "",
-    thumnail: "",
-    content: "",
-  });
-  //   const makeSlug = (value: string) => {
-  //     return value.toLowerCase().replace(/\s+/g, "-");
-  //   };
-  console.log("data in Blog>>>", state);
-  const HandleChange = (name: string, value: string) => {
-    setState((prev) => ({
+  // const [isOpen, setOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const [updatePost] = useUpdatePostMutation();
+
+  const handleChange = (e) => {
+    setCategoryDataForm((prev) => ({
       ...prev,
-      [name]: value,
+      [e?.target?.name]:
+        e?.target?.type === "checkbox" ? e?.target?.checked : e?.target?.value,
     }));
   };
-  const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target?.files?.[0];
-    if (selectedFile) {
-      try {
-        const imageUrl = await uploadImage(
-          selectedFile.name,
-          selectedFile,
-          setProgressStatus
-        );
-        setState({ ...state, thumnail: imageUrl });
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Error uploading image");
-      }
-    }
-  };
-  const navigate = useNavigate();
-  const HandleCreate = async () => {
+  const submiteHandler = async (e) => {
+    e.preventDefault();
+
+    console.log(categoryDataForm);
     try {
       const payload = {
-        maincategory: state?.maincategory,
-        subcategory: state?.subcategory,
-        subsubcategory: state?.subsubcategory,
-        innercategory: state?.innercategory,
-        title: state?.title,
-        slug: state?.slug,
-        thumnail: state?.thumnail,
-        content: state?.content,
+        name: categoryDataForm?.categoryName,
       };
-      const response = await createPost({
-        data: payload,
-        path: "/blog/create-blogs",
-      });
 
+      const response = await updatePost({
+        data: payload,
+        method: isCategoryForm.creat ? "POST" : "PUT",
+        path: isCategoryForm.creat
+          ? "/awareness/category/create"
+          : `/awareness/category/${isCategoryForm.updateId}`,
+      });
+      console.log(response);
       if (response?.data?.success) {
+        toast.dismiss();
         toast.success(response?.data?.message, {
           autoClose: 5000,
         });
+        closeHandler();
       } else {
+        toast.dismiss();
         toast.error("Failed to create main category");
       }
     } catch (error) {
+      toast.dismiss();
       console.error("Error creating main category:", error);
       toast.error("An error occurred");
     }
   };
 
+  const closeHandler = () => {
+    if (isCategoryForm.creat) {
+      setCategoryForm((prev) => ({
+        ...prev,
+        creat: !prev.creat,
+      }));
+    } else {
+      setCategoryForm((prev) => ({
+        ...prev,
+        updateId: "",
+      }));
+    }
+  };
+
   return (
-    <div className="w-full p-5 bg-blue-100">
-      <ToastContainer />
-      <button
-        onClick={() => navigate("/blogs")}
-        className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
+    <div
+      className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
+      onClick={closeHandler}
+    >
+      <div
+        className="bg-white rounded-md w-[400px]"
+        onClick={(e) => e.stopPropagation()}
       >
-        View Awareness List
-      </button>
-      <div className="flex flex-col gap-5 border bg-white border-[#8d8787f5] p-10 rounded-[7px]">
-        <div className="flex flex-col w-full gap-1">
-          <label>Title</label>
-          <input
-            value={state?.title}
-            onChange={(e) => HandleChange("title", e.target.value)}
-            type="text"
-            className="border border-[#b9b4b4da] bg-[#e7e5e592] outline-none p-1 rounded-[7px]"
-          />
-        </div>
-        <div className="relative flex flex-row gap-5 mb-6 outline-none ">
-          <div className="w-full ">
-            <label className="block mb-2 font-semibold text-gray-700">
-              Profile Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full border-[#b9b4b4da] bg-[#e7e5e592] p-3 border outline-none  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {progressStatus !== null && progressStatus !== 0 && (
-              <>
-                <div className="inset-0 z-10 flex flex-row items-end gap-2 pt-2">
-                  <p className="text-black text-[12px]">uploading</p>
-                  <div
-                    className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
-                    style={{ width: `${progressStatus}%` }}
-                  ></div>
-                </div>
-              </>
-            )}
+        <form className="" onSubmit={submiteHandler}>
+          {/* left section */}
+          <div className="p-6 px-8 rounded font-montserrat">
+            <div className="flex pb-2">
+              <h2 className=" md:text-4xl text-[28px] font-bold text-gray-700">
+                Category Form
+              </h2>
+              <button onClick={closeHandler}>
+                <TiArrowBackOutline className="w-10 h-10 ml-4 hover:text-orange-600 text-sky-600" />
+              </button>
+            </div>
+            <div className="items-center h-full gap-4 py-4 sm:flex ">
+              <div className="w-full">
+                <input
+                  value={categoryDataForm?.categoryName}
+                  type="text"
+                  onChange={handleChange}
+                  name="categoryName"
+                  className={
+                    " font-medium outline-none w-full  border h-10 border-gray-400 rounded-md pl-4 focus-within:border-blue-400  "
+                  }
+                  placeholder={"Category Name"}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="flex ">
+              <button
+                className="px-4 py-2 text-white bg-[#1f3c88] rounded hover:bg-[#2950b1]"
+                type="submit"
+              >
+                {/* Save Changes */}
+                Submite
+              </button>
+              <button
+                className="px-4 py-2 ml-8 text-white bg-red-500 rounded hover:bg-red-400"
+                onClick={closeHandler}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
-          {state?.thumnail && (
-            <img
-              src={state?.thumnail}
-              alt={state?.title}
-              className="rounded-[5px] max-w-[300px] max-h-[200px]"
-            />
-          )}
-        </div>
-        <div>
-          <ReactQuill
-            theme="snow"
-            value={state?.content}
-            onChange={(content: string) => HandleChange("content", content)}
-            className="h-60  rounded-[7px]"
-          />
-        </div>
-        <button
-          onClick={HandleCreate}
-          disabled={
-            !state?.thumnail ||
-            !state?.maincategory ||
-            !state?.title ||
-            !state?.content
-          }
-          className={`${
-            state?.thumnail &&
-            state?.maincategory &&
-            state?.title &&
-            state?.content
-              ? "bg-[#5a83bd]"
-              : "bg-gray-500"
-          } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
-        >
-          save
-        </button>
+        </form>
       </div>
     </div>
   );

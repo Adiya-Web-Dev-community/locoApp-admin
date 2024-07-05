@@ -26,6 +26,7 @@ import ErrorElement from "./pages/ErrorElement";
 import Awareness from "./pages/Awareness";
 // import AwarenessCategory from "./pages/AwarenessCategory";
 import CreatAwareness from "./forms/CreatAwareness";
+import AwarenessCategory from "./pages/AwarenessCategory";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -116,6 +117,10 @@ function App() {
             {
               path: "awareness/:id",
               element: <CreatAwareness />,
+            },
+            {
+              path: "awareness-category",
+              element: <AwarenessCategory />,
             },
           ],
         },
