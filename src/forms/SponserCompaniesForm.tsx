@@ -39,7 +39,7 @@ const SponserCompaniesForm = () => {
 
   const [companiesData, setCompaniesData] = useState<CompaniesType>({
     name: data?.name || "",
-    type: data?.email || "",
+    type: data?.type || "",
     // phone: data?.phone || "",
     discription: data?.discription || "",
     webLink: data?.website || "",
@@ -209,18 +209,18 @@ const SponserCompaniesForm = () => {
   };
 
   const clearhandler = () => {
-    // setCompaniesData({
-    //   name: "",
-    //   type: "",
+    setCompaniesData({
+      name: "",
+      type: "",
 
-    //   discription: "",
-    //   webLink: "",
-    //   status: false,
+      discription: "",
+      webLink: "",
+      status: false,
 
-    //   imageSrc: "",
-    //   image: "",
-    //   url: "",
-    // });
+      imageSrc: "",
+      image: "",
+      url: "",
+    });
 
     navigate("/sponsor");
   };
@@ -228,7 +228,7 @@ const SponserCompaniesForm = () => {
   const sponserTypeData = ["main sponsor", "sub sponsor"];
 
   return (
-    <div className="w-full px-4 pt-4 ml-4 md:pl-0">
+    <div className="w-full px-4 pt-16 ml-4 md:pl-0">
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
         onSubmit={submitHandler}
