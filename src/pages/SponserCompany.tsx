@@ -10,32 +10,9 @@ import CompaniesLoading from "../components/loading_animation/LoadingAnimation";
 import ConfirmationDialog from "../components/modal/ConfirmationDialog";
 import Pagination from "../components/pagination/Pagination";
 import VideoModal from "../components/modal/VideoModal";
+import { PiEye } from "react-icons/pi";
 
 const SponserCompany = () => {
-  // const categoryDataLatest = useSelector(
-  //   (state) => state.category.categoryData
-  // );
-
-  //   const [isCategoryForm, setCategoryForm] = useState({
-  //     creat: false,
-  //     updateId: "",
-  //   });
-  //   const [updateData, setUpdateDate] = useState({
-  //     name: "",
-  //   });
-
-  //   const handlingCategory = () => {
-  //     setCategoryForm((prev) => ({
-  //       ...prev,
-  //       creat: !prev.creat,
-  //     }));
-  //     setUpdateDate({
-  //       name: "",
-  //     });
-  //   };
-
-  //   console.log(categorysData);
-
   const { data, isLoading, error, isError } = useGetDataQuery({
     url: "/sponsor/company",
   });
@@ -158,6 +135,7 @@ const SponserCompany = () => {
     "Status",
     "Products",
     // "Since",
+    "View",
     "Setting",
   ];
 
@@ -179,13 +157,6 @@ const SponserCompany = () => {
 
   return (
     <>
-      {/* {(isCategoryForm.creat || isCategoryForm.updateId) && (
-        <AwarenessCategoryForm
-          singleCategory={updateData}
-          isCategoryForm={isCategoryForm}
-          setCategoryForm={setCategoryForm}
-        />
-      )} */}
       {isLoading && <Loader />}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
@@ -244,7 +215,7 @@ h-full
           <section
             className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
           >
-            <section className="grid grid-cols-customCompanies pb-2 p-2  gap-4   min-w-[1200px] font-medium md:font-semibold bg-white">
+            <section className="grid grid-cols-customCompanies pb-2 p-2  gap-4   min-w-[1260px] font-medium md:font-semibold bg-white">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
               {listHeadingCompanies.map((heading, index) => (
@@ -258,7 +229,7 @@ h-full
                 </p>
               ))}
             </section>
-            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[1200px] bg-gray-50">
+            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[1260px] bg-gray-50">
               {isLoading ? (
                 // Loading element for the table
                 <CompaniesLoading />
@@ -304,14 +275,14 @@ h-full
                     >
                       {company?.video ? "View Video" : "--"}
                     </span>
-                    <span className="flex justify-center ml-4 text-sm font-semibold ">
+                    <span className="flex justify-center text-sm font-semibold ">
                       {company?.description || "--"}
                     </span>
                     <span
                       onClick={() =>
                         company?.link && handleLinkClick(company.link)
                       }
-                      className={`ml-2 text-sm font-semibold text-center ${
+                      className={` text-sm font-semibold text-center ${
                         company?.link
                           ? "hover:underline hover:text-sky-400 "
                           : ""
@@ -330,9 +301,16 @@ h-full
                     <span className="flex justify-center ml-2 text-sm font-semibold ">
                       {company?.products.length || 0}
                     </span>
-                    {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
-                  {company?.dateAdded || "---"}
-                </span> */}
+                    <div className="flex justify-center">
+                      <button className="px-2 py-2 text-white bg-blue-400 rounded-md hover:bg-blue-500">
+                        <Link
+                          to={`/sponsor/profile/${company._id}`}
+                          className="flex items-center justify-center text-sm font-semibold "
+                        >
+                          <PiEye className="w-4 h-4" />
+                        </Link>
+                      </button>
+                    </div>
 
                     <div className="grid justify-center gap-2">
                       <button
