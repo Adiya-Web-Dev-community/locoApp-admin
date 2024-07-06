@@ -32,6 +32,8 @@ import CreatDocuments from "./pages/createDocument";
 import UpdateDocuments from "./pages/update-document";
 import SponserCompany from "./pages/SponserCompany";
 import SponserCompaniesForm from "./forms/SponserCompaniesForm";
+import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
+import ProductForm from "./forms/ProductForm";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -142,6 +144,14 @@ function App() {
             {
               path: "sponsor",
               element: <SponserCompany />,
+            },
+            {
+              path: "sponsor/profile/:id",
+              element: <SponsorCompanyProfile />,
+            },
+            {
+              path: "sponsor/profile/:id/product_form",
+              element: <ProductForm />,
             },
             {
               path: "sponsor/company_form",
