@@ -1,6 +1,56 @@
 import React from "react";
 
-const Pagination = ({ currentPage, apiData, itemsPerPage, handleClick }) => {
+// Define the type for a product
+interface Product {
+  _id: string;
+  name: string;
+  image: string;
+  description: string;
+  active: boolean;
+  link: string;
+  sponsorname: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+// Define the type for the API data
+interface ApiData {
+  _id: string;
+  name: string;
+  type: string;
+  image: string;
+  link: string;
+  video: string;
+  description: string;
+  active: boolean;
+  products: Product[];
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+// Define the type for the props
+interface PaginationProps {
+  currentPage: number;
+  apiData: ApiData[];
+  itemsPerPage: number;
+  handleClick: (pageNumber: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  apiData,
+  itemsPerPage,
+  handleClick,
+}) => {
+  console.log(
+    currentPage,
+    apiData,
+    itemsPerPage,
+    handleClick,
+    "pagination from comp"
+  );
   const totalPages = Math.ceil(apiData?.length / itemsPerPage);
   return (
     <div className="flex items-center justify-center w-full mt-4">
