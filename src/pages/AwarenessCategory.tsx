@@ -30,6 +30,9 @@ const AwarenessCategory = () => {
       ...prev,
       creat: !prev.creat,
     }));
+    setUpdateDate({
+      name: "",
+    });
   };
 
   //   console.log(categorysData);
@@ -119,7 +122,7 @@ const AwarenessCategory = () => {
         className={`  md:pl-0 p-4 pt-16 w-full rounded-md font-philosopher  mx-auto [&::-webkit-scrollbar]:hidden bg-blue-50`}
       >
         <section
-          className={` md:p-8 ml-4 p-6 h-full  text-gray-600 bg-white border-gray-200 
+          className={` md:p-8 mx-4 p-6 h-full  text-gray-600 bg-white border-gray-200 
           rounded-md  font-philosopher max-w-full w-full shadow-md`}
         >
           <div className="flex items-center mb-2 md:mb-6">

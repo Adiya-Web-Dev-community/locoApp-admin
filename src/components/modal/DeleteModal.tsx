@@ -16,7 +16,7 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
         className="p-6 bg-white rounded-lg shadow-lg"
         onClick={preventhandler}
       >
-        <h2 className="mb-4 text-xl font-bold">
+        <h2 className="mb-4 text-xl font-bold text-gray-700">
           Are you sure you want to delete this?
         </h2>
         <div className="flex justify-end space-x-4">
