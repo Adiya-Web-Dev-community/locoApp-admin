@@ -33,8 +33,7 @@ import UpdateDocuments from "./pages/update-document";
 import SponserCompany from "./pages/SponserCompany";
 import SponserCompaniesForm from "./forms/SponserCompaniesForm";
 import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
-// import ProductForm from "./forms/ProductForm";
-import Video from "./pages/Videos";
+import Video from "./pages/videos";
 
 function App() {
   const token = localStorage.getItem("user");
