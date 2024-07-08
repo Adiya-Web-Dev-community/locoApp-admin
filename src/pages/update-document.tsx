@@ -12,6 +12,7 @@ import uploadFile from "../firebase_file/file";
 
 
 interface Props {
+  title:"",
     donwloadable: boolean;
     link:string ;
 }
@@ -23,6 +24,7 @@ const {id}=useParams();
 const { data, isLoading } = useGetDataQuery({ url: `/important_link/${id}` });
 
   const [value,setValue]=useState<Props>({
+    title:"",
     link:"",
     donwloadable:false,
   })
@@ -30,7 +32,8 @@ const { data, isLoading } = useGetDataQuery({ url: `/important_link/${id}` });
   useEffect(()=>{
     setValue({
         link:data?.link,
-        donwloadable:data?.donwloadable
+        donwloadable:data?.donwloadable,
+        title:data?.title
     })
   },[data])
   const OnchangeValue=(name:string,val:React.ReactNode)=>{
@@ -92,7 +95,18 @@ const [isExternal,setIsExternal]=useState(false)
         onSubmit={handleUpdate}
         className="flex flex-col gap-5 border bg-white border-[#8d8787f5] p-10 rounded-[7px]"
       >
-     
+        <div className="flex flex-row gap-2 ">
+          <label className="block mb-2 font-semibold text-gray-700">
+            title
+          </label>
+          <input
+            value={value?.title}
+            onChange={(e) => OnchangeValue("title", e.target.value)}
+            type="text"
+            placeholder="Title"
+            className="border pl-4 border-[#b9b4b4da] bg-[#e7e5e592] outline-none p-1 rounded-[7px]"
+          />
+        </div>
         <div className="flex flex-row gap-2 ">
           <label className="block mb-2 font-semibold text-gray-700">External URL</label>
           <input
@@ -158,11 +172,11 @@ const [isExternal,setIsExternal]=useState(false)
      
           type="submit"
           disabled={
-            !value?.link 
+            !value?.link || !value?.title
            
           }
           className={`${
-            value?.link? "bg-[#5a83bd]"
+            value?.link&&value?.title? "bg-[#5a83bd]"
               : "bg-gray-500"
           } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
         >

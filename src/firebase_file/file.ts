@@ -38,9 +38,7 @@ import {
           return downloadURL;
         }
       );
-  
       await uploadTask;
-  
       return getDownloadURL(uploadTask.snapshot.ref);
     } catch (error) {
       console.error("Error uploading file:", error);

@@ -90,7 +90,7 @@ export interface AwarenessType {
 
   export interface ImpLinkDocs{
     _id:string,
-    link:string,
+    title:string,
     donwloadable:string,
     createdAt: string;
   }
