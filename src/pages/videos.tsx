@@ -215,7 +215,7 @@ const Video = () => {
                    bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
               }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
               >
-                <Link to={"/video/upload-video"}>
+                <Link to={"/videos/upload-video"}>
                   <span className="hidden md:inline-block">Upload Video</span>
 
                   <IoIosSend className="w-6 h-6 md:hidden" />
