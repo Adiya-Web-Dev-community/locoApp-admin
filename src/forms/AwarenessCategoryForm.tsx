@@ -13,7 +13,7 @@ const AwarenessCategoryForm = ({
   console.log(singleCategory);
 
   const [categoryDataForm, setCategoryDataForm] = useState({
-    categoryName: singleCategory ? singleCategory.name : "",
+    categoryName: singleCategory.name ? singleCategory.name : "",
   });
 
   // const [isOpen, setOpen] = useState(false);
@@ -75,6 +75,11 @@ const AwarenessCategoryForm = ({
         updateId: "",
       }));
     }
+
+    setCategoryDataForm({
+      categoryName: "",
+    });
+    console.log(categoryDataForm);
   };
 
   return (

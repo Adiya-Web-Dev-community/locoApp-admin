@@ -30,6 +30,10 @@ import AwarenessCategory from "./pages/AwarenessCategory";
 import ImportantDocuments from "./pages/important_Document";
 import CreatDocuments from "./pages/createDocument";
 import UpdateDocuments from "./pages/update-document";
+import SponserCompany from "./pages/SponserCompany";
+import SponserCompaniesForm from "./forms/SponserCompaniesForm";
+import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
+import ProductForm from "./forms/ProductForm";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -124,7 +128,8 @@ function App() {
             {
               path: "awareness-category",
               element: <AwarenessCategory />,
-            },{
+            },
+            {
               path: "important-document",
               element: <ImportantDocuments />,
             },
@@ -135,6 +140,26 @@ function App() {
             {
               path: "update-documents/:id",
               element: <UpdateDocuments />,
+            },
+            {
+              path: "sponsor",
+              element: <SponserCompany />,
+            },
+            {
+              path: "sponsor/profile/:id",
+              element: <SponsorCompanyProfile />,
+            },
+            {
+              path: "sponsor/profile/:id/product_form",
+              element: <ProductForm />,
+            },
+            {
+              path: "sponsor/company_form",
+              element: <SponserCompaniesForm />,
+            },
+            {
+              path: "sponsor/company_form/:id",
+              element: <SponserCompaniesForm />,
             },
           ],
         },
