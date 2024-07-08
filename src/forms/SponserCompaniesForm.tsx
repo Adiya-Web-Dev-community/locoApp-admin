@@ -71,8 +71,6 @@ const SponserCompaniesForm = () => {
   );
 
   useEffect(() => {
-    console.log("i am running");
-
     if (isUpdate && !isError) {
       console.log("i am updating");
       setCompaniesData({
@@ -228,28 +226,28 @@ const SponserCompaniesForm = () => {
   const sponserTypeData = ["main sponsor", "sub sponsor"];
 
   return (
-    <div className="w-full px-4 pt-16 ml-4 md:pl-0">
+    <div className="w-full md:px-4 md:ml-4 md:pl-0">
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
         onSubmit={submitHandler}
       >
         <div className="flex-1 h-full p-6 rounded font-montserrat">
           <div className="flex pb-2">
-            <h2 className="md:text-4xl text-[28px] font-bold text-gray-600">
+            <h2 className="md:text-4xl text-[28px] font-bold text-gray-500 font-mavenPro">
               Company Sponsor Form
             </h2>
             <div onClick={clearhandler}>
               <TiArrowBackOutline className="w-10 h-10 ml-4 text-emerald-600 hover:text-emerald-500" />
             </div>
           </div>
-          <div className="h-[calc(100vh-12rem)] w-full overflow-y-auto pr-4 md:pr-0 [&::-webkit-scrollbar]:hidden">
+          <div className="h-[calc(100vh-12rem)] w-full overflow-y-auto  [&::-webkit-scrollbar]:hidden font-mavenPro">
             <div className="grid items-center grid-cols-1 gap-4 py-4 md:grid-cols-2">
               <input
                 value={companiesData.name}
                 type="text"
                 onChange={handleChange}
                 name="name"
-                className="w-full h-10 pl-4 font-medium border border-transparent rounded-md outline-none bg-green-50 focus:border-blue-200 "
+                className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                 placeholder="Company Name"
                 required
               />
@@ -274,7 +272,7 @@ const SponserCompaniesForm = () => {
                   htmlFor="file-upload"
                   className={`px-4 py-2 pl-24 relative ${
                     progressStatus ? "pb-2" : ""
-                  } w-full text-base bg-green-50 focus:border-blue-200 border-transparent border rounded-md text-gray-400 cursor-pointer flex items-center justify-between`}
+                  } w-full text-base bg-green-100 focus:border-blue-200 border-transparent border rounded-md text-gray-400 cursor-pointer flex items-center justify-between`}
                 >
                   {companiesData?.imageSrc || "Choose a file"}
                   <span className="text-gray-400 text-[15px] absolute top-0 h-full flex items-center left-0 rounded-tl-md rounded-bl-md px-3 font-medium bg-blue-100">
@@ -298,7 +296,7 @@ const SponserCompaniesForm = () => {
                 type="number"
                 onChange={handleChange}
                 name="products"
-                className="w-full h-10 px-4 font-medium border border-transparent rounded-md outline-none bg-green-50 focus:border-blue-200 "
+                className="w-full h-10 px-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                 placeholder="No. Products"
                 required
               /> */}
@@ -306,7 +304,7 @@ const SponserCompaniesForm = () => {
               {/* Sponser Dropdown */}
               <div className="relative">
                 <div
-                  className="flex justify-between p-2 pl-4 font-medium text-gray-400 border-transparent rounded-md cursor-pointer bg-green-50 focus:border-blue-200"
+                  className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-green-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
                   onClick={() => setOpen({ ...isOpen, type: !isOpen.type })}
                 >
                   {companiesData.type !== ""
@@ -337,7 +335,7 @@ const SponserCompaniesForm = () => {
                 type="url"
                 onChange={handleChange}
                 name="webLink"
-                className="w-full h-10 pl-4 font-medium border border-transparent rounded-md outline-none bg-green-50 focus:border-blue-200 "
+                className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                 placeholder="Company Web Link"
                 required
               />
@@ -346,7 +344,7 @@ const SponserCompaniesForm = () => {
                 type="tel"
                 onChange={handleChange}
                 name="phone"
-                className={`w-full h-10 pl-4 font-medium  bg-green-50 focus:border-blue-200
+                className={`w-full h-10 pl-4 font-medium  bg-green-100 focus:border-blue-200
                    border-transparent border   rounded-md outline-none`}
                 // className={`w-full h-10 pl-4 font-medium ${
                 //   isError
@@ -361,11 +359,11 @@ const SponserCompaniesForm = () => {
                 value={companiesData.discription}
                 onChange={handleChange}
                 name="discription"
-                className="w-full h-24 py-4 pl-4 font-medium border border-transparent border-gray-400 rounded-md outline-none md:col-span-2 bg-green-50 focus:border-blue-200 "
+                className="w-full h-24 py-4 pl-4 font-medium bg-green-100 border border-transparent border-gray-400 rounded-md outline-none md:col-span-2 focus:border-blue-200 "
                 placeholder="Write Details"
                 required
               />
-              <div className="w-full col-span-2">
+              <div className="w-full col-span-1 md:col-span-2">
                 <div className="flex w-full gap-2 mb-2">
                   <label htmlFor="" className="mb-1 font-medium text-gray-500">
                     External URL
@@ -373,7 +371,7 @@ const SponserCompaniesForm = () => {
                   <input
                     checked={external}
                     onClick={() => setExternal(!external)}
-                    className="  rounded-[7px] outline-none border border-transparent bg-green-50 focus:border-blue-200"
+                    className="  rounded-[7px] outline-none border border-transparent bg-green-100 focus:border-blue-200"
                     type="checkbox"
                   />
                 </div>
@@ -385,7 +383,7 @@ const SponserCompaniesForm = () => {
                         value={companiesData?.url}
                         name="url"
                         onChange={handleChange}
-                        className="w-full h-10 pl-4 font-medium border border-transparent rounded-md outline-none bg-green-50 focus:border-blue-200"
+                        className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200"
                         type="url"
                         placeholder="Video URL"
                       />
@@ -399,7 +397,7 @@ const SponserCompaniesForm = () => {
                         ref={fileInputRef}
                         accept="video/*"
                         onChange={handleFileUpload}
-                        className="w-full h-[40px] mt-2 p-1 rounded-[7px] outline-none border border-transparent bg-green-50 focus:border-blue-200"
+                        className="w-full h-[40px] mt-2 p-1 rounded-[7px] outline-none border border-transparent bg-green-100 focus:border-blue-200"
                         type="file"
                       />
                       {progressVideoStatus !== null &&
@@ -443,7 +441,7 @@ const SponserCompaniesForm = () => {
                   checked={companiesData.status}
                   name="status"
                   onChange={handleChange}
-                  className="  rounded-[7px] outline-none border border-transparent bg-green-50 focus:border-blue-200"
+                  className="  rounded-[7px] outline-none border border-transparent bg-green-100 focus:border-blue-200"
                   type="checkbox"
                 />
               </div>
