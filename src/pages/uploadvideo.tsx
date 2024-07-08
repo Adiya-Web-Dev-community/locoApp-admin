@@ -161,115 +161,11 @@ const UploadVideo = () => {
       description: "",
     });
 
-    navigate("/video");
+    navigate("/videos");
   };
 
   console.log(data, "for category");
   return (
-    // <div className="p-5  w-full bg-[#e7e5e592]">
-    //     {isLoading &&<Loader/>}
-    //   <ToastContainer />
-    //   <button
-    //     onClick={() => navigate("/video")}
-    //     className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
-    //   >
-    //     {"< go back"}
-    //   </button>
-    //   <div className="flex flex-col gap-5 border border-[#8d8787f5] p-10 rounded-[7px]">
-    //     <div className="flex gap-10">
-    //       <div className="flex w-full gap-5">
-    //         <label> Title: </label>
-    //         <input
-    //           value={state?.title}
-    // onChange={(e) => HandleChange("title", e.target.value)}
-    // type="text"
-    //           className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         />
-    //       </div>
-    //       <div className="flex w-full gap-5">
-    //         <label htmlFor="">category:</label>
-    //         <select
-    //           value={state?.category}
-    //           onChange={(e) => HandleChange("category", e.target.value)}
-    //           className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         >
-    //           <option value={""}>Select</option>
-    //           {data?.map((item: VideoCategorys, index: number) => {
-    //             return <option key={index} value={item?.category}>{item?.category}</option>;
-    //           })}
-    //         </select>
-    //       </div>
-    //     </div>
-    //     <div className="flex w-full gap-5">
-    //       <label htmlFor="">External URL:</label>
-    //       <input
-    //         checked={external}
-    //         onClick={() => setExternal(!external)}
-    //         className="  rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         type="checkbox"
-    //       />
-    //     </div>
-    //     <div className="flex justify-between w-full ">
-    //       {external ? (
-    //         <>
-    //           <label htmlFor="">URL:</label>
-    //           <input
-    //             value={state?.url}
-    //             onChange={(e) => HandleChange("url", e.target.value)}
-    //             className="w-full h-[30px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //             type="text"
-    //           />
-    //         </>
-    //       ) : (
-    //         <div>
-    //           <label>Upload Video:</label>
-    //           <input
-    //             ref={fileInputRef}
-    //             accept="video/*"
-    //             onChange={handleFileUpload}
-    //             className="w-full h-[40px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //             type="file"
-    //           />
-    //             {progressStatus !== null && progressStatus !== 0 && (
-    //               <>
-    //                 <div className="inset-0 z-10 flex flex-row items-end gap-2 pt-2">
-    //                   <p className='text-black text-[12px]'>uploading</p>
-    //                   <div
-    //                     className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
-    //                     style={{ width: `${progressStatus}%` }}
-
-    //                   ></div>
-    //                 </div>
-    //               </>
-    //             )}
-    //         </div>
-    //       )}
-    //       <ReactPlayer url={state?.url} width="400px" height="200px" controls />
-    //     </div>
-
-    // <div className="flex w-full gap-5">
-    //   <label>Description:</label>
-    //   <ReactQuill
-    //     theme="snow"
-    //     value={state?.description}
-    //     onChange={(content: string) => HandleChange("description", content)}
-    //     className="h-60  rounded-[7px] w-full"
-    //   />
-    // </div>
-    //     <button
-    //       disabled={!state?.title && !state?.category && !state?.url}
-    //       onClick={HanldeCreate}
-    //       className={`${
-    //         state?.title && state?.category && state?.url
-    //           ? "bg-[#5a83bd]"
-    //           : "bg-blue-300"
-    //       } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
-    //     >
-    //       save
-    //     </button>
-    //   </div>
-    // </div>
-
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
       {isLoadingCategory && <Loader />}
       <form
