@@ -1,17 +1,145 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
-import { useGetDataQuery } from "../api";
+import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { videosTypes } from "../types";
 import Loader from "../components/loader";
+import Pagination from "../components/pagination/Pagination";
+import { useState } from "react";
+import { IoIosSend } from "react-icons/io";
+import ConfirmationDialog from "../components/modal/ConfirmationDialog";
+import { PiEye } from "react-icons/pi";
+import { toast } from "react-toastify";
+import VideoModal from "../components/modal/VideoModal";
+import ConfirmDeleteModal from "../components/modal/DeleteModal";
 
 const Video = () => {
   const navigate = useNavigate();
-  const { data, isLoading } = useGetDataQuery({ url: "/video/get-all-video" });
+  const { data, isLoading, isError } = useGetDataQuery({
+    url: "/video/get-all-video",
+  });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  //calculation of page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
+
+  console.log(currentCompanies, "pagination");
+
+  const [videoModal, setVideoModal] = useState({
+    conditon: false,
+    url: "",
+  });
+
+  const handleClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const listHeadingOfVideo = [
+    "Title",
+    "Category",
+    "Video",
+    "Dectription",
+    "CreatedAt",
+    "Actions",
+  ];
+
+  console.log(data, "from video");
+
+  const [deletPost] = useDeletePostMutation();
+
+  const [isModalOpen, setModalOpen] = useState({
+    condition: false,
+    id: "",
+  });
+
+  console.log(data);
+
+  const handleCloseModal = () => {
+    setModalOpen({
+      condition: false,
+      id: "",
+    });
+  };
+
+  const deletvideo = (id) => {
+    console.log(id, "from handler");
+    setModalOpen((prev) => ({
+      ...prev,
+      condition: !prev.condition,
+      id: id,
+    }));
+  };
+  const updatevideo = (video) => {
+    // setCategoryForm((prev) => ({
+    //   ...prev,
+    //   updateId: category._id,
+    // }));
+    // setUpdateDate((prev) => ({
+    //   ...prev,
+    //   name: category.name,
+    // }));
+
+    navigate(`/video/${video._id}`);
+  };
+
+  const handleConfirmDelete = () => {
+    // Handle the delete action here
+    toast.loading("checking Details");
+    console.log("Item deleted", isModalOpen.id);
+    deletPost({
+      url: `/video/delete/${isModalOpen.id}`,
+    })
+      .then((res) => {
+        if (res.data.success) {
+          toast.dismiss();
+          toast.success(`${res.data.message}`);
+        }
+        console.log(res);
+      })
+      .catch((error) => {
+        toast.dismiss();
+        toast.error("Not successfull to delete");
+      });
+    setModalOpen({
+      condition: false,
+      id: "",
+    });
+  };
+
+  const handlingVideo = (url) => {
+    setVideoModal((prev) => ({
+      ...prev,
+      conditon: true,
+      url: url,
+    }));
+  };
+
+  const handleCloseVideoModal = () => {
+    setVideoModal((prev) => ({
+      ...prev,
+      conditon: false,
+      url: "",
+    }));
+  };
   return (
-    <div className="flex bg-blue-100 justify-center p-4 w-full">
-      {isLoading&&<Loader/>}
-      <div className="w-full ">
+    // <div className="flex justify-center w-full p-4 bg-blue-100">
+    <>
+      {isLoading && <Loader />}
+      {isModalOpen.condition && (
+        <ConfirmDeleteModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmDelete}
+        />
+      )}
+      {videoModal.conditon && (
+        <VideoModal url={videoModal.url} onClose={handleCloseVideoModal} />
+      )}
+      {/* <div className="w-full ">
         <button
           onClick={() => navigate("/upload-video")}
           className="my-4 bg-[#333] text-[#f8f8f8] px-4 py-1 rounded-[7px]"
@@ -21,27 +149,27 @@ const Video = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200">
             <thead className="">
-              <tr className="bg-gray-100 flex flex-row justify-between px-4">
-                <th className="py-2 px-4 border-b">Title</th>
-                <th className="py-2 px-4 border-b">category</th>
-                <th className="py-2 px-4 border-b">Posted At</th>
-                <th className="py-2 px-4 border-b">Action</th>
+              <tr className="flex flex-row justify-between px-4 bg-gray-100">
+                <th className="px-4 py-2 border-b">Title</th>
+                <th className="px-4 py-2 border-b">category</th>
+                <th className="px-4 py-2 border-b">Posted At</th>
+                <th className="px-4 py-2 border-b">Action</th>
               </tr>
             </thead>
             <tbody className="w-full">
               {data?.map((item: videosTypes, index: number) => (
                 <tr
                   key={index}
-                  className="group hover:bg-gray-50 flex flex-row justify-between   border-b px-4"
+                  className="flex flex-row justify-between px-4 border-b group hover:bg-gray-50"
                 >
-                  <td className="py-2 px-4 ">{item?.title}</td>
-                  <td className="py-2 px-4 ">{item?.category}</td>
-                  <td className="py-2 px-4 ">
+                  <td className="px-4 py-2 ">{item?.title}</td>
+                  <td className="px-4 py-2 ">{item?.category}</td>
+                  <td className="px-4 py-2 ">
                     {item?.createdAt
                       ? new Date(item.createdAt).toLocaleDateString()
                       : ""}
                   </td>
-                  <td className="py-2 px-4  flex gap-5 space-x-2">
+                  <td className="flex gap-5 px-4 py-2 space-x-2">
                     <button className="">
                       <DeleteICONSVG heignt={20} width={20} fill={"#fe2828"} />
                     </button>
@@ -56,8 +184,182 @@ const Video = () => {
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
+      </div> */}
+      <section
+        className={`  md:pl-0 p-4 h-full  w-full rounded-md   mx-auto [&::-webkit-scrollbar]:hidden `}
+      >
+        <section
+          className={` md:p-8 p-6 h-full border-gray-200 rounded-md  max-w-full w-full `}
+        >
+          <div className="flex items-center mb-2 md:mb-6">
+            <h1 className=" text-[28px] font-bold md:text-4xl text-gray-600 font-mavenPro">
+              Videos
+            </h1>
+          </div>
+          <div className="flex justify-between mb-4">
+            <div className={`flex items-center   `}>
+              <input
+                type="search"
+                placeholder={`Search`}
+                className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
+           bg-slate-50 focus:border-gray-100
+        shadow-inner rounded-[0.26rem] outline-none `}
+                // value={searchQuery}
+                // onChange={(e) => setSearchQuery(e.target.value)}
+                // onFocus={() => setCurrentPage(1)}
+              />
+            </div>
+            <div className="relative flex items-center self-end ">
+              <button
+                className={` px-2 py-1 
+                   bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
+              }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
+              >
+                <Link to={"/video/upload-video"}>
+                  <span className="hidden md:inline-block">Upload Video</span>
+
+                  <IoIosSend className="w-6 h-6 md:hidden" />
+                </Link>
+              </button>
+            </div>
+          </div>
+          <section
+            className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
+          >
+            <section className="grid grid-cols-customVideo pb-2 p-2  gap-4   min-w-[1260px] font-medium md:font-semibold bg-white font-mavenPro">
+              <p className="pl-2 md:text-lg">SrNo.</p>
+
+              {listHeadingOfVideo.map((heading, index) => (
+                <p
+                  key={index}
+                  className={`   md:text-lg ${
+                    index !== 0 ? "justify-self-center" : "ml-20"
+                  }`}
+                >
+                  {heading.charAt(0).toUpperCase() + heading.slice(1)}
+                </p>
+              ))}
+            </section>
+            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[1260px] bg-gray-50">
+              {isLoading ? (
+                // Loading element for the table
+                // <CompaniesLoading />
+                <p>Loading...</p>
+              ) : isError ? (
+                <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
+                  Check Internet connection or Contact to Admin
+                </p>
+              ) : (
+                currentCompanies?.map((video, i) => (
+                  <section
+                    key={i}
+                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customVideo group hover:bg-gray-50"
+                  >
+                    <span>{i + 1}</span>
+
+                    <span
+                      className={`  font-semibold text-center  rounded-full  `}
+                    >
+                      {video?.title}
+                    </span>
+
+                    <span className="text-sm font-semibold text-center break-words break-all text-ellipsis">
+                      {video?.category}
+                    </span>
+
+                    {/* <div className="flex items-center justify-center">
+                      {video?.image ? (
+                        <img
+                          src={video?.image}
+                          alt="video Image"
+                          className="object-contain w-24 h-24 rounded-lg"
+                        />
+                      ) : (
+                        <span className="text-sm font-bold text-gray-400">
+                          No Image
+                        </span>
+                      )}
+                    </div> */}
+                    <span
+                      className="flex justify-center ml-2 text-sm font-semibold cursor-pointer hover:underline hover:text-sky-400"
+                      typeof="button"
+                      onClick={() => handlingVideo(video?.url)}
+                    >
+                      {video?.url ? "View Video" : "--"}
+                    </span>
+                    <span className="flex justify-center text-sm font-semibold ">
+                      {video?.description || "--"}
+                    </span>
+                    <span className="flex justify-center text-sm font-semibold ">
+                      {video?.createdAt
+                        ? new Date(video.createdAt).toLocaleDateString()
+                        : ""}
+                    </span>
+                    {/* <span
+                      // onClick={() =>
+                      //   video?.link && handleLinkClick(video.link)
+                      // }
+                      className={` text-sm font-semibold text-center ${
+                        video?.link
+                          ? "hover:underline hover:text-sky-400 "
+                          : ""
+                      } break-words break-all cursor-pointer `}
+                    >
+                      {video?.link ? "Official site" : "----"}
+                    </span> */}
+                    {/* <ConfirmationDialog
+                      show={dialogCrendial.showDialog}
+                      onClose={handleCloseDialog}
+                      onConfirm={handleConfirmRedirect}
+                    /> */}
+                    {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
+                      {video?.active === true ? "Active" : "not Active"}
+                    </span> */}
+                    {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
+                      {video?.products.length || 0}
+                    </span> */}
+                    {/* <div className="flex justify-center">
+                      <button className="px-2 py-2 text-white bg-blue-400 rounded-md hover:bg-blue-500">
+                        <Link
+                          to={`/sponsor/profile/${video._id}`}
+                          className="flex items-center justify-center text-sm font-semibold "
+                        >
+                          <PiEye className="w-4 h-4" />
+                        </Link>
+                      </button>
+                    </div> */}
+
+                    <div className="grid justify-center gap-2">
+                      <button
+                        className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
+                        onClick={() => updatevideo(video)}
+                      >
+                        {/* Edit */}
+                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                      </button>
+                      <button
+                        className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
+                        onClick={() => deletvideo(video._id)}
+                      >
+                        {/* Delete */}
+                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                      </button>
+                    </div>
+                  </section>
+                ))
+              )}
+            </div>
+          </section>
+
+          <Pagination
+            currentPage={currentPage}
+            apiData={data}
+            itemsPerPage={itemsPerPage}
+            handleClick={handleClick}
+          />
+        </section>
+      </section>
+    </>
   );
 };
 export default Video;

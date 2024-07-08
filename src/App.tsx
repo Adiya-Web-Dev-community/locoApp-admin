@@ -11,10 +11,10 @@ import Category from "./pages/blog";
 import Create_Category from "./pages/create-category";
 import BlogList from "./pages/blog-list";
 import UpdateBlog from "./pages/update-blog";
-import VideoCategory from "./pages/video-category";
-import Video from "./pages/videos";
+import VideoCategory from "./pages/VideoCategory";
+
 import UploadVideo from "./pages/uploadvideo";
-import UpdateVideo from "./pages/updatevideo";
+// import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
 import Users from "./pages/users";
 import UserUpdate from "./components/user-update";
@@ -33,7 +33,8 @@ import UpdateDocuments from "./pages/update-document";
 import SponserCompany from "./pages/SponserCompany";
 import SponserCompaniesForm from "./forms/SponserCompaniesForm";
 import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
-import ProductForm from "./forms/ProductForm";
+// import ProductForm from "./forms/ProductForm";
+import Video from "./pages/Videos";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -73,7 +74,7 @@ function App() {
           errorElement: <ErrorElement />,
           children: [
             {
-              path: "blog",
+              path: "creat-blog",
               element: <Category />,
             },
             {
@@ -81,10 +82,11 @@ function App() {
               element: <Create_Category />,
             },
             {
-              path: "blogs",
+              path: "creat-blog/blogs-list",
               element: <BlogList />,
             },
             {
+              // path: "creat-blog/blogs-list/update-blog/:id",
               path: "update-blog/:id",
               element: <UpdateBlog />,
             },
@@ -93,7 +95,7 @@ function App() {
               element: <VideoCategory />,
             },
             {
-              path: "video",
+              path: "videos",
               element: <Video />,
             },
             {
@@ -106,11 +108,15 @@ function App() {
             },
 
             {
-              path: "video/:id",
-              element: <UpdateVideo />,
+              path: "videos/:id",
+              element: <UploadVideo />,
             },
+            // {
+            //   path: "video/:id",
+            //   element: <UpdateVideo />,
+            // },
             {
-              path: "upload-video",
+              path: "videos/upload-video",
               element: <UploadVideo />,
             },
             {
@@ -126,7 +132,7 @@ function App() {
               element: <CreatAwareness />,
             },
             {
-              path: "awareness-category",
+              path: "awarenes-category",
               element: <AwarenessCategory />,
             },
             {
@@ -149,10 +155,10 @@ function App() {
               path: "sponsor/profile/:id",
               element: <SponsorCompanyProfile />,
             },
-            {
-              path: "sponsor/profile/:id/product_form",
-              element: <ProductForm />,
-            },
+            // {
+            //   path: "sponsor/profile/:id/product_form",
+            //   element: <ProductForm />,
+            // },
             {
               path: "sponsor/company_form",
               element: <SponserCompaniesForm />,

@@ -4,11 +4,10 @@ import { useDispatch } from "react-redux";
 import { useUpdatePostMutation } from "../api";
 import { toast } from "react-toastify";
 
-const AwarenessCategoryForm = ({
+const VideoCategoryForm = ({
   isCategoryForm,
   setCategoryForm,
   singleCategory,
-  // refetch,
 }) => {
   console.log(singleCategory);
 
@@ -17,7 +16,7 @@ const AwarenessCategoryForm = ({
   });
 
   // const [isOpen, setOpen] = useState(false);
-  const dispatch = useDispatch();
+  //   const dispatch = useDispatch();
 
   const [updatePost] = useUpdatePostMutation();
 
@@ -35,15 +34,20 @@ const AwarenessCategoryForm = ({
     console.log(categoryDataForm);
     try {
       const payload = {
-        name: categoryDataForm?.categoryName,
+        category: categoryDataForm?.categoryName,
       };
+
+      console.log(payload, isCategoryForm.creat);
 
       const response = await updatePost({
         data: payload,
         method: isCategoryForm.creat ? "POST" : "PUT",
         path: isCategoryForm.creat
-          ? "/awareness/category/create"
-          : `/awareness/category/${isCategoryForm.updateId}`,
+          ? `/video/create-category`
+          : `/video/update-category/${isCategoryForm.updateId}`,
+
+        //   "/awareness/category/create"
+        //   : `/awareness/category/${isCategoryForm.updateId}`,
       });
       console.log(response);
       if (response?.data?.success) {
@@ -88,7 +92,7 @@ const AwarenessCategoryForm = ({
       onClick={closeHandler}
     >
       <div
-        className="bg-white rounded-md w-[400px]"
+        className="bg-white rounded-md w-[600px]"
         onClick={(e) => e.stopPropagation()}
       >
         <form className="" onSubmit={submiteHandler}>
@@ -96,7 +100,7 @@ const AwarenessCategoryForm = ({
           <div className="p-6 px-8 rounded font-montserrat">
             <div className="flex pb-2">
               <h2 className=" md:text-4xl text-[28px] font-bold text-gray-700 font-mavenPro">
-                Category Form
+                Video Category Form
               </h2>
               <button onClick={closeHandler}>
                 <TiArrowBackOutline className="w-10 h-10 ml-4 hover:text-orange-600 text-sky-600" />
@@ -140,4 +144,4 @@ const AwarenessCategoryForm = ({
   );
 };
 
-export default AwarenessCategoryForm;
+export default VideoCategoryForm;

@@ -1,17 +1,34 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
-import { useCreatePostMutation, useGetDataQuery } from "../api";
+import {
+  useCreatePostMutation,
+  useGetDataQuery,
+  useUpdatePostMutation,
+} from "../api";
 import { VideoCategorys } from "../types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/loader";
 import uploadVideo from "../firebase_video/video";
+import { TiArrowBackOutline } from "react-icons/ti";
+import { MdOutlineOndemandVideo } from "react-icons/md";
+import { FaCaretDown } from "react-icons/fa";
 const UploadVideo = () => {
-  const [createPost] = useCreatePostMutation();
-  const { data,isLoading } = useGetDataQuery({ url: "/video/get-category" });
+  const { id } = useParams();
+
+  const [updatePost] = useUpdatePostMutation();
+
+  const { data, isLoading, isError } = useGetDataQuery({
+    url: `/video/get-video-byid/${id}`,
+  });
+
+  const { data: categoryData, isLoading: isLoadingCategory } = useGetDataQuery({
+    url: "/video/get-category",
+  });
+
   const [state, setState] = useState({
     title: "",
     slug: "",
@@ -24,163 +41,402 @@ const UploadVideo = () => {
   const makeSlug = (value: string) => {
     return value.toLowerCase().replace(/\s+/g, "-");
   };
+
+  const isUpdate = Object.keys(data || [])?.length !== 0;
+  console.log(
+    data,
+    state,
+    "update value",
+    isUpdate && !isError ? "PUT" : "POST"
+  );
+
+  useEffect(() => {
+    if (isUpdate && !isError) {
+      setState({
+        title: data?.title,
+        slug: data?.slug,
+        category: data?.category,
+        url: data?.url,
+        tags: data?.tags,
+        description: data?.dectription,
+      });
+    }
+  }, [isUpdate, isError, data]);
+
+  const [isOpen, setOpen] = useState({
+    category: false,
+  });
+
   const HandleChange = (name: string, value: string) => {
+    console.log(name, value);
     if (name === "title") {
       setState((prev) => ({ ...prev, [name]: value, slug: makeSlug(value) }));
     } else {
-      setState((prev) => ({ ...prev, [name]: value}));
+      setState((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value, type, checked } = e.target;
+
+    if (name === "title") {
+      setState((prev) => ({ ...prev, [name]: value, slug: makeSlug(value) }));
+    } else {
+      setState((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const selectOption = (field: string, value: string) => {
+    console.log(value);
+    setState((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setOpen((prev) => ({
+      ...prev,
+      [field]: false,
+    }));
   };
 
   const [external, setExternal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [progressStatus, setProgressStatus] = useState<number | null>(null);
-  const handleFileUpload = async(e: React.ChangeEvent<HTMLInputElement>) => {
+  const [progressVideoStatus, setProgressVideoStatus] = useState<number | null>(
+    null
+  );
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target?.files?.[0];
     if (file) {
       try {
         const videourl = await uploadVideo(
           file.name,
           file,
-          setProgressStatus
+          setProgressVideoStatus
         );
 
         setState((prev) => ({ ...prev, url: videourl }));
       } catch (error) {
-        console.error('Error uploading image:', error);
-        toast.error('Error uploading Video');
+        console.error("Error uploading image:", error);
+        toast.error("Error uploading Video");
       }
-  }
+    }
   };
-  const HanldeCreate = async () => {
+  const submitHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log(state);
+    toast.loading("Checking Details for video");
     try {
-      const response = await createPost({
+      const response = await updatePost({
         data: state,
-        path: `/video/upload`,
+        method: isUpdate && !isError ? "PUT" : "POST",
+
+        path: isUpdate && !isError ? `/video/update/${id}` : `/video/upload`,
       });
 
       if (response?.data?.success) {
+        toast.dismiss();
         toast.success(response?.data?.message, {
           autoClose: 3000,
         });
-        setState({
-          title: "",
-          slug: "",
-          category: "",
-          url: "",
-          tags: "",
-          description: "",
-        });
+
+        clearhandler();
       } else {
-        toast.error("Failed to create Sub category");
+        toast.dismiss();
+        toast.error("Failed to Uploade Video");
       }
     } catch (error) {
+      toast.dismiss();
       toast.error("An error occurred");
     }
   };
-  return (
-    <div className="p-5  w-full bg-[#e7e5e592]">
-        {isLoading &&<Loader/>}
-      <ToastContainer />
-      <button
-        onClick={() => navigate("/video")}
-        className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
-      >
-        {"< go back"}
-      </button>
-      <div className="flex flex-col gap-5 border border-[#8d8787f5] p-10 rounded-[7px]">
-        <div className="flex gap-10">
-          <div className="flex gap-5 w-full">
-            <label> Title: </label>
-            <input
-              value={state?.title}
-              onChange={(e) => HandleChange("title", e.target.value)}
-              type="text"
-              className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-            />
-          </div>
-          <div className="flex gap-5 w-full">
-            <label htmlFor="">category:</label>
-            <select
-              value={state?.category}
-              onChange={(e) => HandleChange("category", e.target.value)}
-              className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-            >
-              <option value={""}>Select</option>
-              {data?.map((item: VideoCategorys, index: number) => {
-                return <option key={index} value={item?.category}>{item?.category}</option>;
-              })}
-            </select>
-          </div>
-        </div>
-        <div className="flex gap-5 w-full">
-          <label htmlFor="">External URL:</label>
-          <input
-            checked={external}
-            onClick={() => setExternal(!external)}
-            className="  rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-            type="checkbox"
-          />
-        </div>
-        <div className="  flex justify-between w-full">
-          {external ? (
-            <>
-              <label htmlFor="">URL:</label>
-              <input
-                value={state?.url}
-                onChange={(e) => HandleChange("url", e.target.value)}
-                className="w-full h-[30px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-                type="text"
-              />
-            </>
-          ) : (
-            <div>
-              <label>Upload Video:</label>
-              <input
-                ref={fileInputRef}
-                accept="video/*"
-                onChange={handleFileUpload}
-                className="w-full h-[40px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-                type="file"
-              />
-                {progressStatus !== null && progressStatus !== 0 && (
-                  <>
-                    <div className="pt-2 inset-0 z-10 flex flex-row gap-2 items-end">
-                      <p className='text-black text-[12px]'>uploading</p>
-                      <div
-                        className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
-                        style={{ width: `${progressStatus}%` }}
-                     
-                      ></div>
-                    </div>
-                  </>
-                )}
-            </div>
-          )}
-          <ReactPlayer url={state?.url} width="400px" height="200px" controls />
-        </div>
 
-        <div className="flex gap-5 w-full">
-          <label>Description:</label>
-          <ReactQuill
-            theme="snow"
-            value={state?.description}
-            onChange={(content: string) => HandleChange("description", content)}
-            className="h-60  rounded-[7px] w-full"
-          />
+  const clearhandler = () => {
+    setState({
+      title: "",
+      slug: "",
+      category: "",
+      url: "",
+      tags: "",
+      description: "",
+    });
+
+    navigate("/video");
+  };
+
+  console.log(data, "for category");
+  return (
+    // <div className="p-5  w-full bg-[#e7e5e592]">
+    //     {isLoading &&<Loader/>}
+    //   <ToastContainer />
+    //   <button
+    //     onClick={() => navigate("/video")}
+    //     className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
+    //   >
+    //     {"< go back"}
+    //   </button>
+    //   <div className="flex flex-col gap-5 border border-[#8d8787f5] p-10 rounded-[7px]">
+    //     <div className="flex gap-10">
+    //       <div className="flex w-full gap-5">
+    //         <label> Title: </label>
+    //         <input
+    //           value={state?.title}
+    // onChange={(e) => HandleChange("title", e.target.value)}
+    // type="text"
+    //           className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
+    //         />
+    //       </div>
+    //       <div className="flex w-full gap-5">
+    //         <label htmlFor="">category:</label>
+    //         <select
+    //           value={state?.category}
+    //           onChange={(e) => HandleChange("category", e.target.value)}
+    //           className="w-full p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
+    //         >
+    //           <option value={""}>Select</option>
+    //           {data?.map((item: VideoCategorys, index: number) => {
+    //             return <option key={index} value={item?.category}>{item?.category}</option>;
+    //           })}
+    //         </select>
+    //       </div>
+    //     </div>
+    //     <div className="flex w-full gap-5">
+    //       <label htmlFor="">External URL:</label>
+    //       <input
+    //         checked={external}
+    //         onClick={() => setExternal(!external)}
+    //         className="  rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
+    //         type="checkbox"
+    //       />
+    //     </div>
+    //     <div className="flex justify-between w-full ">
+    //       {external ? (
+    //         <>
+    //           <label htmlFor="">URL:</label>
+    //           <input
+    //             value={state?.url}
+    //             onChange={(e) => HandleChange("url", e.target.value)}
+    //             className="w-full h-[30px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
+    //             type="text"
+    //           />
+    //         </>
+    //       ) : (
+    //         <div>
+    //           <label>Upload Video:</label>
+    //           <input
+    //             ref={fileInputRef}
+    //             accept="video/*"
+    //             onChange={handleFileUpload}
+    //             className="w-full h-[40px] p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
+    //             type="file"
+    //           />
+    //             {progressStatus !== null && progressStatus !== 0 && (
+    //               <>
+    //                 <div className="inset-0 z-10 flex flex-row items-end gap-2 pt-2">
+    //                   <p className='text-black text-[12px]'>uploading</p>
+    //                   <div
+    //                     className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+    //                     style={{ width: `${progressStatus}%` }}
+
+    //                   ></div>
+    //                 </div>
+    //               </>
+    //             )}
+    //         </div>
+    //       )}
+    //       <ReactPlayer url={state?.url} width="400px" height="200px" controls />
+    //     </div>
+
+    // <div className="flex w-full gap-5">
+    //   <label>Description:</label>
+    //   <ReactQuill
+    //     theme="snow"
+    //     value={state?.description}
+    //     onChange={(content: string) => HandleChange("description", content)}
+    //     className="h-60  rounded-[7px] w-full"
+    //   />
+    // </div>
+    //     <button
+    //       disabled={!state?.title && !state?.category && !state?.url}
+    //       onClick={HanldeCreate}
+    //       className={`${
+    //         state?.title && state?.category && state?.url
+    //           ? "bg-[#5a83bd]"
+    //           : "bg-blue-300"
+    //       } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
+    //     >
+    //       save
+    //     </button>
+    //   </div>
+    // </div>
+
+    <div className="w-full md:px-4 md:ml-4 md:pl-0">
+      {isLoadingCategory && <Loader />}
+      <form
+        className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
+        onSubmit={submitHandler}
+      >
+        <div className="flex-1 h-full p-6 rounded font-montserrat">
+          <div className="flex pb-2">
+            <h2 className="md:text-4xl text-[28px] font-bold text-gray-500 font-mavenPro">
+              Video Form
+            </h2>
+            <div onClick={clearhandler}>
+              <TiArrowBackOutline className="w-10 h-10 ml-4 text-emerald-600 hover:text-emerald-500" />
+            </div>
+          </div>
+          <div className="h-[calc(100vh-12rem)] w-full overflow-y-auto   [&::-webkit-scrollbar]:hidden font-mavenPro">
+            <div className="grid items-center grid-cols-1 gap-4 py-4 md:grid-cols-2">
+              <input
+                value={state?.title}
+                type="text"
+                onChange={handleChange}
+                name="title"
+                className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
+                placeholder="Video Title"
+                required
+              />
+
+              {/* Category Dropdown */}
+              <div className="relative">
+                <div
+                  className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-green-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
+                  onClick={() =>
+                    setOpen({ ...isOpen, category: !isOpen.category })
+                  }
+                >
+                  {state.category !== "" ? state.category : "Select Category"}
+                  <FaCaretDown className="m-1" />
+                </div>
+                <ul
+                  className={`mt-2 p-2 rounded-md w-32 text-[#DEE1E2] bg-gray-800 shadow-lg absolute z-10 ${
+                    isOpen.category ? "max-h-60" : "hidden"
+                  } custom-scrollbar`}
+                >
+                  {categoryData?.map((video, i) => (
+                    <li
+                      key={i}
+                      className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
+                        state.category === video?.category ? "bg-rose-600" : ""
+                      }`}
+                      onClick={() => selectOption("category", video?.category)}
+                    >
+                      <span>{video?.category}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* <textarea
+              value={companiesData.discription}
+              onChange={handleChange}
+              name="discription"
+              className="w-full h-24 py-4 pl-4 font-medium bg-green-100 border border-transparent border-gray-400 rounded-md outline-none md:col-span-2 focus:border-blue-200 "
+              placeholder="Write Details"
+              required
+            /> */}
+              <div className="flex w-full col-span-1 gap-5 md:col-span-2 ">
+                <ReactQuill
+                  theme="snow"
+                  value={state?.description}
+                  onChange={(content: string) =>
+                    HandleChange("description", content)
+                  }
+                  className="w-full bg-green-100 border-none rounded-md "
+                />
+              </div>
+              <div className="w-full col-span-1 md:col-span-2">
+                <div className="flex w-full gap-2 mb-2">
+                  <label htmlFor="" className="mb-1 font-medium text-gray-500">
+                    External URL
+                  </label>
+                  <input
+                    checked={external}
+                    onClick={() => setExternal(!external)}
+                    className="  rounded-[7px] outline-none border border-transparent bg-green-100 focus:border-blue-200"
+                    type="checkbox"
+                  />
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {external ? (
+                    <>
+                      {/* <label htmlFor="">URL:</label> */}
+                      <input
+                        value={state?.url}
+                        name="url"
+                        onChange={handleChange}
+                        className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200"
+                        type="url"
+                        placeholder="Video URL"
+                      />
+                    </>
+                  ) : (
+                    <div>
+                      <label className="ml-1 font-medium text-gray-500 ">
+                        Upload Video
+                      </label>
+                      <input
+                        ref={fileInputRef}
+                        accept="video/*"
+                        onChange={handleFileUpload}
+                        className="w-full h-[40px] mt-2 p-1 rounded-[7px] outline-none border border-transparent bg-green-100 focus:border-blue-200"
+                        type="file"
+                      />
+                      {progressVideoStatus !== null &&
+                        progressVideoStatus !== 0 && (
+                          <>
+                            <div className="inset-0 z-10 flex flex-row items-end gap-2 pt-2">
+                              <p className="text-black text-[12px]">
+                                uploading
+                              </p>
+                              <div
+                                className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                                style={{ width: `${progressVideoStatus}%` }}
+                              ></div>
+                            </div>
+                          </>
+                        )}
+                    </div>
+                  )}
+                  {state?.url ? (
+                    <ReactPlayer
+                      url={state?.url}
+                      width="100%"
+                      height="200px"
+                      controls
+                    />
+                  ) : (
+                    <div className="w-full h-[200px] gap-4 bg-blue-50 flex justify-center items-center text-gray-400 font-semibold text-xl">
+                      <MdOutlineOndemandVideo className="w-12 h-12" />
+                      <span className="w-[180px]">
+                        Video will play here after uploade
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex">
+              <button
+                className="px-4 py-2 text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb] "
+                type="submit"
+                // disabled={isError}
+              >
+                Submit
+                {/* {Object.keys(data || {})?.length !== 0 ? "Update" : "Submit"} */}
+              </button>
+              <button
+                className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700"
+                type="button"
+                onClick={clearhandler}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
-        <button
-          disabled={!state?.title && !state?.category && !state?.url}
-          onClick={HanldeCreate}
-          className={`${
-            state?.title && state?.category && state?.url
-              ? "bg-[#5a83bd]"
-              : "bg-blue-300"
-          } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
-        >
-          save
-        </button>
-      </div>
+      </form>
     </div>
   );
 };

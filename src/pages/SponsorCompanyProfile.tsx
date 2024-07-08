@@ -196,13 +196,13 @@ const SponsorCompanyProfile = () => {
         <SponsorCompanyProfileLoading />
       ) : (
         <div
-          className={`w-full p-6  mx-4 
+          className={`w-full p-6   
            
-              bg-white text-gray-600 border-gray-200   rounded-md md:p-8`}
+               text-gray-600 border-gray-200   rounded-md md:p-8`}
         >
           <div className="flex items-center">
             <HiOutlineOfficeBuilding className=" w-9 h-9" />
-            <h1 className="  text-[28px] font-bold  md:text-4xl ml-2">
+            <h1 className="  text-[28px] font-bold  md:text-4xl ml-2 font-mavenPro">
               Sponsore Company
             </h1>
             <Link to={"/sponsor"}>
@@ -221,10 +221,10 @@ const SponsorCompanyProfile = () => {
                       className="w-12 h-12"
                     />
                     <div>
-                      <h2 className="text-xl font-semibold text-blue-800 md:text-2xl">
+                      <h2 className="text-xl font-semibold text-blue-800 md:text-2xl font-mavenPro">
                         {data?.name}
                       </h2>
-                      <p className="text-sm font-semibold text-gray-400">
+                      <p className="text-sm font-semibold text-gray-600">
                         {data?.type}
                       </p>
                     </div>
@@ -234,14 +234,14 @@ const SponsorCompanyProfile = () => {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3 ">
                   <div className="grid grid-cols-1 col-span-3 gap-6 md:grid-cols-3">
                     <p className="text-sm font-semibold md:text-base ">
-                      <span className="pr-2 text-sm font-medium text-gray-400 ">
+                      <span className="pr-2 text-sm text-gray-500 ">
                         Sponsor Type
                       </span>
 
                       {data?.type}
                     </p>
                     <p className="text-sm font-semibold md:text-base">
-                      <span className="pr-2 text-sm font-medium text-gray-400 ">
+                      <span className="pr-2 text-sm text-gray-500 ">
                         Website
                       </span>
 
@@ -257,9 +257,7 @@ const SponsorCompanyProfile = () => {
                       </span>
                     </p>
                     <p className="flex items-center gap-2 text-sm font-semibold md:text-base">
-                      <span className="pr-2 text-sm font-medium text-gray-400 ">
-                        Video
-                      </span>
+                      <span className="pr-2 text-sm text-gray-500 ">Video</span>
                       <span
                         className="flex justify-center ml-2 text-sm font-semibold cursor-pointer hover:underline hover:text-sky-400"
                         typeof="button"
@@ -274,7 +272,7 @@ const SponsorCompanyProfile = () => {
                     </p>
 
                     <p className="text-sm font-semibold md:text-base">
-                      <span className="pr-2 text-sm font-medium text-gray-400 ">
+                      <span className="pr-2 text-sm text-gray-500 ">
                         Description
                       </span>
                       {data?.description}
@@ -320,7 +318,7 @@ const SponsorCompanyProfile = () => {
               <section
                 className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
               >
-                <section className="grid grid-cols-customProduct pb-2 p-2  gap-4   min-w-[1000px] font-medium md:font-semibold bg-white">
+                <section className="grid grid-cols-customProduct pb-2 p-2  gap-4   min-w-[1000px] font-medium md:font-semibold bg-white font-mavenPro">
                   <p className="pl-2 md:text-lg">SrNo.</p>
 
                   {listHeadingProducts.map((heading, index) => (

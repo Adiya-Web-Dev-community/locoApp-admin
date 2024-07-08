@@ -5,6 +5,7 @@ import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import Loader from "../components/loader";
+import Pagination from "../components/pagination/Pagination";
 
 const AwarenessCategory = () => {
   const [categorysData, setCategoryData] = useState([
@@ -49,6 +50,20 @@ const AwarenessCategory = () => {
   });
 
   console.log(data);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  //calculation of page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
+
+  console.log(currentCompanies, "pagination");
+
+  const handleClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   const handleCloseModal = () => {
     setModalOpen({
@@ -110,7 +125,7 @@ const AwarenessCategory = () => {
           setCategoryForm={setCategoryForm}
         />
       )}
-       {isLoading && <Loader />}
+      {isLoading && <Loader />}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
           isOpen={isModalOpen}
@@ -119,14 +134,14 @@ const AwarenessCategory = () => {
         />
       )}
       <section
-        className={`  md:pl-0 p-4 pt-16 w-full rounded-md font-philosopher  mx-auto [&::-webkit-scrollbar]:hidden bg-blue-50`}
+        className={`  md:pl-0 p-4 h-full w-full rounded-md   mx-auto [&::-webkit-scrollbar]:hidden `}
       >
         <section
-          className={` md:p-8 mx-4 p-6 h-full  text-gray-600 bg-white border-gray-200 
-          rounded-md  font-philosopher max-w-full w-full shadow-md`}
+          className={` md:p-8 p-6 h-full  text-gray-600  border-gray-200 
+          rounded-md   max-w-full w-full `}
         >
           <div className="flex items-center mb-2 md:mb-6">
-            <h1 className=" text-[28px] font-bold md:text-4xl ">
+            <h1 className=" text-[28px] font-bold md:text-4xl font-mavenPro ">
               Awareness Category
             </h1>
           </div>
@@ -161,7 +176,7 @@ const AwarenessCategory = () => {
             className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg  shadow-md bg-white`}
           >
             {/* min-w-[900px] */}
-            <section className="grid gap-4 p-2 pb-2 min-w-[600px] font-medium border-gray-100 grid-cols-customeCategory md:font-semibold bg-sky-100">
+            <section className="grid gap-4 p-2 pb-2 min-w-[600px] font-medium border-gray-100 grid-cols-customeCategory md:font-semibold font-mavenPro bg-white">
               <p className="pl-2 text-gray-600 md:text-lg">SrNo.</p>
               {/* <p className="pl-10 text-gray-600 md:text-lg">Logo</p> */}
 
@@ -177,7 +192,7 @@ const AwarenessCategory = () => {
               ))}
             </section>
             {/* min-w-[900px] */}
-            <div className=" h-[400px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[600px] ">
+            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[600px] bg-gray-50">
               {data?.map((category, i) => (
                 <section
                   key={i}
@@ -191,13 +206,13 @@ const AwarenessCategory = () => {
 
                   <div className="flex justify-center gap-4">
                     <button
-                      className="px-3 text-sm py-2 text-white bg-[#28a745] rounded-md hover:bg-green-700"
+                      className="px-3 text-sm py-2 text-white  rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
                       onClick={() => updateCategory(category)}
                     >
                       Edit
                     </button>
                     <button
-                      className="px-3 text-sm py-2 text-white rounded-md bg-[#FE5722] hover:bg-rose-700"
+                      className="px-3 py-2 text-sm text-white rounded-md bg-rose-600 hover:bg-rose-700"
                       onClick={() => deletCategory(category._id)}
                     >
                       Delete
@@ -207,12 +222,12 @@ const AwarenessCategory = () => {
               ))}
             </div>
           </section>
-          {/* <Pagination
-            paginationInfo={pagination}
-            paginationUpdateds={(value) => setCurrentPage(value)}
+          <Pagination
             currentPage={currentPage}
-            pageNumbers={pageArray}
-          /> */}
+            apiData={data}
+            itemsPerPage={itemsPerPage}
+            handleClick={handleClick}
+          />
         </section>
       </section>
     </>

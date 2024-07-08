@@ -17,12 +17,12 @@ const VideoModal = ({ url, onClose }) => {
       >
         <ReactPlayer url={url} width="100%" height="100%" controls />
 
-        <div className="absolute flex justify-end space-x-4 top-4 right-4">
+        <div className="absolute flex justify-end space-x-4 top-1 right-1">
           <button
             onClick={onClose}
-            className="px-2 py-2 font-semibold text-gray-800 bg-gray-600 rounded-full hover:bg-gray-400"
+            className="px-2 py-2 font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-400"
           >
-            <IoClose className="w-6 h-6" />
+            <IoClose className="w-5 h-5" />
           </button>
         </div>
       </div>
