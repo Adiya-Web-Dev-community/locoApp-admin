@@ -41,10 +41,12 @@ const Video = () => {
   const listHeadingOfVideo = [
     "Title",
     "Category",
+    "Image",
     "Video",
-    "Dectription",
+    // "Dectription",
     "CreatedAt",
-    "Actions",
+    "Tags",
+    "Settings",
   ];
 
   console.log(data, "from video");
@@ -267,10 +269,10 @@ const Video = () => {
                       {video?.category}
                     </span>
 
-                    {/* <div className="flex items-center justify-center">
-                      {video?.image ? (
+                    <div className="flex items-center justify-center">
+                      {video?.thumnail ? (
                         <img
-                          src={video?.image}
+                          src={video?.thumnail}
                           alt="video Image"
                           className="object-contain w-24 h-24 rounded-lg"
                         />
@@ -279,7 +281,7 @@ const Video = () => {
                           No Image
                         </span>
                       )}
-                    </div> */}
+                    </div>
                     <span
                       className="flex justify-center ml-2 text-sm font-semibold cursor-pointer hover:underline hover:text-sky-400"
                       typeof="button"
@@ -287,47 +289,32 @@ const Video = () => {
                     >
                       {video?.url ? "View Video" : "--"}
                     </span>
-                    <span className="flex justify-center text-sm font-semibold ">
-                      {video?.description || "--"}
-                    </span>
+                    {/* <span className="flex justify-center text-sm font-semibold ">
+                      {video?.description ? (
+                        <div
+                          dangerouslySetInnerHTML={{
+                            __html: video?.description,
+                          }}
+                        />
+                      ) : (
+                        "--"
+                      )}
+                    </span> */}
                     <span className="flex justify-center text-sm font-semibold ">
                       {video?.createdAt
                         ? new Date(video.createdAt).toLocaleDateString()
                         : ""}
                     </span>
-                    {/* <span
-                      // onClick={() =>
-                      //   video?.link && handleLinkClick(video.link)
-                      // }
-                      className={` text-sm font-semibold text-center ${
-                        video?.link
-                          ? "hover:underline hover:text-sky-400 "
-                          : ""
-                      } break-words break-all cursor-pointer `}
-                    >
-                      {video?.link ? "Official site" : "----"}
-                    </span> */}
-                    {/* <ConfirmationDialog
-                      show={dialogCrendial.showDialog}
-                      onClose={handleCloseDialog}
-                      onConfirm={handleConfirmRedirect}
-                    /> */}
-                    {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
-                      {video?.active === true ? "Active" : "not Active"}
-                    </span> */}
-                    {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
-                      {video?.products.length || 0}
-                    </span> */}
-                    {/* <div className="flex justify-center">
-                      <button className="px-2 py-2 text-white bg-blue-400 rounded-md hover:bg-blue-500">
-                        <Link
-                          to={`/sponsor/profile/${video._id}`}
-                          className="flex items-center justify-center text-sm font-semibold "
-                        >
-                          <PiEye className="w-4 h-4" />
-                        </Link>
-                      </button>
-                    </div> */}
+
+                    <span className="flex justify-center text-sm font-semibold ">
+                      {video?.tags.length !== 1
+                        ? video?.tags.map((tag) => (
+                            <ul>
+                              <li>{tag},</li>
+                            </ul>
+                          ))
+                        : "--"}
+                    </span>
 
                     <div className="grid justify-center gap-2">
                       <button

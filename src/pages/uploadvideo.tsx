@@ -15,7 +15,9 @@ import Loader from "../components/loader";
 import uploadVideo from "../firebase_video/video";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { MdOutlineOndemandVideo } from "react-icons/md";
-import { FaCaretDown } from "react-icons/fa";
+import { FaCaretDown, FaRegImage } from "react-icons/fa";
+import uploadImage from "../firebase_image/image";
+
 const UploadVideo = () => {
   const { id } = useParams();
 
@@ -24,6 +26,8 @@ const UploadVideo = () => {
   const { data, isLoading, isError } = useGetDataQuery({
     url: `/video/get-video-byid/${id}`,
   });
+
+  const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
   const { data: categoryData, isLoading: isLoadingCategory } = useGetDataQuery({
     url: "/video/get-category",
@@ -34,8 +38,10 @@ const UploadVideo = () => {
     slug: "",
     category: "",
     url: "",
-    tags: "",
+    tags: [],
     description: "",
+    thumnail: "",
+    imageTitle: "",
   });
   const navigate = useNavigate();
   const makeSlug = (value: string) => {
@@ -59,6 +65,9 @@ const UploadVideo = () => {
         url: data?.url,
         tags: data?.tags,
         description: data?.dectription,
+        thumnail: data?.thumnail,
+        imageTitle:
+          data?.thumnail?.slice(72, data?.thumnail?.indexOf("%2F")) || "",
       });
     }
   }, [isUpdate, isError, data]);
@@ -122,13 +131,44 @@ const UploadVideo = () => {
       }
     }
   };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target?.files?.[0];
+    if (selectedFile) {
+      try {
+        const imageUrl = await uploadImage(
+          selectedFile.name,
+          selectedFile,
+          setProgressStatus
+        );
+        setState({
+          ...state,
+          thumnail: imageUrl,
+          imageTitle: selectedFile.name,
+        });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Error uploading image");
+      }
+    }
+  };
+
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(state);
     toast.loading("Checking Details for video");
     try {
+      const payload = {
+        title: state.title,
+        slug: state.slug,
+        category: state.category,
+        url: state.url,
+        tags: state.tags,
+        description: state.description,
+        thumnail: state.thumnail,
+      };
       const response = await updatePost({
-        data: state,
+        data: payload,
         method: isUpdate && !isError ? "PUT" : "POST",
 
         path: isUpdate && !isError ? `/video/update/${id}` : `/video/upload`,
@@ -157,11 +197,34 @@ const UploadVideo = () => {
       slug: "",
       category: "",
       url: "",
-      tags: "",
+      tags: [],
       description: "",
+      thumnail: "",
+      imageTitle: "",
     });
 
     navigate("/videos");
+  };
+
+  const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newTag = e.currentTarget.value.trim();
+      if (newTag && !state.tags.includes(newTag)) {
+        setState((prev) => ({
+          ...prev,
+          tags: [...prev.tags, newTag],
+        }));
+      }
+      e.currentTarget.value = "";
+    }
+  };
+
+  const handleTagRemove = (tagToRemove: string) => {
+    setState((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
   };
 
   console.log(data, "for category");
@@ -241,6 +304,43 @@ const UploadVideo = () => {
                   className="w-full bg-green-100 border-none rounded-md "
                 />
               </div>
+              {/* <input
+                value={state?.tags}
+                type="text"
+                onChange={handleChange}
+                name="tags"
+                className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
+                placeholder="Add Tags"
+                required
+              /> */}
+
+              {/* add tags */}
+              <div className="">
+                <input
+                  type="text"
+                  onKeyDown={handleTagInput}
+                  className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200"
+                  placeholder="Add Tags (press Enter or comma to add)"
+                />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {state.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="flex items-center px-2 py-1 text-sm font-medium text-white bg-blue-600 rounded-full"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        className="ml-2 text-xs font-bold"
+                        onClick={() => handleTagRemove(tag)}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
               <div className="w-full col-span-1 md:col-span-2">
                 <div className="flex w-full gap-2 mb-2">
                   <label htmlFor="" className="mb-1 font-medium text-gray-500">
@@ -302,12 +402,61 @@ const UploadVideo = () => {
                       controls
                     />
                   ) : (
-                    <div className="w-full h-[200px] gap-4 bg-blue-50 flex justify-center items-center text-gray-400 font-semibold text-xl">
+                    <div className="w-full h-[200px] gap-4 bg-blue-50 flex justify-center items-center text-gray-500 font-semibold text-xl">
                       <MdOutlineOndemandVideo className="w-12 h-12" />
                       <span className="w-[180px]">
                         Video will play here after uploade
                       </span>
                     </div>
+                  )}
+                </div>
+              </div>
+              <div className="grid grid-cols-1 col-span-1 gap-4 md:grid-cols-2 md:col-span-2">
+                <div className="relative w-full ">
+                  <input
+                    type="file"
+                    name="image"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className={`px-4 py-2 pl-24 relative ${
+                      progressStatus ? "pb-2" : ""
+                    } w-full text-base bg-green-100 focus:border-blue-200 border-transparent border rounded-md text-gray-400 cursor-pointer flex items-center justify-between`}
+                  >
+                    {state.imageTitle || "Choose a file"}
+                    <span className="text-gray-500 text-[15px] absolute top-0 h-full flex items-center left-0 rounded-tl-md rounded-bl-md px-3 font-medium bg-green-200">
+                      Browse
+                    </span>
+                  </label>
+                  {progressStatus !== null && progressStatus !== 0 && (
+                    <>
+                      <div className="absolute left-0 right-0 top-20%  z-10 flex items-end">
+                        <div
+                          className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                          style={{ width: `${progressStatus}%` }}
+                          // style={{ width: `${100}%` }}
+                        ></div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <div className="text-white h-[200px] bg-blue-50 rounded-md ">
+                  {state.thumnail ? (
+                    <img
+                      src={state?.thumnail}
+                      alt={state?.title}
+                      className="rounded-[5px] object-contain w-full h-full"
+                    />
+                  ) : (
+                    <p className="flex items-center justify-center w-full h-full gap-4 p-4 text-sm">
+                      <FaRegImage className="w-16 h-12 text-gray-500" />
+                      <span className="text-xl font-medium text-gray-500 w-[180px]">
+                        Here Uploade Image will be shown
+                      </span>
+                    </p>
                   )}
                 </div>
               </div>
