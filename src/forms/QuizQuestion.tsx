@@ -7,12 +7,6 @@ import TextEditor from "../components/textEditor";
 import { FaCaretDown } from "react-icons/fa";
 
 const QuizQuestion = ({ isQuestionForm, close }) => {
-  console.log(
-    isQuestionForm,
-    close,
-    "from creat form",
-    isQuestionForm.isCreat ? "POST" : "PUT"
-  );
   const [updatePost] = useUpdatePostMutation();
 
   const [quizData, setQuizData] = useState({
@@ -22,18 +16,32 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
     content: isQuestionForm?.data?.answer_description || "",
   });
 
-  //   useEffect(() => {
-  //     console.log("i am working");
-  //     if (!isQuestionForm.creat && isQuestionForm?.data) {
-  //       setQuizData((prev) => ({
-  //         ...prev,
-  //         question: isQuestionForm?.data?.name || "",
-  //         options: isQuestionForm?.data?.options || [],
-  //         result: isQuestionForm?.data?.predicted_result || "",
-  //         content: isQuestionForm?.data?.answer_description || "",
-  //       }));
-  //     }
-  //   }, [isQuestionForm.data, !isQuestionForm.creat]);
+  const { data, error, isloading, isError } = useGetDataQuery({
+    url: `/quiz/question/${isQuestionForm?.data?._id}`,
+  });
+
+  const isUpdate = Object.keys(data || [])?.length !== 0;
+
+  console.log(data, isQuestionForm, "singleQuiz");
+  console.log(
+    isQuestionForm,
+    close,
+    "from creat form",
+    isQuestionForm.isCreat ? "POST" : "PUT"
+  );
+
+  useEffect(() => {
+    console.log("i am working");
+    if (isUpdate && !isError) {
+      setQuizData((prev) => ({
+        ...prev,
+        question: data?.name || "",
+        options: data?.options || [],
+        result: data?.predicted_result || "",
+        content: data?.answer_description || "",
+      }));
+    }
+  }, [isUpdate, isError, data]);
 
   console.log(quizData);
 
@@ -76,7 +84,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
         method: isQuestionForm.isCreat ? "POST" : "PUT",
         path: isQuestionForm.isCreat
           ? `/quiz/question/${isQuestionForm.quizId}`
-          : `/quiz/${isQuestionForm.updateId}`,
+          : `/quiz/question/${data?._id}`,
       });
       console.log(response);
       if (response?.data?.success) {
@@ -88,15 +96,21 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
       } else {
         toast.dismiss();
         toast.error(
-          `Failed to  ${isQuestionForm.isCreat ? "Create Quiz" : "Update Quiz"}`
+          `Failed to  ${
+            isQuestionForm.isCreat
+              ? "Create Quiz Question"
+              : "Update Quiz Question"
+          }`
         );
       }
     } catch (error) {
       toast.dismiss();
-      console.error("Error creating Quiz:", error);
+      console.error("Error creating Quiz Question:", error);
       toast.error(
         `Error ${
-          isQuestionForm.isCreat ? "Creating Quiz" : "Updating Quiz"
+          isQuestionForm.isCreat
+            ? "Creating Quiz Question"
+            : "Updating Quiz Question"
         } : ${error}`
       );
     }
@@ -261,7 +275,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                   type="submit"
                   // disabled={isError}
                 >
-                  {isQuestionForm.creat ? "Update" : "Submit"}
+                  {isUpdate ? "Update" : "Submit"}
                 </button>
                 <button
                   className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700"
