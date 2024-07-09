@@ -36,6 +36,8 @@ import CreatBlog from "./pages/CreatBlog";
 
 import UserUpdate from "./forms/UserUpdate";
 import UserList from "./pages/UserList";
+import Quiz from "./pages/Quiz";
+import QuizProfile from "./pages/QuizProfile";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -87,10 +89,8 @@ function App() {
               element: <BlogList />,
             },
             {
-              // path: "creat-blog/blogs-list/update-blog/:id",
               path: "creat-blog/blogs-list/update-blog/:id",
               element: <CreatBlog />,
-              // element: <UpdateBlog />,
             },
             {
               path: "videocategory",
@@ -157,10 +157,7 @@ function App() {
               path: "sponsor/profile/:id",
               element: <SponsorCompanyProfile />,
             },
-            // {
-            //   path: "sponsor/profile/:id/product_form",
-            //   element: <ProductForm />,
-            // },
+
             {
               path: "sponsor/company_form",
               element: <SponserCompaniesForm />,
@@ -168,6 +165,19 @@ function App() {
             {
               path: "sponsor/company_form/:id",
               element: <SponserCompaniesForm />,
+            },
+
+            {
+              path: "quiz",
+              element: <Quiz />,
+            },
+            {
+              path: "quiz/:id",
+              element: <QuizProfile />,
+            },
+            {
+              path: "quiz/update_quiz/:id",
+              element: <Quiz />,
             },
           ],
         },

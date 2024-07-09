@@ -85,7 +85,7 @@ const Video = () => {
     //   name: category.name,
     // }));
 
-    navigate(`/video/${video._id}`);
+    navigate(`/videos/${video._id}`);
   };
 
   const handleConfirmDelete = () => {

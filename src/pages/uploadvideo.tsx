@@ -468,8 +468,7 @@ const UploadVideo = () => {
                 type="submit"
                 // disabled={isError}
               >
-                Submit
-                {/* {Object.keys(data || {})?.length !== 0 ? "Update" : "Submit"} */}
+                {isUpdate && !isError ? "Update" : "Submit"}
               </button>
               <button
                 className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700"

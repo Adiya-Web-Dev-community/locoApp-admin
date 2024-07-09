@@ -5,6 +5,7 @@ interface Props {
   OnChangeEditor: (e: string) => void;
 }
 const TextEditor = ({ value, OnChangeEditor }: Props) => {
+  console.log(value, "from textEditor");
   const imageHandler = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
@@ -79,7 +80,7 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
   return (
     <div className="editor-container">
       <Editor
-        initialValue=""
+        initialValue={""}
         apiKey="36yq0o12un80erkntz2avqgqzo23r7mjk5ooaap7n0qvihss"
         init={{
           height: 500,

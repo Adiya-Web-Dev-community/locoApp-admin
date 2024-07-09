@@ -110,7 +110,6 @@ const CreatBlog = () => {
         subcategory: "",
         subsubcategory: "",
         innercategory: "",
-        slug: "",
       });
     }
   }, [isUpdate, isError, blogData]);
