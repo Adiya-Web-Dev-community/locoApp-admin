@@ -18,6 +18,7 @@ import SponorSVG from "../../assets/SVG/sponsor.ICON";
 import DocumentSVG from "../../assets/SVG/documentICON";
 import UserSVG from "../../assets/SVG/userICON";
 import QuizIcon from "../../assets/SVG/quizIcon";
+import TestIcon from "../../assets/SVG/testICON";
 
 interface SidebarItem {
   name: string;
@@ -77,6 +78,11 @@ const sidebarData: SidebarItem[] = [
     name: "Quiz",
     path: "/quiz",
     icon: QuizIcon,
+  },
+  {
+    name: "Test",
+    path: "/test",
+    icon: TestIcon,
   },
   // {
   //   name: "Railway History",
