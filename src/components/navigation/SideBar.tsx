@@ -56,7 +56,7 @@ const sidebarData: SidebarItem[] = [
   {
     name: "Awareness Category",
     path: "/awarenes-category",
-    icon: AwareNessSVG,
+    icon: CategoryICONSVG,
   },
   {
     name: "Sponsor",
