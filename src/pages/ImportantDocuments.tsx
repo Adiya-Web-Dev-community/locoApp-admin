@@ -1,33 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
 
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import loginImage from "../assets/login_2.svg";
 import Loader from "../components/loader";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { useState } from "react";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ImpLinkDocs } from "../types";
 import Pagination from "../components/pagination/Pagination";
 import { IoIosSend } from "react-icons/io";
 
-interface AwarenessType {
-  _id: string;
-  title: string;
-  category: string;
-
-  createdAt: string;
-  image: string;
-  action: string;
-}
-
-const Awareness = () => {
+const ImportantDocuments = () => {
   const navigate = useNavigate();
   const { data, isLoading, error, isError } = useGetDataQuery({
-    url: "/awareness",
+    url: "/important_link",
   });
-
-  const [deletPost] = useDeletePostMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -44,6 +33,10 @@ const Awareness = () => {
     setCurrentPage(pageNumber);
   };
 
+  console.log(data);
+
+  const [deletPost] = useDeletePostMutation();
+
   const [isModalOpen, setModalOpen] = useState({
     condition: false,
     id: "",
@@ -56,12 +49,7 @@ const Awareness = () => {
     });
   };
 
-  const updateHandler = (user) => {
-    navigate(`/users/${user._id}`);
-    console.log("under process", user);
-  };
-
-  const deletHandler = (id) => {
+  const deletHandler = (id: string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -75,14 +63,13 @@ const Awareness = () => {
     toast.loading("checking Details");
     console.log("Item deleted", isModalOpen.id);
     deletPost({
-      url: `/awareness/${isModalOpen.id}`,
+      url: `/important_link/${isModalOpen.id}`,
     })
       .then((res) => {
         if (res.data.success) {
           toast.dismiss();
           toast.success(`${res.data.message}`);
         }
-        console.log(res);
       })
       .catch((error) => {
         toast.dismiss();
@@ -94,96 +81,14 @@ const Awareness = () => {
     });
   };
 
-  console.log(data, error, "awareness");
-  // return (
-  //   <>
-  //     {isModalOpen.condition && (
-  //       <ConfirmDeleteModal
-  //         isOpen={isModalOpen}
-  //         onClose={handleCloseModal}
-  //         onConfirm={handleConfirmDelete}
-  //       />
-  //     )}
-  //     <div className="flex justify-center w-full p-4 bg-blue-100">
-  //       {isLoading && <Loader />}
-  //       <div className="w-full ">
-  //         <div className="flex justify-between">
-  //           <button
-  //             onClick={() => navigate("/creat-awareness")}
-  //             className="my-4 bg-[#333] text-[#f8f8f8] px-4 py-1 rounded-[7px]"
-  //           >
-  //             Creat Awareness
-  //           </button>
-  //           <button
-  //             onClick={() => navigate("/awareness-category")}
-  //             className="my-4 bg-[#333] text-[#f8f8f8] px-4 py-1 rounded-[7px]"
-  //           >
-  //             Awarness Category
-  //           </button>
-  //         </div>
-  //         <div className="overflow-x-auto">
-  //           <table className="min-w-full bg-white border border-gray-200">
-  //             <thead className="">
-  //               <tr className="flex flex-row justify-between px-4 bg-gray-100">
-  //                 <th className="px-4 py-2 border-b">Title</th>
-  //                 <th className="px-4 py-2 border-b ml-14">category</th>
-  //                 <th className="px-4 py-2 border-b">Posted At</th>
-  //                 <th className="px-4 py-2 border-b">Image</th>
-  //                 <th className="px-4 py-2 border-b">Action</th>
-  //               </tr>
-  //             </thead>
-  //             <tbody className="w-full">
-  //               {data?.map((item: AwarenessType, index: number) => (
-  //                 <tr
-  //                   key={index}
-  //                   className="flex flex-row items-center justify-between px-4 border-b group hover:bg-gray-50"
-  //                 >
-  //                   <td className="px-4 py-2 ">{item?.title}</td>
-  //                   <td className="px-4 py-2 ">{item?.category}</td>
-  //                   <td className="px-4 py-2 ">
-  //                     {item?.createdAt
-  //                       ? new Date(
-  //                           item?.createdAt?.split("T")[0]
-  //                         ).toLocaleDateString()
-  //                       : ""}
-  //                   </td>
-  //                   <td className="px-4 py-2 ">
-  //                     <img
-  //                       src={item?.image}
-  //                       alt="Awareness Image"
-  //                       className="w-16 h-16"
-  //                     />
-  //                   </td>
-  //                   <td className="flex gap-5 px-4 py-2 space-x-2">
-  //                     <button
-  //                       className=""
-  //                       onClick={() => deletHandler(item?._id)}
-  //                     >
-  //                       <DeleteICONSVG
-  //                         heignt={20}
-  //                         width={20}
-  //                         fill={"#fe2828"}
-  //                       />
-  //                     </button>
-  //                     <button
-  //                       onClick={() => navigate(`/awareness/${item?._id}`)}
-  //                     >
-  //                       <EditICONSVG heignt={20} width={20} fill={"#5b5a5a"} />
-  //                     </button>
-  //                   </td>
-  //                 </tr>
-  //               ))}
-  //             </tbody>
-  //           </table>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </>
-  // );
+  const updateHandler = (doc) => {
+    navigate(`/important-document/update-documents/${doc._id}`);
+    console.log("under process", doc);
+  };
 
-  console.log("users data>>", data);
+  console.log("doc data>>", data);
 
-  const listHeadingAwarness = ["Title", "Category", "Date", "Image", "Setting"];
+  const listHeadingUsers = ["Title", "Downloadable", "Date", "Setting"];
   return (
     <>
       {isLoading && <Loader />}
@@ -204,7 +109,7 @@ const Awareness = () => {
         >
           <div className="flex items-center mb-2 md:mb-6">
             <h1 className=" text-[28px] font-bold md:text-4xl text-gray-600 font-mavenPro">
-              Awareness
+              Important Document
             </h1>
           </div>
           <div className="flex justify-between mb-4">
@@ -213,8 +118,8 @@ const Awareness = () => {
                 type="search"
                 placeholder={`Search`}
                 className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
-                   bg-slate-50 focus:border-gray-100
-                shadow-inner rounded-[0.26rem] outline-none `}
+                 bg-slate-50 focus:border-gray-100
+              shadow-inner rounded-[0.26rem] outline-none `}
                 // value={searchQuery}
                 // onChange={(e) => setSearchQuery(e.target.value)}
                 // onFocus={() => setCurrentPage(1)}
@@ -223,12 +128,12 @@ const Awareness = () => {
             <div className="relative flex items-center self-end ">
               <button
                 className={` px-2 py-1 
-                           bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
-                      }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
+                         bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
+                    }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
               >
-                <Link to={"/awareness/creat-awareness"}>
+                <Link to={"/important-document/create-documents"}>
                   <span className="hidden md:inline-block">
-                    Creat Awareness
+                    Upload Document
                   </span>
 
                   <IoIosSend className="w-6 h-6 md:hidden" />
@@ -239,10 +144,10 @@ const Awareness = () => {
           <section
             className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
           >
-            <section className="grid grid-cols-customAwarness pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
+            <section className="grid grid-cols-customImportand pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {listHeadingAwarness.map((heading, index) => (
+              {listHeadingUsers.map((heading, index) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -263,38 +168,17 @@ const Awareness = () => {
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((awar, i) => (
+                data?.map((document, i) => (
                   <section
                     key={i}
-                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customAwarness group hover:bg-gray-50"
+                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customImportand group hover:bg-gray-50"
                   >
                     <span>{i + 1}</span>
-
-                    <span
-                      className={`  font-semibold text-center  rounded-full  `}
-                    >
-                      {awar?.title ? awar?.title : "---"}
-                    </span>
-                    <span
-                      className={`  font-semibold text-center  rounded-full  `}
-                    >
-                      {awar?.category ? awar?.category : "--"}
-                    </span>
-                    <span
-                      className={`  font-semibold text-center  rounded-full  `}
-                    >
-                      {awar?.createdAt
-                        ? new Date(
-                            awar?.createdAt?.split("T")[0]
-                          ).toLocaleDateString()
-                        : ""}
-                    </span>
-
-                    <div className="flex items-center justify-center">
-                      {awar?.image ? (
+                    {/* <div className="flex items-center justify-center">
+                      {user?.image ? (
                         <img
-                          src={awar?.image}
-                          alt="Awareness Image"
+                          src={user?.image}
+                          alt="user Image"
                           className="object-cover w-24 h-24 rounded-full "
                         />
                       ) : (
@@ -302,19 +186,38 @@ const Awareness = () => {
                           No Image
                         </span>
                       )}
-                    </div>
+                    </div> */}
+                    <span
+                      className={`  font-semibold text-center  rounded-full  `}
+                    >
+                      {document?.title ? document?.title : "---"}
+                    </span>
+                    <span
+                      className={`  font-semibold text-center  rounded-full  `}
+                    >
+                      {document?.donwloadable ? "yes" : "No"}
+                    </span>
+                    <span
+                      className={`  font-semibold text-center  rounded-full  `}
+                    >
+                      {document?.createdAt
+                        ? new Date(
+                            document?.createdAt?.split("T")[0]
+                          ).toLocaleDateString()
+                        : ""}
+                    </span>
 
                     <div className="grid justify-center gap-2">
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
-                        onClick={() => updateHandler(awar)}
+                        onClick={() => updateHandler(document)}
                       >
                         {/* Edit */}
                         <EditICONSVG heignt={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                        onClick={() => deletHandler(awar._id)}
+                        onClick={() => deletHandler(document._id)}
                       >
                         {/* Delete */}
                         <DeleteICONSVG heignt={18} width={18} fill={"white"} />
@@ -337,4 +240,4 @@ const Awareness = () => {
     </>
   );
 };
-export default Awareness;
+export default ImportantDocuments;

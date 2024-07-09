@@ -7,17 +7,15 @@ import {
 } from "react-router-dom";
 import Login from "./pages/login";
 import Layout from "./layout";
-import Category from "./pages/blog";
+
 import Create_Category from "./pages/create-category";
-import BlogList from "./pages/blog-list";
-import UpdateBlog from "./pages/update-blog";
+import BlogList from "./pages/BlogList";
+// import UpdateBlog from "./pages/update-blog";
 import VideoCategory from "./pages/VideoCategory";
 
 import UploadVideo from "./pages/uploadvideo";
 // import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
-import Users from "./pages/users";
-import UserUpdate from "./components/user-update";
 
 import ForgetPassword from "./pages/ForgetPassword";
 import Authentication from "./pages/Authentication";
@@ -27,13 +25,17 @@ import Awareness from "./pages/Awareness";
 // import AwarenessCategory from "./pages/AwarenessCategory";
 import CreatAwareness from "./forms/CreatAwareness";
 import AwarenessCategory from "./pages/AwarenessCategory";
-import ImportantDocuments from "./pages/important_Document";
+import ImportantDocuments from "./pages/ImportantDocuments";
 import CreatDocuments from "./pages/createDocument";
 import UpdateDocuments from "./pages/update-document";
 import SponserCompany from "./pages/SponserCompany";
 import SponserCompaniesForm from "./forms/SponserCompaniesForm";
 import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
-import Video from "./pages/videos";
+import Video from "./pages/Videos";
+import CreatBlog from "./pages/CreatBlog";
+
+import UserUpdate from "./forms/UserUpdate";
+import UserList from "./pages/UserList";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -74,7 +76,7 @@ function App() {
           children: [
             {
               path: "creat-blog",
-              element: <Category />,
+              element: <CreatBlog />,
             },
             {
               path: "blogcategory",
@@ -86,26 +88,27 @@ function App() {
             },
             {
               // path: "creat-blog/blogs-list/update-blog/:id",
-              path: "update-blog/:id",
-              element: <UpdateBlog />,
+              path: "creat-blog/blogs-list/update-blog/:id",
+              element: <CreatBlog />,
+              // element: <UpdateBlog />,
             },
             {
               path: "videocategory",
               element: <VideoCategory />,
             },
-            {
-              path: "videos",
-              element: <Video />,
-            },
+
             {
               path: "users",
-              element: <Users />,
+              element: <UserList />,
             },
             {
               path: "users/:id",
               element: <UserUpdate />,
             },
-
+            {
+              path: "videos",
+              element: <Video />,
+            },
             {
               path: "videos/:id",
               element: <UploadVideo />,
@@ -123,7 +126,7 @@ function App() {
               element: <Awareness />,
             },
             {
-              path: "creat-awareness",
+              path: "awareness/creat-awareness",
               element: <CreatAwareness />,
             },
             {
@@ -139,11 +142,11 @@ function App() {
               element: <ImportantDocuments />,
             },
             {
-              path: "create-documents",
+              path: "important-document/create-documents",
               element: <CreatDocuments />,
             },
             {
-              path: "update-documents/:id",
+              path: "important-document/update-documents/:id",
               element: <UpdateDocuments />,
             },
             {

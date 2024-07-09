@@ -197,11 +197,20 @@ const SponserCompaniesForm = () => {
         clearhandler();
       } else {
         toast.dismiss();
-        toast.error("Failed to Add Company for Sponsor");
+        toast.error(
+          `Failed to ${
+            isUpdate && !isError ? "Update Company" : "Add Company"
+          }  for Sponsor`
+        );
       }
     } catch (error) {
       toast.dismiss();
-      console.error("Error Add Company for Sponsor:", error);
+      console.error(
+        `Error ${
+          isUpdate && !isError ? "Update Company" : "Add Company"
+        } for Sponsor:`,
+        error
+      );
       toast.error("An error occurred");
     }
   };
