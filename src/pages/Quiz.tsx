@@ -1,30 +1,21 @@
-import { Link, useNavigate } from "react-router-dom";
-
-import { useDeletePostMutation, useGetDataQuery } from "../api";
-import loginImage from "../assets/login_2.svg";
-import Loader from "../components/loader";
-import DeleteICONSVG from "../assets/SVG/deleteICON";
-import EditICONSVG from "../assets/SVG/editICON";
-import { useState } from "react";
-import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
+import EditICONSVG from "../assets/SVG/editICON";
+import DeleteICONSVG from "../assets/SVG/deleteICON";
+import ConfirmDeleteModal from "../components/modal/DeleteModal";
+import Loader from "../components/loader";
+import { toast } from "react-toastify";
+import { useDeletePostMutation, useGetDataQuery } from "../api";
+import { Link, useNavigate } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
+import CreatQuiz from "../forms/CreatQuiz";
+import QuizQuestion from "../forms/QuizQuestion";
+import { PiEye } from "react-icons/pi";
 
-interface AwarenessType {
-  _id: string;
-  title: string;
-  category: string;
-
-  createdAt: string;
-  image: string;
-  action: string;
-}
-
-const Awareness = () => {
+const Quiz = () => {
   const navigate = useNavigate();
   const { data, isLoading, error, isError } = useGetDataQuery({
-    url: "/awareness",
+    url: "/quiz",
   });
 
   const [deletPost] = useDeletePostMutation();
@@ -44,6 +35,30 @@ const Awareness = () => {
     setCurrentPage(pageNumber);
   };
 
+  const [isQuizForm, setQuizForm] = useState({
+    creat: false,
+    updateId: "",
+  });
+
+  //   const [isQuestionForm, setQuestionForm] = useState({
+  //     creat: false,
+  //     updateId: "",
+  //     quizIdQuestion: "",
+  //   });
+
+  const [isQuestionForm, setQuestionForm] = useState({
+    condition: false,
+    isCreat: false,
+    data: null,
+    quizId: "",
+  });
+
+  const [updateData, setUpdateDate] = useState({
+    title: "",
+    instructions: "",
+    completd: false,
+  });
+
   const [isModalOpen, setModalOpen] = useState({
     condition: false,
     id: "",
@@ -56,9 +71,20 @@ const Awareness = () => {
     });
   };
 
-  const updateHandler = (user) => {
-    navigate(`/users/${user._id}`);
-    console.log("under process", user);
+  const updateHandler = (quiz) => {
+    // navigate(`/users/${user._id}`);
+    // console.log("under process", user);
+
+    setQuizForm((prev) => ({
+      ...prev,
+      updateId: quiz._id,
+    }));
+    setUpdateDate((prev) => ({
+      ...prev,
+      title: quiz.title,
+      instructions: quiz.instructions,
+      completd: quiz.isComplete,
+    }));
   };
 
   const deletHandler = (id) => {
@@ -75,7 +101,7 @@ const Awareness = () => {
     toast.loading("checking Details");
     console.log("Item deleted", isModalOpen.id);
     deletPost({
-      url: `/awareness/${isModalOpen.id}`,
+      url: `/quiz/${isModalOpen.id}`,
     })
       .then((res) => {
         if (res.data.success) {
@@ -96,10 +122,76 @@ const Awareness = () => {
 
   console.log(data, error, "awareness");
 
-  const listHeadingAwarness = ["Title", "Category", "Date", "Image", "Setting"];
+  const listHeadingAwarness = [
+    "Title",
+    "Instruction",
+    "Add Questions",
+    "view",
+    "Setting",
+  ];
+
+  const handlingCrateQuiz = () => {
+    setQuizForm((prev) => ({
+      ...prev,
+      creat: !prev.creat,
+    }));
+    setUpdateDate({
+      title: "",
+      instructions: "",
+      completd: false,
+    });
+  };
+
+  //   const creatQuestionHandler = (quiz) => {
+  //     setQuestionForm((prev) => ({
+  //       ...prev,
+  //       quizIdQuestion: quiz._id,
+  //       creat: !prev.creat,
+  //     }));
+  //     setUpdateDate({
+  //       title: "",
+  //       instructions: "",
+  //       completd: false,
+  //     });
+  //   };
+
+  const questionFormHandler = (quiz) => {
+    setQuestionForm((prev) => ({
+      ...prev,
+      condition: true,
+      isCreat: true,
+      quizId: quiz?._id,
+    }));
+  };
+
+  const closeHandler = () => {
+    setQuestionForm((prev) => ({
+      ...prev,
+      condition: false,
+      isCreat: false,
+      data: null,
+      quizId: "",
+    }));
+  };
   return (
     <>
       {isLoading && <Loader />}
+
+      {(isQuizForm.creat || isQuizForm.updateId) && (
+        <CreatQuiz
+          isQuizForm={isQuizForm}
+          setQuizForm={setQuizForm}
+          singleQuiz={updateData}
+        />
+      )}
+      {isQuestionForm.condition && (
+        <QuizQuestion
+          isQuestionForm={isQuestionForm}
+          //   setQuestionForm={setQuestionForm}
+          close={closeHandler}
+          //   singleQuestionData={updateData}
+        />
+      )}
 
       {isModalOpen.condition && (
         <ConfirmDeleteModal
@@ -117,7 +209,7 @@ const Awareness = () => {
         >
           <div className="flex items-center mb-2 md:mb-6">
             <h1 className=" text-[28px] font-bold md:text-4xl text-gray-600 font-mavenPro">
-              Awareness
+              Quiz
             </h1>
           </div>
           <div className="flex justify-between mb-4">
@@ -126,8 +218,8 @@ const Awareness = () => {
                 type="search"
                 placeholder={`Search`}
                 className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
-                   bg-slate-50 focus:border-gray-100
-                shadow-inner rounded-[0.26rem] outline-none `}
+                         bg-slate-50 focus:border-gray-100
+                      shadow-inner rounded-[0.26rem] outline-none `}
                 // value={searchQuery}
                 // onChange={(e) => setSearchQuery(e.target.value)}
                 // onFocus={() => setCurrentPage(1)}
@@ -136,23 +228,20 @@ const Awareness = () => {
             <div className="relative flex items-center self-end ">
               <button
                 className={` px-2 py-1 
-                           bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
-                      }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
+                                 bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
+                            }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
+                onClick={handlingCrateQuiz}
               >
-                <Link to={"/awareness/creat-awareness"}>
-                  <span className="hidden md:inline-block">
-                    Creat Awareness
-                  </span>
+                <span className="hidden md:inline-block">Creat Quiz</span>
 
-                  <IoIosSend className="w-6 h-6 md:hidden" />
-                </Link>
+                <IoIosSend className="w-6 h-6 md:hidden" />
               </button>
             </div>
           </div>
           <section
             className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
           >
-            <section className="grid grid-cols-customAwarness pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
+            <section className="grid grid-cols-customQuiz pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
               {listHeadingAwarness.map((heading, index) => (
@@ -176,58 +265,52 @@ const Awareness = () => {
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((awar, i) => (
+                data?.map((quiz, i) => (
                   <section
                     key={i}
-                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customAwarness group hover:bg-gray-50"
+                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuiz group hover:bg-gray-50"
                   >
                     <span>{i + 1}</span>
 
                     <span
                       className={`  font-semibold text-center  rounded-full  `}
                     >
-                      {awar?.title ? awar?.title : "---"}
+                      {quiz?.title ? quiz?.title : "---"}
                     </span>
                     <span
                       className={`  font-semibold text-center  rounded-full  `}
                     >
-                      {awar?.category ? awar?.category : "--"}
-                    </span>
-                    <span
-                      className={`  font-semibold text-center  rounded-full  `}
-                    >
-                      {awar?.createdAt
-                        ? new Date(
-                            awar?.createdAt?.split("T")[0]
-                          ).toLocaleDateString()
-                        : ""}
+                      {quiz?.instructions ? quiz?.instructions : "--"}
                     </span>
 
-                    <div className="flex items-center justify-center">
-                      {awar?.image ? (
-                        <img
-                          src={awar?.image}
-                          alt="Awareness Image"
-                          className="object-cover w-24 h-24 rounded-full "
-                        />
-                      ) : (
-                        <span className="text-sm font-bold text-gray-400">
-                          No Image
-                        </span>
-                      )}
+                    <div className="grid items-center justify-center">
+                      <button
+                        className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
+                        onClick={() => questionFormHandler(quiz)}
+                      >
+                        Add Questions
+                      </button>
+                    </div>
+                    <div className="grid items-center justify-center ">
+                      <Link
+                        to={`/quiz/${quiz._id}`}
+                        className="px-2 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500"
+                      >
+                        <PiEye className="w-5 h-5" />
+                      </Link>
                     </div>
 
                     <div className="grid justify-center gap-2">
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
-                        onClick={() => updateHandler(awar)}
+                        onClick={() => updateHandler(quiz)}
                       >
                         {/* Edit */}
                         <EditICONSVG heignt={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                        onClick={() => deletHandler(awar._id)}
+                        onClick={() => deletHandler(quiz._id)}
                       >
                         {/* Delete */}
                         <DeleteICONSVG heignt={18} width={18} fill={"white"} />
@@ -250,4 +333,5 @@ const Awareness = () => {
     </>
   );
 };
-export default Awareness;
+
+export default Quiz;
