@@ -5,25 +5,29 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import TextEditor from "../components/textEditor";
 import { FaCaretDown } from "react-icons/fa";
+import MultipleImageUploadeForm from "../components/multiple_image_upload/MultipleImageUploadeForm";
 
-const QuizQuestion = ({ isQuestionForm, close }) => {
+const TestQuestion = ({ isQuestionForm, close }) => {
   const [updatePost] = useUpdatePostMutation();
 
-  const [quizData, setQuizData] = useState({
-    question: isQuestionForm?.data?.name || "",
+  const [testData, settestData] = useState({
+    image: isQuestionForm?.data?.name || [],
+    imageSrc: [],
     options: isQuestionForm?.data?.options || [],
     result: isQuestionForm?.data?.predicted_result || "",
     content: isQuestionForm?.data?.answer_description || "",
   });
 
+  console.log(testData);
+
   const { data, error, isloading, isError } = useGetDataQuery({
-    url: `/quiz/question/${isQuestionForm?.data?._id}`,
+    url: `/test/question/${isQuestionForm?.data?._id}`,
   });
-
   const isUpdate = Object.keys(data || [])?.length !== 0;
-
-  console.log(data, isQuestionForm, "singleQuiz");
   console.log(
+    data,
+    isUpdate,
+    isError,
     isQuestionForm,
     close,
     "from creat form",
@@ -33,17 +37,15 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
   useEffect(() => {
     console.log("i am working");
     if (isUpdate && !isError) {
-      setQuizData((prev) => ({
+      settestData((prev) => ({
         ...prev,
-        question: data?.name || "",
+        image: data?.name || "",
         options: data?.options || [],
         result: data?.predicted_result || "",
         content: data?.answer_description || "",
       }));
     }
   }, [isUpdate, isError, data]);
-
-  console.log(quizData);
 
   const [isOpen, setOpen] = useState({
     result: false,
@@ -55,36 +57,33 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
   ) => {
     const { name, value, type, checked } = e.target;
 
-    setQuizData((prev) => ({
+    settestData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // if (name === "phone" && !pattern.test(value)) setIsError(true);
-    // else setIsError(false);
   };
-
-  //   const quizId = "";
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const quizQuestionObject = {
-      name: quizData?.question,
-      options: quizData?.options,
-      predicted_result: quizData?.result,
-      answer_description: quizData?.content,
+    const testQuestionObject = {
+      name: testData?.image,
+
+      options: testData?.options,
+      predicted_result: testData?.result,
+      answer_description: testData?.content,
     };
 
-    console.log(quizQuestionObject);
+    console.log(testQuestionObject);
 
     toast.loading("Checking Details");
     try {
       const response = await updatePost({
-        data: quizQuestionObject,
+        data: testQuestionObject,
         method: isQuestionForm.isCreat ? "POST" : "PUT",
         path: isQuestionForm.isCreat
-          ? `/quiz/question/${isQuestionForm.quizId}`
-          : `/quiz/question/${data?._id}`,
+          ? `/test/question/${isQuestionForm?.testId}`
+          : `/test/question/${isQuestionForm?.data?._id}`,
       });
       console.log(response);
       if (response?.data?.success) {
@@ -98,26 +97,26 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
         toast.error(
           `Failed to  ${
             isQuestionForm.isCreat
-              ? "Create Quiz Question"
-              : "Update Quiz Question"
+              ? "Create Test Question"
+              : "Update Test Question"
           }`
         );
       }
     } catch (error) {
       toast.dismiss();
-      console.error("Error creating Quiz Question:", error);
+      console.error("Error creating Test Question:", error);
       toast.error(
         `Error ${
           isQuestionForm.isCreat
-            ? "Creating Quiz Question"
-            : "Updating Quiz Question"
+            ? "Creating Test Question"
+            : "Updating Test Question"
         } : ${error}`
       );
     }
   };
 
   const handleEditorChange = (name, value) => {
-    setQuizData((prev) => ({
+    settestData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -125,7 +124,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
 
   const selectOption = (field: string, value: string) => {
     console.log(value);
-    setQuizData((prev) => ({
+    settestData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -139,8 +138,8 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       const newOption = e.currentTarget.value.trim();
-      if (newOption && !quizData.options.includes(newOption)) {
-        setQuizData((prev) => ({
+      if (newOption && !testData.options.includes(newOption)) {
+        settestData((prev) => ({
           ...prev,
           options: [...prev.options, newOption],
         }));
@@ -150,15 +149,16 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
   };
 
   const handleQuestionRemove = (optionToRemove: string) => {
-    setQuizData((prev) => ({
+    settestData((prev) => ({
       ...prev,
       options: prev.options.filter((option) => option !== optionToRemove),
     }));
   };
 
   const clearHandler = () => {
-    setQuizData({
-      question: "",
+    settestData({
+      image: [],
+      imageSrc: [],
       options: [],
       result: "",
       content: "",
@@ -182,7 +182,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
           <div className="flex-1 h-full p-6 rounded font-montserrat">
             <div className="flex pb-2">
               <h2 className="md:text-4xl text-[28px] font-bold text-gray-500 font-mavenPro">
-                Quiz Question Form
+                Test Question Form
               </h2>
               <div onClick={close}>
                 <TiArrowBackOutline className="w-10 h-10 ml-4 text-emerald-600 hover:text-emerald-500" />
@@ -190,18 +190,13 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
             </div>
             <div className="h-[calc(100vh-12rem)] w-full overflow-y-auto  [&::-webkit-scrollbar]:hidden font-mavenPro">
               <div className="grid items-center grid-cols-1 gap-4 py-4 md:grid-cols-2">
-                <input
-                  value={quizData.question}
-                  type="text"
-                  onChange={handleChange}
-                  name="question"
-                  className="w-full h-10 col-span-1 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none md:col-span-2 focus:border-blue-200 "
-                  placeholder="Write Question"
-                  required
+                <MultipleImageUploadeForm
+                  imge={testData.image}
+                  setImageData={settestData}
                 />
 
                 {/* Add Option */}
-                <div className="grid grid-cols-2 col-span-2 gap-4">
+                <div className="grid grid-cols-1 col-span-1 gap-2 md:gap-4 md:grid-cols-2 md:col-span-2">
                   <input
                     type="text"
                     // value={}
@@ -210,7 +205,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                     placeholder="Add Options (press Enter or comma to add)"
                   />
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {quizData.options.map((tag, index) => (
+                    {testData.options.map((tag, index) => (
                       <span
                         key={index}
                         className="flex items-center px-2 py-1 text-sm font-medium text-white bg-green-600 rounded-full"
@@ -228,6 +223,18 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                   </div>
                 </div>
 
+                {/* [
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Reset%20password-pana.svg?alt=media&token=dfc0281b-cf16-4834-a289-f92d370472dd",
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Login-cuate%20(1).svg?alt=media&token=471ba61a-037d-4718-b518-0a9256572bd1",
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Forgot%20password-pana%20(2).svg?alt=media&token=9e8934b9-9e58-4be9-88bb-01c763539041"
+]
+
+[
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Reset%20password-pana.svg?alt=media&token=dfc0281b-cf16-4834-a289-f92d370472dd",
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Login-cuate%20(1).svg?alt=media&token=471ba61a-037d-4718-b518-0a9256572bd1",
+    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Forgot%20password-pana%20(2).svg?alt=media&token=9e8934b9-9e58-4be9-88bb-01c763539041"
+] */}
+
                 <div className="relative">
                   <div
                     className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-green-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
@@ -235,7 +242,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                       setOpen({ ...isOpen, result: !isOpen.result })
                     }
                   >
-                    {quizData.result !== "" ? quizData.result : "Select Result"}
+                    {testData.result !== "" ? testData.result : "Select Result"}
                     <FaCaretDown className="m-1" />
                   </div>
                   <ul
@@ -243,12 +250,12 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                       isOpen.result ? "max-h-60" : "hidden"
                     } custom-scrollbar`}
                   >
-                    {quizData.options.length !== 0 ? (
-                      quizData.options?.map((option, i) => (
+                    {testData.options.length !== 0 ? (
+                      testData.options?.map((option, i) => (
                         <li
                           key={i}
                           className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
-                            quizData.result === option ? "bg-rose-600" : ""
+                            testData.result === option ? "bg-rose-600" : ""
                           }`}
                           onClick={() => selectOption("result", option)}
                         >
@@ -263,7 +270,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
 
                 <div className="col-span-1 md:col-span-2">
                   <TextEditor
-                    value={quizData?.content}
+                    value={testData?.content}
                     OnChangeEditor={(e) => handleEditorChange("content", e)}
                   />
                 </div>
@@ -275,7 +282,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
                   type="submit"
                   // disabled={isError}
                 >
-                  {isUpdate ? "Update" : "Submit"}
+                  {isUpdate && !isError ? "Update" : "Submit"}
                 </button>
                 <button
                   className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700"
@@ -293,4 +300,4 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
   );
 };
 
-export default QuizQuestion;
+export default TestQuestion;

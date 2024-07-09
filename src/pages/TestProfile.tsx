@@ -9,11 +9,12 @@ import { TiArrowBackOutline } from "react-icons/ti";
 import { IoIosSend } from "react-icons/io";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import QuizQuestion from "../forms/QuizQuestion";
+import TestQuestion from "../forms/TestQuestion";
 
-const QuizProfile = () => {
+const TestProfile = () => {
   const { id } = useParams();
   const { data, isLoading, error, isError } = useGetDataQuery({
-    url: `/quiz/${id}`,
+    url: `/test/${id}`,
   });
 
   console.log(data, "pagination");
@@ -22,7 +23,7 @@ const QuizProfile = () => {
     condition: false,
     isCreat: false,
     data: null,
-    quizId: "",
+    testId: "",
   });
 
   const listHeadingProducts = ["Question", "Option", "Answer", "Setting"];
@@ -32,7 +33,7 @@ const QuizProfile = () => {
       ...prev,
       condition: true,
       isCreat: true,
-      quizId: data?._id,
+      testId: data?._id,
     }));
   };
 
@@ -42,7 +43,7 @@ const QuizProfile = () => {
       condition: false,
       isCreat: false,
       data: null,
-      quizId: "",
+      testId: "",
     }));
   };
 
@@ -84,12 +85,12 @@ const QuizProfile = () => {
     }));
   };
 
-  const updateHandler = (quizData) => {
+  const updateHandler = (testData) => {
     setQuestionForm((prev) => ({
       ...prev,
       condition: true,
       isCreat: false,
-      data: quizData,
+      data: testData,
     }));
   };
 
@@ -98,7 +99,7 @@ const QuizProfile = () => {
     toast.loading("checking Details");
 
     deletPost({
-      url: `/quiz/question/${isModalOpen.id}`,
+      url: `/test/question/${isModalOpen.id}`,
     })
       .then((res) => {
         if (res.data.success) {
@@ -127,7 +128,7 @@ const QuizProfile = () => {
       )}
 
       {isQuestionForm.condition && (
-        <QuizQuestion close={closeHandler} isQuestionForm={isQuestionForm} />
+        <TestQuestion close={closeHandler} isQuestionForm={isQuestionForm} />
       )}
 
       {isLoading ? (
@@ -142,9 +143,9 @@ const QuizProfile = () => {
           <div className="flex items-center">
             <MdOutlineQuiz className=" w-9 h-9" />
             <h1 className="  text-[28px] font-bold  md:text-4xl ml-2 font-mavenPro">
-              Quiz Area
+              Test Area
             </h1>
-            <Link to={"/quiz"}>
+            <Link to={"/test"}>
               <TiArrowBackOutline className="w-10 h-10 ml-4 hover:text-orange-600 text-sky-600" />
             </Link>
           </div>
@@ -158,53 +159,10 @@ const QuizProfile = () => {
                     <h2 className="text-xl font-semibold text-blue-800 md:text-2xl font-mavenPro">
                       {data?.title}
                     </h2>
-                    {/* <p className="text-sm font-semibold text-gray-600">
-                              {data?.type}
-                            </p> */}
-                    {/* </div> */}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 ">
-                  {/* <div className="grid grid-cols-1 col-span-3 gap-6 md:grid-cols-2"> */}
-                  {/* <p className="text-sm font-semibold md:text-base ">
-                            <span className="pr-2 text-sm text-gray-500 ">
-                              Sponsor Type
-                            </span>
-      
-                            {data?.type}
-                          </p>
-                          <p className="text-sm font-semibold md:text-base">
-                            <span className="pr-2 text-sm text-gray-500 ">
-                              Website
-                            </span>
-      
-                            <span
-                              onClick={() => data?.link && handleLinkClick(data.link)}
-                              className={` text-sm font-semibold text-center ${
-                                data?.link
-                                  ? "hover:underline hover:text-sky-400 "
-                                  : ""
-                              } break-words break-all cursor-pointer `}
-                            >
-                              {data?.link ? "Official site" : "----"}
-                            </span>
-                          </p>
-                          <p className="flex items-center gap-2 text-sm font-semibold md:text-base">
-                            <span className="pr-2 text-sm text-gray-500 ">Video</span>
-                            <span
-                              className="flex justify-center ml-2 text-sm font-semibold cursor-pointer hover:underline hover:text-sky-400"
-                              typeof="button"
-                              onClick={() => handlingVideo(data?.video)}
-                            >
-                              {data?.video ? (
-                                <MdOutlineOndemandVideo className="w-8 h-8" />
-                              ) : (
-                                "No video provided"
-                              )}
-                            </span>
-                          </p> */}
-
                   <p className="text-sm font-semibold md:text-base">
                     <span className="pr-2 text-sm text-gray-500 ">
                       instructions
@@ -281,7 +239,9 @@ const QuizProfile = () => {
                         <span
                           className={`  font-semibold text-center  rounded-full  `}
                         >
-                          {question?.name}
+                          {question?.name.length !== 0
+                            ? "View Image"
+                            : "No Image"}
                         </span>
                         <span className="ml-6 font-semibold text-center rounded-full">
                           <ul className="text-left list-disc list-inside">
@@ -341,4 +301,4 @@ const QuizProfile = () => {
   );
 };
 
-export default QuizProfile;
+export default TestProfile;
