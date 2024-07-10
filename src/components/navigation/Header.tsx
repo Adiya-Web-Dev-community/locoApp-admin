@@ -13,10 +13,6 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
   const [showProfile, setShowProfile] = useState(false);
   const [isLogout, setLogoutModal] = useState(false);
 
-  const profilePannelHanlder = () => {
-    setShowProfile((prev) => !prev);
-  };
-
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,6 +21,11 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
     setLogoutModal(true);
     // localStorage.removeItem("admin");
     // navigate("/login");
+  };
+
+  const profilePannelHanlder = () => {
+    // setShowProfile((prev) => !prev);
+    handleLogout();
   };
 
   //   const handleUpdatePassword = () => {
@@ -131,7 +132,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
               // style={{ width: "178px" }}
             >
               {/* <img src="" alt=""/> */}
-              <div className={`flex items-center justify-center p-1    `}>
+              <div className={`flex items-center justify-center p-1`}>
                 {/* {adminProfile ? (
                   <img
                     src={adminProfile.image}
