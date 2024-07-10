@@ -17,7 +17,7 @@ import AwareNessSVG from "../../assets/SVG/arenessICON";
 import SponorSVG from "../../assets/SVG/sponsor.ICON";
 import DocumentSVG from "../../assets/SVG/documentICON";
 import UserSVG from "../../assets/SVG/userICON";
-import LocoSVGIcon from "../../assets/SVG/LocoSVGIcon";
+import QuizIcon from "../../assets/SVG/quizIcon";
 
 interface SidebarItem {
   name: string;
@@ -56,7 +56,7 @@ const sidebarData: SidebarItem[] = [
   {
     name: "Awareness Category",
     path: "/awarenes-category",
-    icon: AwareNessSVG,
+    icon: CategoryICONSVG,
   },
   {
     name: "Sponsor",
@@ -74,25 +74,30 @@ const sidebarData: SidebarItem[] = [
     icon: UserSVG,
   },
   {
-    name: "Railway History",
-    path: "/history",
-    icon: UserSVG,
+    name: "Quiz",
+    path: "/quiz",
+    icon: QuizIcon,
   },
-  {
-    name: "MCB & Switches",
-    path: "/mcb-switches",
-    icon: UserSVG,
-  },
-  {
-    name: "E-Store",
-    path: "/store",
-    icon: UserSVG,
-  },
-  {
-    name: "Finance",
-    path: "/finance",
-    icon: UserSVG,
-  },
+  // {
+  //   name: "Railway History",
+  //   path: "/history",
+  //   icon: UserSVG,
+  // },
+  // {
+  //   name: "MCB & Switches",
+  //   path: "/mcb-switches",
+  //   icon: UserSVG,
+  // },
+  // {
+  //   name: "E-Store",
+  //   path: "/store",
+  //   icon: UserSVG,
+  // },
+  // {
+  //   name: "Finance",
+  //   path: "/finance",
+  //   icon: UserSVG,
+  // },
 ];
 
 const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }) => {

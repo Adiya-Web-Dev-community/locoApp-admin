@@ -60,32 +60,32 @@ const BlogList = () => {
     }));
   };
   const updateblog = (blog) => {
-    navigate(`/update-blog/${blog._id}`);
+    navigate(`/creat-blog/blogs-list/update-blog/${blog._id}`);
     console.log("under process", blog);
   };
 
   const handleConfirmDelete = () => {
     // Handle the delete action here
-    // toast.loading("checking Details");
-    // console.log("Item deleted", isModalOpen.id);
-    // deletPost({
-    //   url: `/sponsor/company/${isModalOpen.id}`,
-    // })
-    //   .then((res) => {
-    //     if (res.data.success) {
-    //       toast.dismiss();
-    //       toast.success(`${res.data.message}`);
-    //     }
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     toast.dismiss();
-    //     toast.error("Not successfull to delete");
-    //   });
-    // setModalOpen({
-    //   condition: false,
-    //   id: "",
-    // });
+    toast.loading("checking Details");
+    console.log("Item deleted", isModalOpen.id);
+    deletPost({
+      url: `/blog/delete-blog/${isModalOpen.id}`,
+    })
+      .then((res) => {
+        if (res.data.success) {
+          toast.dismiss();
+          toast.success(`${res.data.message}`);
+        }
+        console.log(res);
+      })
+      .catch((error) => {
+        toast.dismiss();
+        toast.error("Not successfull to delete");
+      });
+    setModalOpen({
+      condition: false,
+      id: "",
+    });
     console.log("deleting...");
   };
 
@@ -113,61 +113,9 @@ const BlogList = () => {
 
   const blogHeadings = ["Image", "Title", "Date", "Setting"];
   return (
-    <React.Fragment>
+    <>
       {isLoading && <Loader />}
-      {/* <ToastContainer/>
-    <div className="flex justify-center w-full p-4">
-    
-      <div className="w-full">
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead className="">
-              <tr className="flex flex-row justify-between px-4 bg-gray-100">
-                <th>Image</th>
-                <th className="px-4 py-2 border-b">Title</th>
-                <th className="px-4 py-2 border-b">Posted At</th>
-                <th className="px-4 py-2 border-b">Action</th>
-              </tr>
-            </thead>
-            <tbody className="w-full">
-              {response?.data?.map((member: BlogSTyepes, index: number) => (
-                <tr
-                  key={index}
-                  className="flex flex-row justify-between px-4 border-b group hover:bg-gray-50"
-                >
-                  <td className="flex items-center px-4 py-2">
-                    <img
-                      src={member?.thumnail}
-                      alt={member.title}
-                      className="w-10 h-10 mr-3 rounded-full"
-                    />
-                  </td>
-                  <td className="px-4 py-2 ">{member?.title}</td>
 
-                  <td className="px-4 py-2">
-                    {member?.createdAt
-                      ? new Date(member?.createdAt).toLocaleDateString()
-                      : ""}
-                  </td>
-                  <td className="flex gap-5 px-4 py-2 space-x-2">
-                    <button className="" onClick={()=>handleDelete(member?._id)}>
-                      <DeleteICONSVG heignt={20} width={20} fill={"#fe2828"} />
-                    </button>
-                    <button
-                      onClick={() =>
-                        navigate(`/update-blog/${member?._id}`)
-                      }
-                    >
-                      <EditICONSVG heignt={20} width={20} fill={"#5b5a5a"} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div> */}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
           isOpen={isModalOpen}
@@ -300,7 +248,7 @@ const BlogList = () => {
           />
         </section>
       </section>
-    </React.Fragment>
+    </>
   );
 };
 export default BlogList;

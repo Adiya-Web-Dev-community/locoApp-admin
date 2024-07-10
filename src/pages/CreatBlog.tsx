@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useCreatePostMutation, useGetDataQuery } from "../api";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  useCreatePostMutation,
+  useGetDataQuery,
+  useUpdatePostMutation,
+} from "../api";
 import { BlogCategory } from "../types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,14 +20,14 @@ interface Props {
 }
 
 interface StateProps {
-  mainId: string;
-  subid: string;
-  subsubid: string;
-  innerid: string;
-  maincategory: string;
-  subcategory: string;
-  subsubcategory: string;
-  innercategory: string;
+  mainId?: string;
+  subid?: string;
+  subsubid?: string;
+  innerid?: string;
+  maincategory?: string;
+  subcategory?: string;
+  subsubcategory?: string;
+  innercategory?: string;
   title: string;
   slug: string;
   thumnail: string;
@@ -37,8 +41,20 @@ interface popostate {
   innercategoryData: Props[];
 }
 
-const Category = () => {
-  const [createPost] = useCreatePostMutation();
+const CreatBlog = () => {
+  // const [createPost] = useCreatePostMutation();
+  const [updatePost] = useUpdatePostMutation();
+
+  const { id } = useParams();
+  const {
+    data: blogData,
+    isLoading: isLoadingBlog,
+    isError,
+  } = useGetDataQuery({
+    url: `/blog/get-blog-using-Id/${id}`,
+  });
+
+  console.log(blogData, "update Blog");
 
   const { data } = useGetDataQuery({ url: "/get-blog-category" });
 
@@ -57,11 +73,12 @@ const Category = () => {
     subcategory: "",
     subsubcategory: "",
     innercategory: "",
-    title: "",
+    title: data?.data?.title || "",
     slug: "",
-    thumnail: "",
-    content: "",
-    imageTitle: "",
+    thumnail: data?.data?.thumnail || "",
+    content: data?.data?.content || "",
+    imageTitle:
+      data?.data?.thumnail?.slice(67, data?.image?.indexOf("%")) || "",
   });
 
   const [isOpen, setOpen] = useState({
@@ -70,6 +87,32 @@ const Category = () => {
     subsubcategory: false,
     innercategory: false,
   });
+
+  const isUpdate = Object.keys(data || [])?.length !== 0;
+
+  useEffect(() => {
+    if (isUpdate && !isError) {
+      setState({
+        title: blogData?.data?.title,
+        thumnail: blogData?.data?.thumnail,
+        slug: blogData?.data?.slug,
+        content: blogData?.data?.content,
+        imageTitle:
+          blogData?.data?.thumnail?.slice(
+            72,
+            blogData?.data?.thumnail?.indexOf("%2F")
+          ) || "",
+        maincategory: "",
+        mainId: "",
+        subid: "",
+        subsubid: "",
+        innerid: "",
+        subcategory: "",
+        subsubcategory: "",
+        innercategory: "",
+      });
+    }
+  }, [isUpdate, isError, blogData]);
 
   const makeSlug = (value: string) => {
     return value.toLowerCase().replace(/\s+/g, "-");
@@ -182,76 +225,9 @@ const Category = () => {
     }
   };
   const navigate = useNavigate();
-  // const HandleCreate = async () => {
-  //   try {
-  //     const payload = {
-  //       maincategory: state?.maincategory,
-  //       subcategory: state?.subcategory,
-  //       subsubcategory: state?.subsubcategory,
-  //       innercategory: state?.innercategory,
-  //       title: state?.title,
-  //       slug: state?.slug,
-  //       thumnail: state?.thumnail,
-  //       content: state?.content,
-  //     };
-  //     const response = await createPost({
-  //       data: payload,
-  //       path: "/blog/create-blogs",
-  //     });
-
-  //     if (response?.data?.success) {
-  //       toast.success(response?.data?.message, {
-  //         autoClose: 5000,
-  //       });
-  //     } else {
-  //       toast.error("Failed to create Blog");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error creating Blog:", error);
-  //     toast.error("An error occurred");
-  //   }
-  // };
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // const companySponserPostObject = {
-    //   name: companiesData.name,
-    //   type: companiesData.type,
-    //   image: data?.image ? data?.image : companiesData.image,
-    //   link: companiesData.webLink,
-    //   video: companiesData.url,
-    //   description: companiesData.discription,
-    //   active: companiesData.status,
-    // };
-
-    // console.log(companiesData);
-
-    // toast.loading("Checking Details");
-    // try {
-    //   console.log(companySponserPostObject, "submit");
-    //   const response = await updatePost({
-    //     data: companySponserPostObject,
-    //     method: isUpdate && !isError ? "PUT" : "POST",
-    //     path:
-    //       isUpdate && !isError ? `/sponsor/company/${id}` : "/sponsor/company",
-    //   });
-    //   console.log(response);
-    //   if (response?.data?.success) {
-    //     toast.dismiss();
-    //     toast.success(response?.data?.message, {
-    //       autoClose: 5000,
-    //     });
-    //     clearhandler();
-    //   } else {
-    //     toast.dismiss();
-    //     toast.error("Failed to Add Company for Sponsor");
-    //   }
-    // } catch (error) {
-    //   toast.dismiss();
-    //   console.error("Error Add Company for Sponsor:", error);
-    //   toast.error("An error occurred");
-    // }
 
     console.log(state, "hello");
     try {
@@ -267,9 +243,14 @@ const Category = () => {
         content: state?.content,
       };
       console.log(payload, "data creating...");
-      const response = await createPost({
+      const response = await updatePost({
         data: payload,
-        path: "/blog/create-blogs",
+        method: isUpdate && !isError ? "PUT" : "POST",
+
+        path:
+          isUpdate && !isError
+            ? `/blog/update-blog/${id}`
+            : "/blog/create-blogs",
       });
 
       console.log(response);
@@ -282,11 +263,18 @@ const Category = () => {
         clearhandler();
       } else {
         toast.dismiss();
-        toast.error("Failed to create Blog");
+        toast.error(
+          `Failed to ${
+            isUpdate && !isError ? "Update Blog" : "Create Blog"
+          } create Blog`
+        );
       }
     } catch (error) {
       toast.dismiss();
-      console.error("Error creating Blog:", error);
+      console.error(
+        `Error ${isUpdate && !isError ? "Updating Blog" : "Creating Blog"} :`,
+        error
+      );
       toast.error("An error occurred");
     }
   };
@@ -329,137 +317,6 @@ const Category = () => {
   };
 
   return (
-    // <div className="w-full p-5 bg-blue-100">
-    //   <ToastContainer />
-    //   <button
-    //     onClick={() => navigate("/creat-blog/blogs-list")}
-    //     className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
-    //   >
-    //     View blogs List
-    //   </button>
-    //   <div className="flex flex-col gap-5 border bg-white border-[#8d8787f5] p-10 rounded-[7px]">
-    //     <select
-    //       className="p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //       value={state?.mainId}
-    //       onChange={(e) => HandleChange("maincategory", e.target.value)}
-    //     >
-    //       <option value="">Select</option>
-    //       {data?.data?.map((category: BlogCategory, index: number) => (
-    //         <option key={index} value={category?._id}>
-    //           {category?.name}
-    //         </option>
-    //       ))}
-    //     </select>
-    //     {category?.subcategoryData?.length > 0 && (
-    //       <select
-    //         className="p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         value={state?.subid}
-    //         onChange={(e) => HandleChange("subcategory", e.target.value)}
-    //       >
-    //         <option value="">Select</option>
-    //         {category?.subcategoryData?.map((category, index: number) => (
-    //           <option key={index} value={category?._id}>
-    //             {category?.name}
-    //           </option>
-    //         ))}
-    //       </select>
-    //     )}
-    //     {category?.subsubcategoryData?.length > 0 && (
-    //       <select
-    //         className="p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         value={state?.subsubid}
-    //         onChange={(e) => HandleChange("subsubcategory", e.target.value)}
-    //       >
-    //         <option value="">Select</option>
-    //         {category?.subsubcategoryData?.map((category, index: number) => (
-    //           <option key={index} value={category?._id}>
-    //             {category?.name}
-    //           </option>
-    //         ))}
-    //       </select>
-    //     )}
-    //     {category?.innercategoryData?.length > 0 && (
-    //       <select
-    //         className="p-1 rounded-[7px] outline-none border bg-[#e7e5e592] border-[#b9b4b4da]"
-    //         value={state?.innerid}
-    //         onChange={(e) => HandleChange("innercategory", e.target.value)}
-    //       >
-    //         <option value="">Select</option>
-    //         {category?.innercategoryData?.map((category, index: number) => (
-    //           <option key={index} value={category?._id}>
-    //             {category?.name}
-    //           </option>
-    //         ))}
-    //       </select>
-    //     )}
-    //     <div className="flex flex-col w-full gap-1">
-    //       <label>Title</label>
-    //       <input
-    //         value={state?.title}
-    //         onChange={(e) => HandleChange("title", e.target.value)}
-    //         type="text"
-    //         className="border border-[#b9b4b4da] bg-[#e7e5e592] outline-none p-1 rounded-[7px]"
-    //       />
-    //     </div>
-    //     <div className="relative flex flex-row gap-5 mb-6 outline-none ">
-    //       <div className="w-full ">
-    //         <label className="block mb-2 font-semibold text-gray-700">
-    //           Profile Image
-    //         </label>
-    //         <input
-    //           type="file"
-    //           accept="image/*"
-    //           onChange={handleImageChange}
-    //           className="w-full border-[#b9b4b4da] bg-[#e7e5e592] p-3 border outline-none  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    //         />
-    //         {progressStatus !== null && progressStatus !== 0 && (
-    //           <>
-    //             <div className="inset-0 z-10 flex flex-row items-end gap-2 pt-2">
-    //               <p className="text-black text-[12px]">uploading</p>
-    //               <div
-    //                 className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
-    //                 style={{ width: `${progressStatus}%` }}
-    //               ></div>
-    //             </div>
-    //           </>
-    //         )}
-    //       </div>
-    //       {state?.thumnail && (
-    // <img
-    //   src={state?.thumnail}
-    //   alt={state?.title}
-    //   className="rounded-[5px] max-w-[300px] max-h-[200px]"
-    // />
-    //       )}
-    //     </div>
-
-    //     <TextEditor
-    //       value={state?.content}
-    //       OnChangeEditor={(e: string) => HandleChange("content", e)}
-    //     />
-    //     <button
-    //       onClick={HandleCreate}
-    //       disabled={
-    //         !state?.thumnail ||
-    //         !state?.maincategory ||
-    //         !state?.title ||
-    //         !state?.content
-    //       }
-    //       className={`${
-    //         state?.thumnail &&
-    //         state?.maincategory &&
-    //         state?.title &&
-    //         state?.content
-    //           ? "bg-[#5a83bd]"
-    //           : "bg-gray-500"
-    //       } text-center  mt-8 p-1 rounded-[8px] text-[15px] font-[600] text-[#f8f8f8]`}
-    //     >
-    //       save
-    //     </button>
-    //   </div>
-    // </div>
-
-   
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
@@ -492,7 +349,7 @@ const Category = () => {
                   <img
                     src={state?.thumnail}
                     alt={state?.title}
-                    className="rounded-[5px] max-w-[300px] max-h-[200px]"
+                    className="rounded-[5px] object-contain w-full h-full"
                   />
                 ) : (
                   <p className="flex items-center justify-center w-full h-full gap-4 p-4 text-sm">
@@ -543,49 +400,42 @@ const Category = () => {
                 placeholder="Enter Blog Title"
                 required
               />
-              {/* <input
-              value={companiesData.email}
-              type="email"
-              onChange={handleChange}
-              name="email"
-              className="w-full h-10 pl-4 font-medium border border-transparent rounded-md outline-none bg-green-50 focus:border-blue-200 "
-              placeholder="Company Email"
-              required
-            /> */}
 
               {/* Main Category Dropdown */}
-              <div className="relative">
-                <div
-                  className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-blue-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
-                  onClick={() =>
-                    setOpen({ ...isOpen, maincategory: !isOpen.maincategory })
-                  }
-                >
-                  {state.maincategory !== ""
-                    ? state.maincategory
-                    : "Select Main Category"}
-                  <FaCaretDown className="m-1" />
+              {isError && (
+                <div className="relative">
+                  <div
+                    className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-blue-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
+                    onClick={() =>
+                      setOpen({ ...isOpen, maincategory: !isOpen.maincategory })
+                    }
+                  >
+                    {state.maincategory !== ""
+                      ? state.maincategory
+                      : "Select Main Category"}
+                    <FaCaretDown className="m-1" />
+                  </div>
+                  <ul
+                    className={`mt-2 p-2 rounded-md w-32 text-[#DEE1E2] bg-gray-800 shadow-lg absolute z-10 ${
+                      isOpen.maincategory ? "max-h-60" : "hidden"
+                    } custom-scrollbar`}
+                  >
+                    {data?.data?.map((main, i) => (
+                      <li
+                        key={i}
+                        className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
+                          state.maincategory === main?.name ? "bg-rose-600" : ""
+                        }`}
+                        onClick={() =>
+                          handleDropChange("maincategory", main?._id)
+                        }
+                      >
+                        <span>{main?.name}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <ul
-                  className={`mt-2 p-2 rounded-md w-32 text-[#DEE1E2] bg-gray-800 shadow-lg absolute z-10 ${
-                    isOpen.maincategory ? "max-h-60" : "hidden"
-                  } custom-scrollbar`}
-                >
-                  {data?.data?.map((main, i) => (
-                    <li
-                      key={i}
-                      className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
-                        state.maincategory === main?.name ? "bg-rose-600" : ""
-                      }`}
-                      onClick={() =>
-                        handleDropChange("maincategory", main?._id)
-                      }
-                    >
-                      <span>{main?.name}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              )}
 
               {/* Sub Category Dropdown */}
               {category.subcategoryData.length > 0 && (
@@ -705,19 +555,6 @@ const Category = () => {
                 </div>
               )}
 
-              {/* <textarea
-              value={companiesData.discription}
-              onChange={handleChange}
-              name="discription"
-              className="w-full h-24 py-4 pl-4 font-medium bg-green-100 border border-transparent border-gray-400 rounded-md outline-none md:col-span-2 focus:border-blue-200 "
-              placeholder="Write Details"
-              required
-            /> */}
-              {/* <TextEditor
-                value={state?.content}
-                OnChangeEditor={(e: string) => HandleChange("content", e)}
-              /> */}
-
               <div className="col-span-1 md:col-span-2">
                 <TextEditor
                   value={state?.content}
@@ -732,13 +569,14 @@ const Category = () => {
                 type="submit"
                 disabled={
                   !state?.thumnail ||
-                  !state?.maincategory ||
+                  (isUpdate && !isError
+                    ? state?.maincategory
+                    : !state?.maincategory) ||
                   !state?.title ||
                   !state?.content
                 }
               >
-                Submit
-                {/* {Object.keys(data || {})?.length !== 0 ? "Update" : "Submit"} */}
+                {isUpdate && !isError ? "Update" : "Submit"}
               </button>
               <button
                 className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700"
@@ -754,4 +592,4 @@ const Category = () => {
     </div>
   );
 };
-export default Category;
+export default CreatBlog;
