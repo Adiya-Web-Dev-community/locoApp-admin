@@ -37,6 +37,8 @@ import UserUpdate from "./forms/UserUpdate";
 import UserList from "./pages/UserList";
 import Quiz from "./pages/Quiz";
 import QuizProfile from "./pages/QuizProfile";
+import Test from "./pages/Test";
+import TestProfile from "./pages/TestProfile";
 import Video from "./pages/videos";
 
 function App() {
@@ -176,8 +178,12 @@ function App() {
               element: <QuizProfile />,
             },
             {
-              path: "quiz/update_quiz/:id",
-              element: <Quiz />,
+              path: "test",
+              element: <Test />,
+            },
+            {
+              path: "test/:id",
+              element: <TestProfile />,
             },
           ],
         },

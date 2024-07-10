@@ -5,24 +5,24 @@ import { toast } from "react-toastify";
 import { TiArrowBackOutline } from "react-icons/ti";
 import TextEditor from "../components/textEditor";
 
-const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
-  console.log(singleQuiz);
+const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
+  console.log(singleTest);
 
   const { data, error, isloading, isError } = useGetDataQuery({
-    url: `/quiz/${isQuizForm?.updateId}`,
+    url: `/test/${isTestForm?.updateId}`,
   });
 
   const isUpdate = Object.keys(data || [])?.length !== 0;
 
-  console.log(data, isQuizForm, "singleQuiz");
+  console.log(data, isTestForm, "singleQuiz");
   console.log(
-    isQuizForm,
-
+    isTestForm,
+    close,
     "from creat form",
-    isQuizForm.isCreat ? "POST" : "PUT"
+    isTestForm.isCreat ? "POST" : "PUT"
   );
 
-  const [quizDataForm, setquizDataForm] = useState({
+  const [testDataForm, settestDataForm] = useState({
     title: data?.title ? data?.title : "",
     instructions: data?.instructions ? data?.instructions : "",
     completed: data?.isComplete ? data?.isComplete : false,
@@ -31,7 +31,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
   useEffect(() => {
     console.log("i am working");
     if (isUpdate && !isError) {
-      setquizDataForm((prev) => ({
+      settestDataForm((prev) => ({
         ...prev,
         title: data?.title ? data?.title : "",
         instructions: data?.instructions ? data?.instructions : "",
@@ -43,7 +43,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
   const [updatePost] = useUpdatePostMutation();
 
   const handleChange = (e) => {
-    setquizDataForm((prev) => ({
+    settestDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
         e?.target?.type === "checkbox" ? e?.target?.checked : e?.target?.value,
@@ -53,19 +53,19 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
   const submiteHandler = async (e) => {
     e.preventDefault();
 
-    console.log(quizDataForm);
+    console.log(testDataForm);
     toast.loading("Checking Details");
     try {
       const payload = {
-        title: quizDataForm?.title,
-        instructions: quizDataForm?.instructions,
-        isComplete: quizDataForm?.completed,
+        title: testDataForm?.title,
+        instructions: testDataForm?.instructions,
+        isComplete: testDataForm?.completed,
       };
 
       const response = await updatePost({
         data: payload,
-        method: isQuizForm.creat ? "POST" : "PUT",
-        path: isQuizForm.creat ? "/quiz" : `/quiz/${isQuizForm.updateId}`,
+        method: isTestForm.creat ? "POST" : "PUT",
+        path: isTestForm.creat ? "/test" : `/test/${isTestForm.updateId}`,
       });
       console.log(response);
       if (response?.data?.success) {
@@ -77,49 +77,49 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
       } else {
         toast.dismiss();
         toast.error(
-          `Failed to  ${isQuizForm.creat ? "Create Quiz" : "Update Quiz"}`
+          `Failed to  ${isTestForm.creat ? "Create Test" : "Update Test"}`
         );
       }
     } catch (error) {
       toast.dismiss();
       console.error(
-        `Error ${isQuizForm.creat ? "Creating Quiz" : "Updating Quiz"} :`,
+        `Error ${isTestForm.creat ? "Creating Test" : "Updating Test"} :`,
         error
       );
       toast.error(
         `Error ${
-          isQuizForm.creat ? "Creating Quiz" : "Updating Quiz"
+          isTestForm.creat ? "Creating Test" : "Updating Test"
         } : ${error}`
       );
     }
   };
 
   const handleEditorChange = (name, value) => {
-    setquizDataForm((prev) => ({
+    settestDataForm((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
   const closeHandler = () => {
-    if (isQuizForm.creat) {
-      setQuizForm((prev) => ({
+    if (isTestForm.creat) {
+      setTestForm((prev) => ({
         ...prev,
         creat: !prev.creat,
       }));
     } else {
-      setQuizForm((prev) => ({
+      setTestForm((prev) => ({
         ...prev,
         updateId: "",
       }));
     }
 
-    setquizDataForm({
+    settestDataForm({
       title: "",
       instructions: "",
       completed: false,
     });
-    console.log(quizDataForm);
+    console.log(testDataForm);
   };
 
   return (
@@ -136,7 +136,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
           <div className="p-6 px-8 rounded font-montserrat">
             <div className="flex pb-2">
               <h2 className=" md:text-4xl text-[28px] font-bold text-gray-700 font-mavenPro">
-                Quiz Form
+                Test Form
               </h2>
               <button onClick={closeHandler}>
                 <TiArrowBackOutline className="w-10 h-10 ml-4 hover:text-orange-600 text-sky-600" />
@@ -146,18 +146,18 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
               <div className="grid gap-2 py-4 md:gap-4 ">
                 {/* <div className="w-full font-mavenPro"> */}
                 <input
-                  value={quizDataForm?.title}
+                  value={testDataForm?.title}
                   type="text"
                   onChange={handleChange}
                   name="title"
                   className={
-                    " font-medium outline-none w-full border h-10 border-gray-400 rounded-md pl-4 focus-within:border-blue-400  "
+                    " font-medium outline-none w-full  border h-10 border-gray-400 rounded-md pl-4 focus-within:border-blue-400  "
                   }
                   placeholder={"Add Title"}
                   required
                 />
                 {/* <input
-                value={quizDataForm?.instructions}
+                value={testDataForm?.instructions}
                 type="text"
                 onChange={handleChange}
                 name="instructions"
@@ -167,9 +167,10 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
                 placeholder={"Add Instruction here"}
                 required
               /> */}
+
                 <div className="">
                   <TextEditor
-                    value={quizDataForm?.instructions}
+                    value={testDataForm?.instructions}
                     OnChangeEditor={(e) =>
                       handleEditorChange("instructions", e)
                     }
@@ -178,7 +179,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
                 <div className="flex gap-2">
                   <input
                     type="checkbox"
-                    checked={quizDataForm.completed}
+                    checked={testDataForm.completed}
                     onChange={handleChange}
                     name="completed"
                     className={
@@ -188,7 +189,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
                   />
                   <span
                     className={`text-sm font-semibold ${
-                      quizDataForm.completed ? "text-black" : "text-gray-500"
+                      testDataForm.completed ? "text-black" : "text-gray-500"
                     } `}
                   >
                     Completed
@@ -202,7 +203,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
                   type="submit"
                 >
                   {/* Save Changes */}
-                  {isQuizForm.creat ? "Submit" : "Update"}
+                  {isTestForm.creat ? "Submit" : "Update"}
                 </button>
                 <button
                   className="px-4 py-2 ml-8 text-white bg-red-500 rounded hover:bg-red-400"
@@ -219,4 +220,4 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
   );
 };
 
-export default CreatQuiz;
+export default CreatTest;

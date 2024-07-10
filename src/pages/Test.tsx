@@ -11,11 +11,13 @@ import { IoIosSend } from "react-icons/io";
 import CreatQuiz from "../forms/CreatQuiz";
 import QuizQuestion from "../forms/QuizQuestion";
 import { PiEye } from "react-icons/pi";
+import CreatTest from "../forms/CreatTest";
+import TestQuestion from "../forms/TestQuestion";
 
-const Quiz = () => {
-  const navigate = useNavigate();
+const Test = () => {
+  //   const navigate = useNavigate();
   const { data, isLoading, error, isError } = useGetDataQuery({
-    url: "/quiz",
+    url: "/test",
   });
 
   const [deletPost] = useDeletePostMutation();
@@ -35,22 +37,16 @@ const Quiz = () => {
     setCurrentPage(pageNumber);
   };
 
-  const [isQuizForm, setQuizForm] = useState({
+  const [isTestForm, setTestForm] = useState({
     creat: false,
     updateId: "",
   });
-
-  //   const [isQuestionForm, setQuestionForm] = useState({
-  //     creat: false,
-  //     updateId: "",
-  //     quizIdQuestion: "",
-  //   });
 
   const [isQuestionForm, setQuestionForm] = useState({
     condition: false,
     isCreat: false,
     data: null,
-    quizId: "",
+    testId: "",
   });
 
   const [updateData, setUpdateDate] = useState({
@@ -75,7 +71,7 @@ const Quiz = () => {
     // navigate(`/users/${user._id}`);
     // console.log("under process", user);
 
-    setQuizForm((prev) => ({
+    setTestForm((prev) => ({
       ...prev,
       updateId: quiz._id,
     }));
@@ -101,7 +97,7 @@ const Quiz = () => {
     toast.loading("checking Details");
     console.log("Item deleted", isModalOpen.id);
     deletPost({
-      url: `/quiz/${isModalOpen.id}`,
+      url: `/test/${isModalOpen.id}`,
     })
       .then((res) => {
         if (res.data.success) {
@@ -131,7 +127,7 @@ const Quiz = () => {
   ];
 
   const handlingCrateQuiz = () => {
-    setQuizForm((prev) => ({
+    setTestForm((prev) => ({
       ...prev,
       creat: !prev.creat,
     }));
@@ -142,25 +138,12 @@ const Quiz = () => {
     });
   };
 
-  //   const creatQuestionHandler = (quiz) => {
-  //     setQuestionForm((prev) => ({
-  //       ...prev,
-  //       quizIdQuestion: quiz._id,
-  //       creat: !prev.creat,
-  //     }));
-  //     setUpdateDate({
-  //       title: "",
-  //       instructions: "",
-  //       completd: false,
-  //     });
-  //   };
-
-  const questionFormHandler = (quiz) => {
+  const questionFormHandler = (test) => {
     setQuestionForm((prev) => ({
       ...prev,
       condition: true,
       isCreat: true,
-      quizId: quiz?._id,
+      testId: test?._id,
     }));
   };
 
@@ -170,22 +153,22 @@ const Quiz = () => {
       condition: false,
       isCreat: false,
       data: null,
-      quizId: "",
+      testId: "",
     }));
   };
   return (
     <>
       {isLoading && <Loader />}
 
-      {(isQuizForm.creat || isQuizForm.updateId) && (
-        <CreatQuiz
-          isQuizForm={isQuizForm}
-          setQuizForm={setQuizForm}
-          singleQuiz={updateData}
+      {(isTestForm.creat || isTestForm.updateId) && (
+        <CreatTest
+          isTestForm={isTestForm}
+          setTestForm={setTestForm}
+          singleTest={updateData}
         />
       )}
       {isQuestionForm.condition && (
-        <QuizQuestion
+        <TestQuestion
           isQuestionForm={isQuestionForm}
           //   setQuestionForm={setQuestionForm}
           close={closeHandler}
@@ -209,7 +192,7 @@ const Quiz = () => {
         >
           <div className="flex items-center mb-2 md:mb-6">
             <h1 className=" text-[28px] font-bold md:text-4xl text-gray-600 font-mavenPro">
-              Quiz
+              Test
             </h1>
           </div>
           <div className="flex justify-between mb-4">
@@ -218,8 +201,8 @@ const Quiz = () => {
                 type="search"
                 placeholder={`Search`}
                 className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
-                         bg-slate-50 focus:border-gray-100
-                      shadow-inner rounded-[0.26rem] outline-none `}
+                             bg-slate-50 focus:border-gray-100
+                          shadow-inner rounded-[0.26rem] outline-none `}
                 // value={searchQuery}
                 // onChange={(e) => setSearchQuery(e.target.value)}
                 // onFocus={() => setCurrentPage(1)}
@@ -228,11 +211,11 @@ const Quiz = () => {
             <div className="relative flex items-center self-end ">
               <button
                 className={` px-2 py-1 
-                                 bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
-                            }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
+                                     bg-[#1f3c88] hover:bg-[#2d56bb]  text-[#DEE1E2] font-semibold
+                                }    rounded shadow-xl md:px-4 md:py-2  sm:self-center`}
                 onClick={handlingCrateQuiz}
               >
-                <span className="hidden md:inline-block">Creat Quiz</span>
+                <span className="hidden md:inline-block">Creat Test</span>
 
                 <IoIosSend className="w-6 h-6 md:hidden" />
               </button>
@@ -265,7 +248,7 @@ const Quiz = () => {
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((quiz, i) => (
+                data?.map((test, i) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuiz group hover:bg-gray-50"
@@ -275,15 +258,15 @@ const Quiz = () => {
                     <span
                       className={`  font-semibold text-center  rounded-full  `}
                     >
-                      {quiz?.title ? quiz?.title : "---"}
+                      {test?.title ? test?.title : "---"}
                     </span>
                     <span
                       className={`  font-semibold text-center  rounded-full  `}
                     >
-                      {quiz?.instructions ? (
+                      {test?.instructions ? (
                         <div
                           dangerouslySetInnerHTML={{
-                            __html: quiz?.instructions,
+                            __html: test?.instructions,
                           }}
                         />
                       ) : (
@@ -294,14 +277,14 @@ const Quiz = () => {
                     <div className="grid items-center justify-center">
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
-                        onClick={() => questionFormHandler(quiz)}
+                        onClick={() => questionFormHandler(test)}
                       >
                         Add Questions
                       </button>
                     </div>
                     <div className="grid items-center justify-center ">
                       <Link
-                        to={`/quiz/${quiz._id}`}
+                        to={`/test/${test._id}`}
                         className="px-2 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-500"
                       >
                         <PiEye className="w-5 h-5" />
@@ -311,14 +294,14 @@ const Quiz = () => {
                     <div className="grid justify-center gap-2">
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
-                        onClick={() => updateHandler(quiz)}
+                        onClick={() => updateHandler(test)}
                       >
                         {/* Edit */}
                         <EditICONSVG heignt={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                        onClick={() => deletHandler(quiz._id)}
+                        onClick={() => deletHandler(test._id)}
                       >
                         {/* Delete */}
                         <DeleteICONSVG heignt={18} width={18} fill={"white"} />
@@ -342,4 +325,4 @@ const Quiz = () => {
   );
 };
 
-export default Quiz;
+export default Test;
