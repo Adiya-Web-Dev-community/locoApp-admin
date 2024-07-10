@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import TextEditor from "../components/textEditor";
 import { FaCaretDown } from "react-icons/fa";
 
+interface stateProps{
+  question:string,
+  options:string[],
+  result:string,
+  content:string,
+}
 const QuizQuestion = ({ isQuestionForm, close }) => {
   const [updatePost] = useUpdatePostMutation();
 
-  const [quizData, setQuizData] = useState({
+  const [quizData, setQuizData] = useState<stateProps>({
     question: isQuestionForm?.data?.name || "",
     options: isQuestionForm?.data?.options || [],
     result: isQuestionForm?.data?.predicted_result || "",
@@ -116,7 +121,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
     }
   };
 
-  const handleEditorChange = (name, value) => {
+  const handleEditorChange = (name:string, value:string) => {
     setQuizData((prev) => ({
       ...prev,
       [name]: value,

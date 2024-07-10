@@ -246,7 +246,6 @@ const CreatBlog = () => {
       const response = await updatePost({
         data: payload,
         method: isUpdate && !isError ? "PUT" : "POST",
-
         path:
           isUpdate && !isError
             ? `/blog/update-blog/${id}`

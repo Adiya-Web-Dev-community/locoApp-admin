@@ -91,6 +91,11 @@ const sidebarData: SidebarItem[] = [
     icon: <UserSVG width={20} heignt={20} fill={"#9ca3af"} />,
   },
   {
+    name: "Daily Task",
+    path: "/daily-task",
+    icon: <UserSVG width={20} heignt={20} fill={"#9ca3af"} />,
+  },
+  {
     name: "Railway History",
     path: "/history",
     icon: "",

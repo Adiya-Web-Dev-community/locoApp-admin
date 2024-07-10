@@ -1,14 +1,11 @@
 // Sidebar.js
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
-import { MdDirectionsSubway, MdOutlineCategory } from "react-icons/md";
+import { MdDirectionsSubway,  } from "react-icons/md";
 
-import { RiBuilding2Line } from "react-icons/ri";
 
-import { GiBatMask } from "react-icons/gi";
-import { AiOutlineProduct } from "react-icons/ai";
 
 import BlogICONSVG from "../../assets/SVG/blogICON";
 import CategoryICONSVG from "../../assets/SVG/categoryICON";
@@ -84,6 +81,12 @@ const sidebarData: SidebarItem[] = [
     path: "/test",
     icon: TestIcon,
   },
+  {
+    name: "Daily Task",
+    path: "/daily-task",
+    icon: QuizIcon,
+  },
+  
   // {
   //   name: "Railway History",
   //   path: "/history",

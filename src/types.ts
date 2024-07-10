@@ -94,3 +94,11 @@ export interface AwarenessType {
     donwloadable:string,
     createdAt: string;
   }
+
+  export interface DailyTask{
+    _id:string,
+    title:string,
+    content:string,
+    createdAt:string
+  }
+  

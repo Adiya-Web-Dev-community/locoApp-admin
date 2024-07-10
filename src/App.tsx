@@ -7,22 +7,16 @@ import {
 } from "react-router-dom";
 import Login from "./pages/login";
 import Layout from "./layout";
-
 import Create_Category from "./pages/create-category";
 import BlogList from "./pages/BlogList";
-// import UpdateBlog from "./pages/update-blog";
 import VideoCategory from "./pages/VideoCategory";
-
 import UploadVideo from "./pages/uploadvideo";
-// import UpdateVideo from "./pages/updatevideo";
 import PrivateRoute from "./middleware/privateroute";
-
 import ForgetPassword from "./pages/ForgetPassword";
 import Authentication from "./pages/Authentication";
 import ResetPassword from "./pages/ResetPassword";
 import ErrorElement from "./pages/ErrorElement";
 import Awareness from "./pages/Awareness";
-// import AwarenessCategory from "./pages/AwarenessCategory";
 import CreatAwareness from "./forms/CreatAwareness";
 import AwarenessCategory from "./pages/AwarenessCategory";
 import ImportantDocuments from "./pages/ImportantDocuments";
@@ -32,7 +26,6 @@ import SponserCompany from "./pages/SponserCompany";
 import SponserCompaniesForm from "./forms/SponserCompaniesForm";
 import SponsorCompanyProfile from "./pages/SponsorCompanyProfile";
 import CreatBlog from "./pages/CreatBlog";
-
 import UserUpdate from "./forms/UserUpdate";
 import UserList from "./pages/UserList";
 import Quiz from "./pages/Quiz";
@@ -40,6 +33,7 @@ import QuizProfile from "./pages/QuizProfile";
 import Test from "./pages/Test";
 import TestProfile from "./pages/TestProfile";
 import Video from "./pages/videos";
+import DalyTasks from "./pages/Daily_Task";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -122,6 +116,10 @@ function App() {
             {
               path: "videos/upload-video",
               element: <UploadVideo />,
+            },
+            {
+              path: "daily-task",
+              element: <DalyTasks />,
             },
             {
               path: "awareness",
