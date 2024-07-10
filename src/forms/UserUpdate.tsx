@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Loader from "../components/loader";
 import uploadImage from "../firebase_image/image";
+import { TiArrowBackOutline } from "react-icons/ti";
 
 const UserUpdate = () => {
   const { id } = useParams();
@@ -26,6 +27,8 @@ const UserUpdate = () => {
       imageTitle: data?.image?.slice(73, data?.image?.indexOf("%2F")),
     });
   }, [data]);
+
+  const navigate = useNavigate();
 
   console.log("user Data in this >>", data);
   const handleInputChange = (e) => {
@@ -58,6 +61,8 @@ const UserUpdate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("hello");
+    toast.loading("checking Info");
     try {
       const response = await updatePost({
         path: `/update-user/${id}`,
@@ -65,28 +70,41 @@ const UserUpdate = () => {
       });
 
       if (response?.data?.success) {
+        toast.dismiss();
         toast.success(response.data.message, {
           autoClose: 5000,
         });
+        navigate("/users");
       } else {
+        toast.dismiss();
         toast.error("Failed to Update User");
       }
     } catch (error) {
       console.error("Update failed:", error);
+      toast.dismiss();
+      toast.error("Failed to Update User");
     }
   };
   return (
-    <div className="flex items-center justify-center w-full p-6 bg-gradient-to-r from-blue-100 to-purple-200">
+    <div className="flex items-center justify-center w-full h-full p-6 bg-gradient-to-r from-blue-100 to-purple-200">
       {isLoading && <Loader />}
 
       <div className="w-full max-w-xl p-8 transition duration-500 transform bg-white rounded-lg shadow-2xl hover:scale-105">
-        <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
-          Edit User
-        </h2>
+        <div className="flex justify-center pb-2">
+          <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">
+            Edit User
+          </h2>
+          <div>
+            <Link to={"/users"}>
+              <TiArrowBackOutline className="w-10 h-10 ml-4 text-emerald-600 hover:text-emerald-500" />
+            </Link>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <div className="grid items-center grid-cols-1 gap-4 py-4 md:grid-cols-2">
+          <div className="grid items-center grid-cols-1 gap-4 md:grid-cols-2">
             {user?.image && (
-              <div className="relative flex justify-center mb-6 ">
+              <div className="relative flex justify-center col-span-1 mb-6 md:col-span-2 ">
                 <img
                   src={user.image}
                   alt="Profile"
@@ -215,10 +233,10 @@ const UserUpdate = () => {
               placeholder="Enter Mobile Number"
               required
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end w-full col-span-1 md:col-span-2">
               <button
                 type="submit"
-                className="px-6 py-3 text-white transition duration-500 transform rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-2xl hover:scale-110"
+                className="px-6 py-3 text-white transition duration-500 transform rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:shadow-2xl "
               >
                 Save Changes
               </button>
