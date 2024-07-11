@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
 import { toast } from "react-toastify";
 import { TiArrowBackOutline } from "react-icons/ti";
 import TextEditor from "../components/textEditor";
+interface quizform {
+  creat: boolean;
+  updateId: string;
+}
+interface Props{
+  isQuizForm:{
+    creat:boolean,
+    updateId:string
+  },
+  setQuizForm:React.Dispatch<React.SetStateAction<quizform>>,
+  singleQuiz:{
+    title:string,
+    completd:boolean,
+    instructions:string
+  }
+}
+const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }:Props) => {
+ 
 
-const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
-  console.log(singleQuiz);
-
-  const { data, error, isloading, isError } = useGetDataQuery({
+  const { data, isError } = useGetDataQuery({
     url: `/quiz/${isQuizForm?.updateId}`,
   });
-
+  
   const isUpdate = Object.keys(data || [])?.length !== 0;
-
-  console.log(data, isQuizForm, "singleQuiz");
-  console.log(
-    isQuizForm,
-
-    "from creat form",
-    isQuizForm.isCreat ? "POST" : "PUT"
-  );
+ 
 
   const [quizDataForm, setquizDataForm] = useState({
     title: data?.title ? data?.title : "",
@@ -42,7 +49,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
 
   const [updatePost] = useUpdatePostMutation();
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setquizDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
@@ -50,7 +57,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
     }));
   };
 
-  const submiteHandler = async (e) => {
+  const submiteHandler = async (e:React.FormEvent) => {
     e.preventDefault();
 
     console.log(quizDataForm);
@@ -94,7 +101,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }) => {
     }
   };
 
-  const handleEditorChange = (name, value) => {
+  const handleEditorChange = (name:string, value:string) => {
     setquizDataForm((prev) => ({
       ...prev,
       [name]: value,

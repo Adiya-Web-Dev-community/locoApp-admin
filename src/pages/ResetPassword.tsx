@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import  {  useState } from "react";
+import {  useNavigate } from "react-router-dom";
 import resetImg from "../assets/Secure login.svg";
 
 import { FiEye, FiEyeOff, FiInbox, FiLock, FiUser } from "react-icons/fi";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useCreatePostMutation } from "../api";
 
 const ResetPasswordForm = () => {
@@ -26,7 +26,7 @@ const ResetPasswordForm = () => {
 
   const navigate = useNavigate();
 
-  const handleChangePassword = (e) => {
+  const handleChangePassword = (e:React.ChangeEvent<HTMLInputElement>) => {
     const confirmPassword =
       e.target.name === "confirmPassword" && e.target.value;
 
@@ -51,9 +51,9 @@ const ResetPasswordForm = () => {
     }
   };
 
-  const [createPost, responseInfo] = useCreatePostMutation();
+  const [createPost] = useCreatePostMutation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e:React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -99,7 +99,7 @@ const ResetPasswordForm = () => {
           navigate("/login");
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Please put correct Email");
       });
@@ -113,6 +113,7 @@ const ResetPasswordForm = () => {
 
   return (
     <>
+    <ToastContainer/>
       <div className="flex flex-col items-center justify-center h-screen px-4 mx-auto w-[100%]  sm:w-[80%]  lg:w-[50%]">
         <div className="w-full lg:pl-8">
           <h4 className="text-[24px] md:text-3xl lg:text-4xl font-bold text-gray-600">

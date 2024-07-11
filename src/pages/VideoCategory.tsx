@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import DeleteICONSVG from "../assets/SVG/deleteICON";
-import EditICONSVG from "../assets/SVG/editICON";
-import CloseICONSVG from "../assets/SVG/closeICON";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast, ToastContainer } from "react-toastify";
 import {
   useGetDataQuery,
-  useUpdatePostMutation,
   useDeletePostMutation,
-  useCreatePostMutation,
+  
 } from "../api";
 import { VideoCategorys } from "../types";
 import Loader from "../components/loader";
 import Pagination from "../components/pagination/Pagination";
 import { IoIosSend } from "react-icons/io";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import AwarenessCategoryForm from "../forms/AwarenessCategoryForm";
+
 import VideoCategoryForm from "../forms/VideoCategoryForm";
 
 const VideoCategory: React.FC = () => {
@@ -28,6 +24,7 @@ const VideoCategory: React.FC = () => {
   });
   const [updateData, setUpdateDate] = useState({
     name: "",
+    image:""
   });
 
   const [isModalOpen, setModalOpen] = useState({
@@ -58,6 +55,7 @@ const VideoCategory: React.FC = () => {
     }));
     setUpdateDate({
       name: "",
+      image:""
     });
   };
 
@@ -68,7 +66,7 @@ const VideoCategory: React.FC = () => {
     });
   };
 
-  const deletCategory = (id) => {
+  const deletCategory = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -76,15 +74,15 @@ const VideoCategory: React.FC = () => {
       id: id,
     }));
   };
-  const updateCategory = (category) => {
+  const updateCategory = (category:VideoCategorys) => {
     setCategoryForm((prev) => ({
       ...prev,
-      updateId: category._id,
+      updateId: category?._id,
     }));
 
     setUpdateDate((prev) => ({
       ...prev,
-      name: category.name,
+      name: category.category,
     }));
   };
 
@@ -102,7 +100,7 @@ const VideoCategory: React.FC = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -116,7 +114,7 @@ const VideoCategory: React.FC = () => {
   return (
     <React.Fragment>
       {isLoading && <Loader />}
-
+      <ToastContainer/>
       <>
         {(isCategoryForm.creat || isCategoryForm.updateId) && (
           <VideoCategoryForm
@@ -128,7 +126,7 @@ const VideoCategory: React.FC = () => {
 
         {isModalOpen.condition && (
           <ConfirmDeleteModal
-            isOpen={isModalOpen}
+           
             onClose={handleCloseModal}
             onConfirm={handleConfirmDelete}
           />
@@ -180,7 +178,7 @@ const VideoCategory: React.FC = () => {
                 <p className="pl-2 text-gray-600 md:text-lg">SrNo.</p>
                 {/* <p className="pl-10 text-gray-600 md:text-lg">Logo</p> */}
 
-                {categoryHeading.map((heading, index) => (
+                {categoryHeading?.map((heading:string, index:number) => (
                   <p
                     key={index}
                     className={`  text-gray-600 md:text-lg ${
@@ -193,7 +191,7 @@ const VideoCategory: React.FC = () => {
               </section>
               {/* min-w-[900px] */}
               <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[600px] bg-gray-50">
-                {data?.map((category, i) => (
+                {data?.map((category:VideoCategorys, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customeCategory group hover:bg-gray-50"
@@ -213,7 +211,7 @@ const VideoCategory: React.FC = () => {
                       </button>
                       <button
                         className="px-3 py-2 text-sm text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                        onClick={() => deletCategory(category._id)}
+                        onClick={() => deletCategory(category?._id)}
                       >
                         Delete
                       </button>

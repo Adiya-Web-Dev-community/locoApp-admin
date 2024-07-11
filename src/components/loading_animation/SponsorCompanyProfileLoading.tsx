@@ -1,7 +1,6 @@
-import React from "react";
+
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { IoIosSend } from "react-icons/io";
 import ProductsLoading from "./ProductsLoading"; // Assuming you have the ProductsLoading component
 
 const SponsorCompanyProfileLoading = () => {

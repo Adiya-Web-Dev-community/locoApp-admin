@@ -1,35 +1,22 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-
+import  { useState } from "react";
 import forgetImg from "../assets/Forgot password.svg";
-import { Link } from "react-router-dom";
-import { useNavigate, useParams } from "react-router-dom";
-
-import { useDispatch, useSelector } from "react-redux";
-import { IoMdArrowRoundBack } from "react-icons/io";
 import { FiUser } from "react-icons/fi";
-
-import { setUserToken } from "../store/auth";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useCreatePostMutation } from "../api";
+import { useNavigate } from "react-router-dom";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const [createPost, responseInfo] = useCreatePostMutation();
-
-  const handleSubmit = (e) => {
+  const [createPost] = useCreatePostMutation();
+  const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     toast.loading("Checking Email");
-
     createPost({
       data: { email: email },
       path: "/forget-password",
@@ -43,7 +30,7 @@ const ForgetPassword = () => {
           navigate("/login/reset-password");
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Please put correct Email");
       });
@@ -52,6 +39,7 @@ const ForgetPassword = () => {
 
   return (
     <>
+    <ToastContainer/>
       <div className="flex flex-col items-center justify-center h-screen px-6 mx-auto w-[100%] sm:w-[80%]  lg:w-[40%]">
         <div className="w-full">
           <h4 className="text-[24px] md:text-4xl font-bold text-gray-600">

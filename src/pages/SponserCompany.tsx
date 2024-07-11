@@ -1,32 +1,24 @@
 import { useState } from "react";
-import AwarenessCategoryForm from "../forms/AwarenessCategoryForm";
 import { IoIosSend } from "react-icons/io";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import Loader from "../components/loader";
 import { Link, useNavigate } from "react-router-dom";
-import CompaniesLoading from "../components/loading_animation/LoadingAnimation";
 import ConfirmationDialog from "../components/modal/ConfirmationDialog";
 import Pagination from "../components/pagination/Pagination";
 import VideoModal from "../components/modal/VideoModal";
 import { PiEye } from "react-icons/pi";
+import { SponsorCompanytypes } from "../types";
 
 const SponserCompany = () => {
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading,  isError } = useGetDataQuery({
     url: "/sponsor/company",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentCompanies, "pagination");
-
+ 
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -43,7 +35,7 @@ const SponserCompany = () => {
 
   const navigate = useNavigate();
 
-  const handleLinkClick = (url) => {
+  const handleLinkClick = (url:string) => {
     setDialogCrendial((prev) => ({
       ...prev,
       targetUrl: url,
@@ -80,32 +72,22 @@ const SponserCompany = () => {
     });
   };
 
-  const deletcompany = (id) => {
-    console.log(id, "from handler");
+  const deletcompany = (id:string) => {
+   
     setModalOpen((prev) => ({
       ...prev,
       condition: !prev.condition,
       id: id,
     }));
   };
-  const updatecompany = (company) => {
-    // setCategoryForm((prev) => ({
-    //   ...prev,
-    //   updateId: category._id,
-    // }));
-    // setUpdateDate((prev) => ({
-    //   ...prev,
-    //   name: category.name,
-    // }));
-
+  const updatecompany = (company:SponsorCompanytypes) => {
     navigate(`/sponsor/company_form/${company._id}`);
   };
 
   const handleConfirmDelete = () => {
     // Handle the delete action here
     toast.loading("checking Details");
-    console.log("Item deleted", isModalOpen.id);
-    deletPost({
+      deletPost({
       url: `/sponsor/company/${isModalOpen.id}`,
     })
       .then((res) => {
@@ -115,7 +97,7 @@ const SponserCompany = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -139,7 +121,7 @@ const SponserCompany = () => {
     "Setting",
   ];
 
-  const handlingVideo = (url) => {
+  const handlingVideo = (url:string) => {
     setVideoModal((prev) => ({
       ...prev,
       conditon: true,
@@ -157,10 +139,11 @@ const SponserCompany = () => {
 
   return (
     <>
+    <ToastContainer/>
       {isLoading && <Loader />}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+          
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -214,7 +197,7 @@ const SponserCompany = () => {
             <section className="grid grid-cols-customCompanies pb-2 p-2  gap-4   min-w-[1260px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {listHeadingCompanies.map((heading, index) => (
+              {listHeadingCompanies?.map((heading:string, index:number) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -227,14 +210,14 @@ const SponserCompany = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[1260px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                <CompaniesLoading />
+               
+               <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((company, i) => (
+                data?.map((company:SponsorCompanytypes, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customCompanies group hover:bg-gray-50"
@@ -287,7 +270,7 @@ const SponserCompany = () => {
                       {company?.link ? "Official site" : "----"}
                     </span>
                     <ConfirmationDialog
-                      show={dialogCrendial.showDialog}
+                      show={dialogCrendial?.showDialog}
                       onClose={handleCloseDialog}
                       onConfirm={handleConfirmRedirect}
                     />

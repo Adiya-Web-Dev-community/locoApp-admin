@@ -1,7 +1,4 @@
 import {
-  BaseQueryFn,
-  FetchArgs,
-  FetchBaseQueryError,
   createApi,
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
@@ -9,7 +6,7 @@ import { RootState } from "../store/store";
 
 export interface NewPost {
   path: string;
-  data?: any;
+  data: string | number | boolean | Record<string, unknown>;
 }
 
 export interface Path {

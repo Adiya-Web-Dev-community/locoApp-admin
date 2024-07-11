@@ -1,31 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-
-import { FaCaretDown } from "react-icons/fa";
+import React, { useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { Link, useNavigate, useParams } from "react-router-dom";
-
-import { toast } from "react-toastify";
-import { useGetDataQuery, useUpdatePostMutation } from "../api";
+import {  useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import {  useUpdatePostMutation } from "../api";
 import uploadImage from "../firebase_image/image";
-import uploadVideo from "../firebase_video/video";
-import ReactPlayer from "react-player";
-import { MdOutlineOndemandVideo } from "react-icons/md";
+import { sponsorProductsType } from "../types";
 
 interface CompaniesType {
   name: string;
-  //   type: string;
-
   discription: string;
   webLink: string;
   status: boolean;
-
   imageSrc: string;
   image: string;
-  //   sponserName: string;
+ 
 }
 
-const ProductForm = ({ close, updateData = "", sponsorname }) => {
-  //   const companyUpdateData = useSelector((state) => state?.company?.companyData);
+interface Props{
+  close:()=>void,
+  updateData:sponsorProductsType,
+  sponsorname:string
+}
+
+const ProductForm = ({ close, updateData , sponsorname }:Props) => {
+
   const [updatePost] = useUpdatePostMutation();
 
   const { id } = useParams();
@@ -46,11 +44,7 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
 
   console.log(updateData, "from company form");
 
-  //   const isUpdate = Object.keys(data || [])?.length !== 0;
 
-  const [isOpen, setOpen] = useState({
-    type: false,
-  });
 
   const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
@@ -58,31 +52,27 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setProductData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // if (name === "phone" && !pattern.test(value)) setIsError(true);
-    // else setIsError(false);
+   
   };
 
   //for Image Data
-  const handleImageChange = async (event: React.ChangeEvent) => {
-    // const selectedFile = event.target.files[0];
-
-    const selectedFile = event.target?.files?.[0];
-
-    if (selectedFile) {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const selectedFile = files[0];
+  
       const imageUrl = await uploadImage(
-        event.target.files[0].name,
-
-        event.target.files[0],
-
+        selectedFile.name,
+        selectedFile,
         setProgressStatus
       );
-
+  
       setProductData((prev) => ({
         ...prev,
         image: imageUrl,
@@ -105,7 +95,7 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
       companyId: id,
     };
 
-    console.log(ProductData, companySponserProductPostObject, sponsorname);
+   
 
     toast.loading("Checking Details");
     try {
@@ -138,7 +128,6 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
   const clearhandler = () => {
     setProductData({
       name: "",
-      type: "",
 
       discription: "",
       webLink: "",
@@ -146,12 +135,11 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
 
       imageSrc: "",
       image: "",
-      url: "",
     });
     close();
   };
 
-  const refusetoClosehandler = (e) => {
+  const refusetoClosehandler = (e:React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 
@@ -160,6 +148,7 @@ const ProductForm = ({ close, updateData = "", sponsorname }) => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 "
       onClick={close}
     >
+      <ToastContainer/>
       <div
         className="flex items-center w-[360px] px-4 md:px-0 md:w-[600px] justify-center bg-white rounded-md"
         onClick={refusetoClosehandler}

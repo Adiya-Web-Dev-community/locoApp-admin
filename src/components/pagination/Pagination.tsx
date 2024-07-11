@@ -44,13 +44,7 @@ const Pagination: React.FC<PaginationProps> = ({
   itemsPerPage,
   handleClick,
 }) => {
-  // console.log(
-  //   currentPage,
-  //   apiData,
-  //   itemsPerPage,
-  //   handleClick,
-  //   "pagination from comp"
-  // );
+
   const totalPages = Math.ceil(apiData?.length / itemsPerPage);
   return (
     <div className="flex items-center justify-center w-full mt-4">

@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import TextEditor from "../components/textEditor";
 import { FaCaretDown } from "react-icons/fa";
 import MultipleImageUploadeForm from "../components/multiple_image_upload/MultipleImageUploadeForm";
+import { TestQuestionsType } from "../types";
 
-const TestQuestion = ({ isQuestionForm, close }) => {
+interface Props{
+  close:()=>void,
+  isQuestionForm:{
+    condition: boolean,
+    isCreat: boolean,
+    data: TestQuestionsType,
+    testId: string
+  },
+ 
+}
+const TestQuestion = ({ isQuestionForm, close }:Props) => {
+
+  console.log("isQuestionForm>>>",isQuestionForm)
   const [updatePost] = useUpdatePostMutation();
 
   const [testData, settestData] = useState({
@@ -20,7 +32,7 @@ const TestQuestion = ({ isQuestionForm, close }) => {
 
   console.log(testData);
 
-  const { data, error, isloading, isError } = useGetDataQuery({
+  const { data,  isError } = useGetDataQuery({
     url: `/test/question/${isQuestionForm?.data?._id}`,
   });
   const isUpdate = Object.keys(data || [])?.length !== 0;
@@ -51,17 +63,7 @@ const TestQuestion = ({ isQuestionForm, close }) => {
     result: false,
   });
 
-  //for text Data
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type, checked } = e.target;
 
-    settestData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,7 +117,7 @@ const TestQuestion = ({ isQuestionForm, close }) => {
     }
   };
 
-  const handleEditorChange = (name, value) => {
+  const handleEditorChange = (name:string, value:string) => {
     settestData((prev) => ({
       ...prev,
       [name]: value,
@@ -170,6 +172,7 @@ const TestQuestion = ({ isQuestionForm, close }) => {
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={close}
     >
+      <ToastContainer/>
       <div
         className="md:w-[800px] bg-white rounded-md "
         // className="w-full bg-white md:px-4 md:ml-4 md:pl-0"

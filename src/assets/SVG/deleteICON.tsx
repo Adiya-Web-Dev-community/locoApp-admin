@@ -1,7 +1,7 @@
 
 interface Props {
   width: number;
-  heignt: number;
+  height: number;
   fill?: string;
   className?: string;
 }

@@ -7,7 +7,7 @@ const Create_Category = () => {
     <div className="p-5 flex flex-wrap  gap-5 bg-blue-100  w-full  ">
       <div className="flex flex-col gap-5 w-full  p-10 rounded-[7px]">
         <div className=" w-auto flex   flex-wrap gap-3 bg-white rounded-[5px] ">
-          {tablist.map((item, index) => {
+          {tablist?.map((item, index) => {
             return (
               <div
                 key={index}

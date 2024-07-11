@@ -7,9 +7,8 @@ import Loader from "../components/loader";
 import Pagination from "../components/pagination/Pagination";
 import { useState } from "react";
 import { IoIosSend } from "react-icons/io";
-import ConfirmationDialog from "../components/modal/ConfirmationDialog";
-import { PiEye } from "react-icons/pi";
-import { toast } from "react-toastify";
+
+import { toast, ToastContainer } from "react-toastify";
 import VideoModal from "../components/modal/VideoModal";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 
@@ -26,8 +25,6 @@ const Video = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentCompanies, "pagination");
 
   const [videoModal, setVideoModal] = useState({
     conditon: false,
@@ -67,7 +64,7 @@ const Video = () => {
     });
   };
 
-  const deletvideo = (id) => {
+  const deletvideo = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -75,16 +72,8 @@ const Video = () => {
       id: id,
     }));
   };
-  const updatevideo = (video) => {
-    // setCategoryForm((prev) => ({
-    //   ...prev,
-    //   updateId: category._id,
-    // }));
-    // setUpdateDate((prev) => ({
-    //   ...prev,
-    //   name: category.name,
-    // }));
-
+  const updatevideo = (video:videosTypes) => {
+   
     navigate(`/videos/${video._id}`);
   };
 
@@ -102,7 +91,7 @@ const Video = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -112,7 +101,7 @@ const Video = () => {
     });
   };
 
-  const handlingVideo = (url) => {
+  const handlingVideo = (url:string) => {
     setVideoModal((prev) => ({
       ...prev,
       conditon: true,
@@ -128,12 +117,12 @@ const Video = () => {
     }));
   };
   return (
-    // <div className="flex justify-center w-full p-4 bg-blue-100">
     <>
       {isLoading && <Loader />}
+      <ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -141,52 +130,7 @@ const Video = () => {
       {videoModal.conditon && (
         <VideoModal url={videoModal.url} onClose={handleCloseVideoModal} />
       )}
-      {/* <div className="w-full ">
-        <button
-          onClick={() => navigate("/upload-video")}
-          className="my-4 bg-[#333] text-[#f8f8f8] px-4 py-1 rounded-[7px]"
-        >
-          Upload Video
-        </button>
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead className="">
-              <tr className="flex flex-row justify-between px-4 bg-gray-100">
-                <th className="px-4 py-2 border-b">Title</th>
-                <th className="px-4 py-2 border-b">category</th>
-                <th className="px-4 py-2 border-b">Posted At</th>
-                <th className="px-4 py-2 border-b">Action</th>
-              </tr>
-            </thead>
-            <tbody className="w-full">
-              {data?.map((item: videosTypes, index: number) => (
-                <tr
-                  key={index}
-                  className="flex flex-row justify-between px-4 border-b group hover:bg-gray-50"
-                >
-                  <td className="px-4 py-2 ">{item?.title}</td>
-                  <td className="px-4 py-2 ">{item?.category}</td>
-                  <td className="px-4 py-2 ">
-                    {item?.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString()
-                      : ""}
-                  </td>
-                  <td className="flex gap-5 px-4 py-2 space-x-2">
-                    <button className="">
-                      <DeleteICONSVG heignt={20} width={20} fill={"#fe2828"} />
-                    </button>
-                    <button
-                      onClick={() => navigate(`/video/${item?._id}`)}
-                    >
-                      <EditICONSVG heignt={20} width={20} fill={"#5b5a5a"} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div> */}
+      
       <section
         className={`  md:pl-0 p-4 h-full  w-full rounded-md   mx-auto [&::-webkit-scrollbar]:hidden `}
       >
@@ -244,15 +188,14 @@ const Video = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[1260px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+               
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                currentCompanies?.map((video, i) => (
+                currentCompanies?.map((video:videosTypes, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customVideo group hover:bg-gray-50"
@@ -307,8 +250,8 @@ const Video = () => {
                     </span>
 
                     <span className="flex justify-center text-sm font-semibold ">
-                      {video?.tags.length !== 1
-                        ? video?.tags.map((tag) => (
+                      {video?.tags.length >0
+                        ? video?.tags.map((tag:string) => (
                             <ul>
                               <li>{tag},</li>
                             </ul>
@@ -322,14 +265,14 @@ const Video = () => {
                         onClick={() => updatevideo(video)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
                         onClick={() => deletvideo(video._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>

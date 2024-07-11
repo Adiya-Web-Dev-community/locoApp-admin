@@ -1,5 +1,5 @@
 // Sidebar.js
-import React, { useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 
 import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
@@ -109,12 +109,18 @@ const sidebarData: SidebarItem[] = [
   // },
 ];
 
-const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }) => {
-  const [isCategory, setSidebarOpen] = useState(false);
+interface subProps{ large:boolean,
+    small:boolean}
 
-  const handlingCategory = () => {
-    setSidebarOpen((prev) => !prev);
-  };
+
+interface Props{
+  isOpen:subProps
+  onToggleSidebarLarge:()=>void,
+  onToggleSidebarSmall:()=>void,
+}
+const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }:Props) => {
+
+
 
   return (
     <section

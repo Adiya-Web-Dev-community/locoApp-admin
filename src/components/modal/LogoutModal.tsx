@@ -1,9 +1,12 @@
 import React from "react";
+interface Props{
+  onClose:()=>void,
+  onConfirm:()=>void
+}
+const LogOutModal = ({ onClose, onConfirm }:Props) => {
 
-const LogOutModal = ({ onClose, onConfirm }) => {
-  //   if (!show) return null;
 
-  const handlingPropogation = (e) => {
+  const handlingPropogation = (e:React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 

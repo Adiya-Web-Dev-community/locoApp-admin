@@ -1,22 +1,22 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
 import { Link, useParams } from "react-router-dom";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import { toast } from "react-toastify";
-import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { toast, ToastContainer } from "react-toastify";
 import { MdOutlineQuiz } from "react-icons/md";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { IoIosSend } from "react-icons/io";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import QuizQuestion from "../forms/QuizQuestion";
+import { QuestionsType } from "../types";
 
 const QuizProfile = () => {
   const { id } = useParams();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading,  isError } = useGetDataQuery({
     url: `/quiz/${id}`,
   });
 
-  console.log(data, "pagination");
+
 
   const [isQuestionForm, setQuestionForm] = useState({
     condition: false,
@@ -75,7 +75,7 @@ const QuizProfile = () => {
     });
   };
 
-  const deletHandler = (id) => {
+  const deletHandler = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -107,7 +107,7 @@ const QuizProfile = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -118,9 +118,10 @@ const QuizProfile = () => {
   };
   return (
     <>
+    <ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -158,52 +159,12 @@ const QuizProfile = () => {
                     <h2 className="text-xl font-semibold text-blue-800 md:text-2xl font-mavenPro">
                       {data?.title}
                     </h2>
-                    {/* <p className="text-sm font-semibold text-gray-600">
-                              {data?.type}
-                            </p> */}
-                    {/* </div> */}
+                  
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 ">
-                  {/* <div className="grid grid-cols-1 col-span-3 gap-6 md:grid-cols-2"> */}
-                  {/* <p className="text-sm font-semibold md:text-base ">
-                            <span className="pr-2 text-sm text-gray-500 ">
-                              Sponsor Type
-                            </span>
-      
-                            {data?.type}
-                          </p>
-                          <p className="text-sm font-semibold md:text-base">
-                            <span className="pr-2 text-sm text-gray-500 ">
-                              Website
-                            </span>
-      
-                            <span
-                              onClick={() => data?.link && handleLinkClick(data.link)}
-                              className={` text-sm font-semibold text-center ${
-                                data?.link
-                                  ? "hover:underline hover:text-sky-400 "
-                                  : ""
-                              } break-words break-all cursor-pointer `}
-                            >
-                              {data?.link ? "Official site" : "----"}
-                            </span>
-                          </p>
-                          <p className="flex items-center gap-2 text-sm font-semibold md:text-base">
-                            <span className="pr-2 text-sm text-gray-500 ">Video</span>
-                            <span
-                              className="flex justify-center ml-2 text-sm font-semibold cursor-pointer hover:underline hover:text-sky-400"
-                              typeof="button"
-                              onClick={() => handlingVideo(data?.video)}
-                            >
-                              {data?.video ? (
-                                <MdOutlineOndemandVideo className="w-8 h-8" />
-                              ) : (
-                                "No video provided"
-                              )}
-                            </span>
-                          </p> */}
+                
 
                   <p className="text-sm font-semibold md:text-base">
                     <span className="pr-2 text-sm text-gray-500 ">
@@ -271,7 +232,7 @@ const QuizProfile = () => {
                       Check Internet connection or Contact to Admin
                     </p>
                   ) : data?.questions.length !== 0 ? (
-                    currentQuestion?.map((question, i) => (
+                    currentQuestion?.map((question:QuestionsType, i:number) => (
                       <section
                         key={i}
                         className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuizQuestion group hover:bg-gray-50"
@@ -313,7 +274,7 @@ const QuizProfile = () => {
                           </button>
                           <button
                             className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                            onClick={() => deletHandler(question._id)}
+                            onClick={() => deletHandler(question?._id)}
                           >
                             Delete
                           </button>

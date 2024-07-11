@@ -2,16 +2,15 @@ import { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
-  useCreatePostMutation,
   useGetDataQuery,
   useUpdatePostMutation,
 } from "../api";
 import { BlogCategory } from "../types";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import uploadImage from "../firebase_image/image";
 import TextEditor from "../components/textEditor";
-import { TiArrowBackOutline } from "react-icons/ti";
+
 import { FaBloggerB, FaCaretDown } from "react-icons/fa";
 
 interface Props {
@@ -48,16 +47,15 @@ const CreatBlog = () => {
   const { id } = useParams();
   const {
     data: blogData,
-    isLoading: isLoadingBlog,
     isError,
   } = useGetDataQuery({
     url: `/blog/get-blog-using-Id/${id}`,
   });
 
-  console.log(blogData, "update Blog");
+ 
 
   const { data } = useGetDataQuery({ url: "/get-blog-category" });
-
+  console.log(data, "update Blog");
   const [category, setCategory] = useState<popostate>({
     maincategoryData: [],
     subcategoryData: [],
@@ -117,7 +115,7 @@ const CreatBlog = () => {
   const makeSlug = (value: string) => {
     return value.toLowerCase().replace(/\s+/g, "-");
   };
-  console.log("data in Blog>>>", state, data, category);
+ 
 
   const handleDropChange = (name: string, value: string) => {
     console.log(name, value, "change text");
@@ -148,6 +146,7 @@ const CreatBlog = () => {
       );
       setCategory((prev) => ({
         ...prev,
+                //@ts-expect-error no error
         subsubcategoryData: subCategory ? subCategory?.subSubCategories : [],
         innercategoryData: [],
       }));
@@ -168,6 +167,7 @@ const CreatBlog = () => {
       setCategory((prev) => ({
         ...prev,
         innercategoryData: subSubCategory
+        //@ts-expect-error mooj
           ? subSubCategory?.innerCategories
           : [],
       }));
@@ -301,6 +301,7 @@ const CreatBlog = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    //@ts-expect-error //ggjh
     const { name, value, type, checked } = e.target;
 
     if (name === "title")
@@ -317,6 +318,7 @@ const CreatBlog = () => {
 
   return (
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
+      <ToastContainer/>
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
         onSubmit={submitHandler}
@@ -409,7 +411,7 @@ const CreatBlog = () => {
                       setOpen({ ...isOpen, maincategory: !isOpen.maincategory })
                     }
                   >
-                    {state.maincategory !== ""
+                    {state?.maincategory !== ""
                       ? state.maincategory
                       : "Select Main Category"}
                     <FaCaretDown className="m-1" />
@@ -419,11 +421,13 @@ const CreatBlog = () => {
                       isOpen.maincategory ? "max-h-60" : "hidden"
                     } custom-scrollbar`}
                   >
-                    {data?.data?.map((main, i) => (
+                    {
+                      data?.data?.length>0?
+                    data?.data?.map((main:BlogCategory, i:number) => (
                       <li
                         key={i}
                         className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
-                          state.maincategory === main?.name ? "bg-rose-600" : ""
+                          state?.maincategory === main?.name ? "bg-rose-600" : ""
                         }`}
                         onClick={() =>
                           handleDropChange("maincategory", main?._id)
@@ -431,31 +435,33 @@ const CreatBlog = () => {
                       >
                         <span>{main?.name}</span>
                       </li>
-                    ))}
+                    )):<div>Data Not Found</div>
+                    
+                    }
                   </ul>
                 </div>
               )}
 
               {/* Sub Category Dropdown */}
-              {category.subcategoryData.length > 0 && (
+              {category?.subcategoryData?.length > 0 && (
                 <div className="relative">
                   <div
                     className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-blue-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
                     onClick={() =>
-                      setOpen({ ...isOpen, subcategory: !isOpen.subcategory })
+                      setOpen({ ...isOpen, subcategory: !isOpen?.subcategory })
                     }
                   >
-                    {state.subcategory !== ""
-                      ? state.subcategory
+                    {state?.subcategory !== ""
+                      ? state?.subcategory
                       : "Select Sub Category"}
                     <FaCaretDown className="m-1" />
                   </div>
                   <ul
                     className={`mt-2 p-2 rounded-md w-32 text-[#DEE1E2] bg-gray-800 shadow-lg absolute z-10 ${
-                      isOpen.subcategory ? "max-h-60" : "hidden"
+                      isOpen?.subcategory ? "max-h-60" : "hidden"
                     } custom-scrollbar`}
                   >
-                    {category.subcategoryData?.map((sub, i) => (
+                    {category?.subcategoryData?.map((sub, i) => (
                       <li
                         key={i}
                         className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
@@ -473,7 +479,7 @@ const CreatBlog = () => {
               )}
 
               {/* SubSub Category Dropdown */}
-              {category.subsubcategoryData.length > 0 && (
+              {category?.subsubcategoryData?.length > 0 && (
                 <div className="relative">
                   <div
                     className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-blue-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
@@ -494,7 +500,7 @@ const CreatBlog = () => {
                       isOpen.subsubcategory ? "max-h-60" : "hidden"
                     } custom-scrollbar`}
                   >
-                    {category.subsubcategoryData?.map((subsub, i) => (
+                    {category?.subsubcategoryData?.map((subsub, i) => (
                       <li
                         key={i}
                         className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
@@ -514,7 +520,7 @@ const CreatBlog = () => {
               )}
 
               {/* inner Category Dropdown */}
-              {category.innercategoryData.length > 0 && (
+              {category?.innercategoryData?.length > 0 && (
                 <div className="relative">
                   <div
                     className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-blue-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"
@@ -525,17 +531,17 @@ const CreatBlog = () => {
                       })
                     }
                   >
-                    {state.innercategory !== ""
-                      ? state.innercategory
+                    {state?.innercategory !== ""
+                      ? state?.innercategory
                       : "Select Inner Category"}
                     <FaCaretDown className="m-1" />
                   </div>
                   <ul
                     className={`mt-2 p-2 rounded-md w-32 text-[#DEE1E2] bg-gray-800 shadow-lg absolute z-10 ${
-                      isOpen.innercategory ? "max-h-60" : "hidden"
+                      isOpen?.innercategory ? "max-h-60" : "hidden"
                     } custom-scrollbar`}
                   >
-                    {category.innercategoryData?.map((iner, i) => (
+                    {category?.innercategoryData?.map((iner, i) => (
                       <li
                         key={i}
                         className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
@@ -569,7 +575,7 @@ const CreatBlog = () => {
                 disabled={
                   !state?.thumnail ||
                   (isUpdate && !isError
-                    ? state?.maincategory
+                    ? !state?.maincategory
                     : !state?.maincategory) ||
                   !state?.title ||
                   !state?.content

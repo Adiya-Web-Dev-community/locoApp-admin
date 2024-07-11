@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
@@ -6,9 +6,9 @@ import Loader from "../components/loader";
 import { UserTypes } from "../types";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ComponentTable from "../components/tabel/ComponentTable";
+
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { IoIosSend } from "react-icons/io";
+
 import { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
 
@@ -52,7 +52,7 @@ const UserList = () => {
       id: id,
     }));
   };
-  const updateuser = (user) => {
+  const updateuser = (user:UserTypes) => {
     navigate(`/users/${user._id}`);
     console.log("under process", user);
   };
@@ -71,7 +71,7 @@ const UserList = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -88,10 +88,10 @@ const UserList = () => {
   return (
     <>
       {isLoading && <Loader />}
-
+<ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+       
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -154,15 +154,14 @@ const UserList = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[900px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+               
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                currentUsers?.map((user, i) => (
+                currentUsers?.map((user:UserTypes, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customUsers group hover:bg-gray-50"
@@ -194,7 +193,7 @@ const UserList = () => {
                     <span
                       className={`  font-semibold text-center  rounded-full  `}
                     >
-                      {user?.phone ? user?.phone : "------"}
+                      {user?.mobile ? user?.mobile : "------"}
                     </span>
 
                     {/* <span className="flex justify-center ml-2 text-sm font-semibold ">
@@ -209,14 +208,14 @@ const UserList = () => {
                         onClick={() => updateuser(user)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
                         onClick={() => deletuser(user._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>

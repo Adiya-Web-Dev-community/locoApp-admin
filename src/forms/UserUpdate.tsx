@@ -31,7 +31,7 @@ const UserUpdate = () => {
   const navigate = useNavigate();
 
   console.log("user Data in this >>", data);
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setCurrentUser({ ...user, [name]: value });
   };
@@ -59,7 +59,7 @@ const UserUpdate = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
     console.log("hello");
     toast.loading("checking Info");
@@ -88,7 +88,7 @@ const UserUpdate = () => {
   return (
     <div className="flex items-center justify-center w-full h-full p-6 bg-gradient-to-r from-blue-100 to-purple-200">
       {isLoading && <Loader />}
-
+     <ToastContainer/>
       <div className="w-full max-w-xl p-8 transition duration-500 transform bg-white rounded-lg shadow-2xl hover:scale-105">
         <div className="flex justify-center pb-2">
           <h2 className="mb-6 text-3xl font-bold text-center text-gray-800">

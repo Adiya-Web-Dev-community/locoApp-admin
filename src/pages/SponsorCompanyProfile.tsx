@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { AiOutlineProfile } from "react-icons/ai";
-import { FaRegImage, FaUserCog } from "react-icons/fa";
+import  { useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link,  useParams } from "react-router-dom";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { IoIosSend } from "react-icons/io";
@@ -10,22 +8,42 @@ import { MdOutlineOndemandVideo } from "react-icons/md";
 import ProductForm from "../forms/ProductForm";
 import ConfirmationDialog from "../components/modal/ConfirmationDialog";
 import Pagination from "../components/pagination/Pagination";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import VideoModal from "../components/modal/VideoModal";
-import CompaniesLoading from "../components/loading_animation/LoadingAnimation";
-import ProductsLoading from "../components/loading_animation/ProductsLoading";
 import SponsorCompanyProfileLoading from "../components/loading_animation/SponsorCompanyProfileLoading";
-
+import { sponsorProductsType } from "../types";
+ interface stateProps{
+  condition:boolean,
+  sponsername:string,
+  data:{_id:string,
+  name:string,
+  image:string,
+  description:string,
+  active:boolean,
+  link:string,
+  sponsorname:string,
+  createdAt: string,
+}
+}
 const SponsorCompanyProfile = () => {
   const { id } = useParams();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading, isError } = useGetDataQuery({
     url: `/sponsor/company/${id}`,
   });
 
-  const [isProductForm, setProductForm] = useState({
+  const [isProductForm, setProductForm] = useState<stateProps>({
     condition: false,
-    data: null,
+    data: {
+      _id: "",
+      name: "",
+      image: "",
+      description: "",
+      active: true,
+      link: "",
+      sponsorname: "",
+      createdAt: "",
+    },
     sponsername: "",
   });
 
@@ -57,23 +75,24 @@ const SponsorCompanyProfile = () => {
     setProductForm((prev) => ({
       ...prev,
       condition: false,
-      data: null,
+      data: {
+        _id: "",
+        name: "",
+        image: "",
+        description: "",
+        active: true,
+        link: "",
+        sponsorname: "",
+        createdAt: "",
+      },
       sponsername: "",
     }));
   };
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentCompanies = data?.products?.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
 
-  console.log(currentCompanies, "pagination");
 
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -84,7 +103,7 @@ const SponsorCompanyProfile = () => {
     showDialog: false,
   });
 
-  const handleLinkClick = (url) => {
+  const handleLinkClick = (url:string) => {
     setDialogCrendial((prev) => ({
       ...prev,
       targetUrl: url,
@@ -119,7 +138,7 @@ const SponsorCompanyProfile = () => {
     });
   };
 
-  const handlingVideo = (url) => {
+  const handlingVideo = (url:string) => {
     setVideoModal((prev) => ({
       ...prev,
       conditon: true,
@@ -134,7 +153,7 @@ const SponsorCompanyProfile = () => {
     }));
   };
 
-  const deletproduct = (id) => {
+  const deletproduct = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -142,11 +161,11 @@ const SponsorCompanyProfile = () => {
       id: id,
     }));
   };
-  const updateproduct = (productData) => {
+  const updateproduct = (productData:sponsorProductsType) => {
     setProductForm((prev) => ({
       ...prev,
       condition: true,
-      data: productData,
+      data:{... productData},
     }));
   };
 
@@ -164,7 +183,7 @@ const SponsorCompanyProfile = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -175,9 +194,10 @@ const SponsorCompanyProfile = () => {
   };
   return (
     <>
+    <ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -185,8 +205,8 @@ const SponsorCompanyProfile = () => {
       {isProductForm.condition && (
         <ProductForm
           close={closeHandler}
-          updateData={isProductForm?.data || ""}
-          sponsorname={isProductForm.sponsername || ""}
+          updateData={isProductForm?.data}
+          sponsorname={isProductForm?.sponsername || ""}
         />
       )}
       {videoModal.conditon && (
@@ -337,8 +357,8 @@ const SponsorCompanyProfile = () => {
                     <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                       Check Internet connection or Contact to Admin
                     </p>
-                  ) : data.products ? (
-                    data?.products?.map((product, i) => (
+                  ) : data.products?.length>0 ? (
+                    data?.products?.map((product:sponsorProductsType, i:number) => (
                       <section
                         key={i}
                         className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customProduct group hover:bg-gray-50"

@@ -1,9 +1,13 @@
-import React from "react";
+interface Props{
+  show:boolean,
+  onClose:()=>void,
+  onConfirm:()=>void
+}
 
-const ConfirmationDialog = ({ show, onClose, onConfirm }) => {
+const ConfirmationDialog = ({ show, onClose, onConfirm }:Props) => {
   if (!show) return null;
 
-  const handlingPropogation = (e) => {
+  const handlingPropogation = (e:React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
 

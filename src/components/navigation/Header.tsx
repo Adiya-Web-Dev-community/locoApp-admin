@@ -1,16 +1,21 @@
 // Header.js
 import { useState } from "react";
-import { RxCross1, RxHamburgerMenu, RxUpdate } from "react-icons/rx";
+import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
 
 import { FaUserCog } from "react-icons/fa";
 import { useNavigate } from "react-router";
-import { GiBatMask } from "react-icons/gi";
-import { BiLogOutCircle } from "react-icons/bi";
+
 import LogOutModal from "../modal/LogoutModal";
 import { MdDirectionsSubway } from "react-icons/md";
+interface Props{
+  isOpen:{
+    small:boolean,
+    large:boolean,
+  }
+  onToggleSidebarSmall:()=>void;
+}
 
-const Header = ({ onToggleSidebarSmall, isOpen }) => {
-  const [showProfile, setShowProfile] = useState(false);
+const Header = ({ onToggleSidebarSmall, isOpen }:Props) => {
   const [isLogout, setLogoutModal] = useState(false);
 
   const navigate = useNavigate();
@@ -24,7 +29,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
   };
 
   const profilePannelHanlder = () => {
-    // setShowProfile((prev) => !prev);
+    
     handleLogout();
   };
 
@@ -35,27 +40,30 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
   //     navigate("/login/update-profile");
   //   };
 
-  const getDateString = (date) => {
+  const getDateString = (dateString: string) => {
+    const date = new Date(dateString);
     const day = date.getDate();
-    const month = date.toLocaleString("en-Us", { month: "long" });
+    const month = date.toLocaleString("en-US", { month: "long" });
     return `${day} ${month}`;
   };
 
-  const getTimeString = (date) => {
-    const options = {
+  const getTimeString = (dateString: string) => {
+    const date = new Date(dateString);
+  
+    const options: Intl.DateTimeFormatOptions = {
       hour: "numeric",
       minute: "numeric",
       hour12: true,
     };
-
-    return new Intl.DateTimeFormat("en-Us", options).format(date);
+  
+    return new Intl.DateTimeFormat("en-US", options).format(date);
   };
 
-  const date = new Date();
+  const date = new Date().toISOString(); 
 
   const time = getTimeString(date);
   const dateMonth = getDateString(date);
-  console.log(time, dateMonth);
+
 
   const cancelLogout = () => {
     setLogoutModal(false);
@@ -125,9 +133,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }) => {
             </div>
             {/* user Profile */}
             <div
-              className={`flex items-center  gap-4 p-1  cursor-pointer rounded-md z-4  ${
-                showProfile ? "bg-white  " : ""
-              }`}
+              className={`flex items-center  gap-4 p-1  cursor-pointer rounded-md z-4  `}
               onClick={profilePannelHanlder}
               // style={{ width: "178px" }}
             >

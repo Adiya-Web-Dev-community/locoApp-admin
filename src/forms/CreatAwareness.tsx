@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  useCreatePostMutation,
   useGetDataQuery,
   useUpdatePostMutation,
 } from "../api";
@@ -9,11 +8,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import ReactQuill from "react-quill";
 import { FaCaretDown } from "react-icons/fa";
+import { awarenessCategoryType } from "../types";
 
-interface Props {
-  _id: string;
-  name: string;
-}
+
 interface StateProps {
   category: CategoryType;
   title: string;
@@ -34,18 +31,16 @@ const CreatAwareness = () => {
   const { id } = useParams();
   const {
     data: updateAwar,
-    isLoading: isLoadingAwar,
-    error: erroAwar,
     isError: isErrorAwar,
   } = useGetDataQuery({ url: `/awareness/${id}` });
 
   const isUpdate = Object.keys(updateAwar || [])?.length !== 0;
-  //   console.log(updateAwar, erroAwar, isUpdate, !isErrorAwar, "from update");
+  
 
-  const { data, isLoading, error } = useGetDataQuery({
+  const { data } = useGetDataQuery({
     url: "/awareness/category",
   });
-  //   console.log(data, error, "category Awar");
+console.log("Awareness Category>>>>",data)
 
   const [state, setState] = useState<StateProps>({
     category: {
@@ -74,10 +69,7 @@ const CreatAwareness = () => {
       });
     }
   }, [isUpdate, isErrorAwar, updateAwar]);
-  //   const makeSlug = (value: string) => {
-  //     return value.toLowerCase().replace(/\s+/g, "-");
-  //   };
-  //   console.log("data in Blog>>>", state);
+ 
   const HandleChange = (name: string, value: string | CategoryType) => {
     setState((prev) => ({
       ...prev,
@@ -106,7 +98,7 @@ const CreatAwareness = () => {
     }
   };
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent) => {
     e.preventDefault();
     toast.loading("Checking Details");
     try {
@@ -146,6 +138,7 @@ const CreatAwareness = () => {
 
   return (
     <div className="w-full p-5 bg-blue-100">
+      <ToastContainer/>
       <button
         onClick={() => navigate("/awareness")}
         className="bg-[#3d3d3d] text-[#f8f8f8] px-3 py-1 rounded-[7px] text-[14px] font-[600] mb-[10px] hover:bg-[#323131]"
@@ -171,7 +164,7 @@ const CreatAwareness = () => {
             className="flex realtive justify-between p-2  pl-4  border rounded-md cursor-pointer   focus:border-[#DEE1E2]  border-[#b9b4b4da] bg-[#e7e5e592] "
             onClick={() => setOpen((prev) => !prev)}
           >
-            {state?.category.name !== "" ? (
+            {state?.category?.name !== "" ? (
               state?.category?.name
             ) : (
               <span className="text-sm font-normal text-gray-400">
@@ -185,7 +178,7 @@ const CreatAwareness = () => {
               isOpen ? "max-h-40" : "hidden"
             } custom-scrollbar`}
           >
-            {data?.map((category, i) => (
+            {data?.map((category:awarenessCategoryType, i:number) => (
               <li
                 key={i}
                 className={`p-2 ${

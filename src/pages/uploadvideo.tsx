@@ -4,12 +4,12 @@ import "react-quill/dist/quill.snow.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import {
-  useCreatePostMutation,
+  
   useGetDataQuery,
   useUpdatePostMutation,
 } from "../api";
 import { VideoCategorys } from "../types";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/loader";
 import uploadVideo from "../firebase_video/video";
@@ -18,12 +18,23 @@ import { MdOutlineOndemandVideo } from "react-icons/md";
 import { FaCaretDown, FaRegImage } from "react-icons/fa";
 import uploadImage from "../firebase_image/image";
 
+
+interface stateProps{
+  title: string,
+  slug: string,
+  category: string,
+  url: string,
+  tags: string[],
+  description: string,
+  thumnail: string,
+  imageTitle: string,
+}
 const UploadVideo = () => {
   const { id } = useParams();
 
   const [updatePost] = useUpdatePostMutation();
 
-  const { data, isLoading, isError } = useGetDataQuery({
+  const { data,  isError } = useGetDataQuery({
     url: `/video/get-video-byid/${id}`,
   });
 
@@ -33,7 +44,7 @@ const UploadVideo = () => {
     url: "/video/get-category",
   });
 
-  const [state, setState] = useState({
+  const [state, setState] = useState<stateProps>({
     title: "",
     slug: "",
     category: "",
@@ -88,7 +99,7 @@ const UploadVideo = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
 
     if (name === "title") {
       setState((prev) => ({ ...prev, [name]: value, slug: makeSlug(value) }));
@@ -230,6 +241,7 @@ const UploadVideo = () => {
   console.log(data, "for category");
   return (
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
+      <ToastContainer/>
       {isLoadingCategory && <Loader />}
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
@@ -272,7 +284,7 @@ const UploadVideo = () => {
                     isOpen.category ? "max-h-60" : "hidden"
                   } custom-scrollbar`}
                 >
-                  {categoryData?.map((video, i) => (
+                  {categoryData?.map((video:VideoCategorys, i:number) => (
                     <li
                       key={i}
                       className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${

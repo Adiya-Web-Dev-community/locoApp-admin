@@ -1,25 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { TiArrowBackOutline } from "react-icons/ti";
 import TextEditor from "../components/textEditor";
+interface CategoryForm {
+  content:string,
+    creat:boolean,
+    title:string,
+    updateId:string
+}
+interface Props{
+  isTestForm:{
+    content:string,
+    creat:boolean,
+    title:string,
+    updateId:string
+  },
+  setTestForm:React.Dispatch<React.SetStateAction<CategoryForm>>,
+  
+}
 
-const Task = ({ isTestForm, setTestForm }) => {
+const Task = ({ isTestForm, setTestForm }:Props) => {
 
-  const { data, error, isloading, isError } = useGetDataQuery({
+  const { data, isError } = useGetDataQuery({
     url: `/daily-task/${isTestForm?.updateId}`,
   });
 
   const isUpdate = Object.keys(data || [])?.length !== 0;
   
-  console.log(data, "singleQuiz");
-  console.log(
-    isTestForm,
-    close,
-    "from creat form",
-    isTestForm.isCreat ? "POST" : "PUT"
-  );
+
 
   const [testDataForm, settestDataForm] = useState({
     title: data?.title ? data?.title : "",
@@ -42,10 +51,10 @@ const Task = ({ isTestForm, setTestForm }) => {
 
 
 
-  const submiteHandler = async (e) => {
+  const submiteHandler = async (e:React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Checking Details",testDataForm);
+ 
     toast.loading("Checking Details");
     try {
       const payload = {
@@ -117,6 +126,7 @@ const Task = ({ isTestForm, setTestForm }) => {
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={closeHandler}
     >
+      <ToastContainer/>
       <div
         className="bg-white rounded-md w-[600px]"
         onClick={(e) => e.stopPropagation()}

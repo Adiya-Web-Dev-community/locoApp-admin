@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
 import EditICONSVG from "../assets/SVG/editICON";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import Loader from "../components/loader";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
 import CreatQuiz from "../forms/CreatQuiz";
 import QuizQuestion from "../forms/QuizQuestion";
 import { PiEye } from "react-icons/pi";
+import { quiztypes } from "../types";
 
 const Quiz = () => {
-  const navigate = useNavigate();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading,  isError } = useGetDataQuery({
     url: "/quiz",
   });
 
@@ -22,15 +22,6 @@ const Quiz = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  console.log(data);
-  const currentUsers = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentUsers, "pagination");
-
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -40,11 +31,6 @@ const Quiz = () => {
     updateId: "",
   });
 
-  //   const [isQuestionForm, setQuestionForm] = useState({
-  //     creat: false,
-  //     updateId: "",
-  //     quizIdQuestion: "",
-  //   });
 
   const [isQuestionForm, setQuestionForm] = useState({
     condition: false,
@@ -71,10 +57,7 @@ const Quiz = () => {
     });
   };
 
-  const updateHandler = (quiz) => {
-    // navigate(`/users/${user._id}`);
-    // console.log("under process", user);
-
+  const updateHandler = (quiz:quiztypes) => {
     setQuizForm((prev) => ({
       ...prev,
       updateId: quiz._id,
@@ -87,7 +70,7 @@ const Quiz = () => {
     }));
   };
 
-  const deletHandler = (id) => {
+  const deletHandler = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -99,7 +82,6 @@ const Quiz = () => {
   const handleConfirmDelete = () => {
     // Handle the delete action here
     toast.loading("checking Details");
-    console.log("Item deleted", isModalOpen.id);
     deletPost({
       url: `/quiz/${isModalOpen.id}`,
     })
@@ -110,7 +92,7 @@ const Quiz = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -120,7 +102,6 @@ const Quiz = () => {
     });
   };
 
-  console.log(data, error, "awareness");
 
   const listHeadingAwarness = [
     "Title",
@@ -142,20 +123,8 @@ const Quiz = () => {
     });
   };
 
-  //   const creatQuestionHandler = (quiz) => {
-  //     setQuestionForm((prev) => ({
-  //       ...prev,
-  //       quizIdQuestion: quiz._id,
-  //       creat: !prev.creat,
-  //     }));
-  //     setUpdateDate({
-  //       title: "",
-  //       instructions: "",
-  //       completd: false,
-  //     });
-  //   };
 
-  const questionFormHandler = (quiz) => {
+  const questionFormHandler = (quiz:quiztypes) => {
     setQuestionForm((prev) => ({
       ...prev,
       condition: true,
@@ -175,6 +144,7 @@ const Quiz = () => {
   };
   return (
     <>
+    <ToastContainer/>
       {isLoading && <Loader />}
 
       {(isQuizForm.creat || isQuizForm.updateId) && (
@@ -187,15 +157,13 @@ const Quiz = () => {
       {isQuestionForm.condition && (
         <QuizQuestion
           isQuestionForm={isQuestionForm}
-          //   setQuestionForm={setQuestionForm}
           close={closeHandler}
-          //   singleQuestionData={updateData}
         />
       )}
 
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -257,15 +225,15 @@ const Quiz = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+               
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((quiz, i) => (
+                data?.length>0?
+                data?.map((quiz:quiztypes, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuiz group hover:bg-gray-50"
@@ -314,18 +282,18 @@ const Quiz = () => {
                         onClick={() => updateHandler(quiz)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
                         onClick={() => deletHandler(quiz._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>
-                ))
+                )):<div>Data Not Found</div>
               )}
             </div>
           </section>

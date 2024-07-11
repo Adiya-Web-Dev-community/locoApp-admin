@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../types";
 
 const authSlice = createSlice({
   name: "token",
@@ -16,7 +17,7 @@ const authSlice = createSlice({
 });
 
 //helper for useSelector
-export const userTokenHelper = (state) => state.authToken.userToken;
+export const userTokenHelper = (state:RootState) => state.authToken.userToken;
 
 //action for using dispatch
 export const { setUserToken, removeUserToken } = authSlice.actions;

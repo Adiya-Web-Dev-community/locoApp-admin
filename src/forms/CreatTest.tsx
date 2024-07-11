@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { TiArrowBackOutline } from "react-icons/ti";
 import TextEditor from "../components/textEditor";
+interface CategoryForm {
+  creat: boolean;
+  updateId: string;
+}
+interface Props{
+  isTestForm:{
+    creat:boolean,
+    updateId:string
+  },
+  setTestForm:React.Dispatch<React.SetStateAction<CategoryForm>>,
+  singleTest:{
+    completd:boolean,
+    title:string,
+    instructions:string
+  }
+}
 
-const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
-  console.log(singleTest);
+const CreatTest = ({ isTestForm, setTestForm, singleTest }:Props) => {
+ 
 
-  const { data, error, isloading, isError } = useGetDataQuery({
+  const { data,  isError } = useGetDataQuery({
     url: `/test/${isTestForm?.updateId}`,
   });
 
   const isUpdate = Object.keys(data || [])?.length !== 0;
 
-  console.log(data, isTestForm, "singleQuiz");
-  console.log(
-    isTestForm,
-    close,
-    "from creat form",
-    isTestForm.isCreat ? "POST" : "PUT"
-  );
+ 
 
   const [testDataForm, settestDataForm] = useState({
     title: data?.title ? data?.title : "",
@@ -29,7 +38,6 @@ const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
   });
 
   useEffect(() => {
-    console.log("i am working");
     if (isUpdate && !isError) {
       settestDataForm((prev) => ({
         ...prev,
@@ -42,7 +50,7 @@ const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
 
   const [updatePost] = useUpdatePostMutation();
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     settestDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
@@ -50,10 +58,10 @@ const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
     }));
   };
 
-  const submiteHandler = async (e) => {
+  const submiteHandler = async (e:React.FormEvent) => {
     e.preventDefault();
 
-    console.log(testDataForm);
+  
     toast.loading("Checking Details");
     try {
       const payload = {
@@ -94,7 +102,7 @@ const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
     }
   };
 
-  const handleEditorChange = (name, value) => {
+  const handleEditorChange = (name:string, value:string) => {
     settestDataForm((prev) => ({
       ...prev,
       [name]: value,
@@ -127,6 +135,7 @@ const CreatTest = ({ isTestForm, setTestForm, singleTest }) => {
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={closeHandler}
     >
+      <ToastContainer/>
       <div
         className="bg-white rounded-md w-[600px]"
         onClick={(e) => e.stopPropagation()}

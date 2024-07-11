@@ -1,26 +1,39 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { useDispatch } from "react-redux";
 import { useUpdatePostMutation } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+interface CategoryForm {
+  creat: boolean;
+  updateId: string;
+}
+interface Props{
+  isCategoryForm:{
+    creat:boolean,
+    updateId:string
+  },
+  setCategoryForm:React.Dispatch<React.SetStateAction<CategoryForm>>,
+  singleCategory:{
+    name:string,
+    image:string
+  }
+}
 
 const VideoCategoryForm = ({
   isCategoryForm,
   setCategoryForm,
   singleCategory,
-}) => {
-  console.log(singleCategory);
+}:Props) => {
+  
 
   const [categoryDataForm, setCategoryDataForm] = useState({
     categoryName: singleCategory.name ? singleCategory.name : "",
   });
 
-  // const [isOpen, setOpen] = useState(false);
-  //   const dispatch = useDispatch();
+
 
   const [updatePost] = useUpdatePostMutation();
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setCategoryDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
@@ -28,7 +41,7 @@ const VideoCategoryForm = ({
     }));
   };
 
-  const submiteHandler = async (e) => {
+  const submiteHandler = async (e:React.FormEvent) => {
     e.preventDefault();
 
     console.log(categoryDataForm);
@@ -91,6 +104,7 @@ const VideoCategoryForm = ({
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={closeHandler}
     >
+      <ToastContainer/>
       <div
         className="bg-white rounded-md w-[600px]"
         onClick={(e) => e.stopPropagation()}

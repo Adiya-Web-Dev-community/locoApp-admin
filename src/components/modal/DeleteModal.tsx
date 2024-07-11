@@ -1,10 +1,12 @@
 // ConfirmDeleteModal.js
 import React from "react";
+interface Props{
+  onClose:()=>void,
+  onConfirm:()=>void
+}
 
-const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
-  //   if (!isOpen) return null;
-
-  const preventhandler = (e) => {
+const ConfirmDeleteModal = ({  onClose, onConfirm }:Props) => {
+  const preventhandler = (e:React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
   return (

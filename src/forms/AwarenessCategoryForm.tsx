@@ -1,27 +1,36 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { useDispatch } from "react-redux";
 import { useUpdatePostMutation } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+interface CategoryForm {
+  creat: boolean;
+  updateId: string;
+}
+interface Props{
+  isCategoryForm:{
+    creat:boolean,
+    updateId:string
+  },
+  setCategoryForm:React.Dispatch<React.SetStateAction<CategoryForm>>,
+  singleCategory:{
+    name:string
+  }
+}
 
 const AwarenessCategoryForm = ({
   isCategoryForm,
   setCategoryForm,
   singleCategory,
   // refetch,
-}) => {
+}:Props) => {
   console.log(singleCategory);
 
   const [categoryDataForm, setCategoryDataForm] = useState({
     categoryName: singleCategory.name ? singleCategory.name : "",
   });
-
-  // const [isOpen, setOpen] = useState(false);
-  const dispatch = useDispatch();
-
   const [updatePost] = useUpdatePostMutation();
 
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setCategoryDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
@@ -29,7 +38,7 @@ const AwarenessCategoryForm = ({
     }));
   };
 
-  const submiteHandler = async (e) => {
+  const submiteHandler = async (e:React.FormEvent) => {
     e.preventDefault();
 
     console.log(categoryDataForm);
@@ -73,6 +82,7 @@ const AwarenessCategoryForm = ({
       setCategoryForm((prev) => ({
         ...prev,
         updateId: "",
+        
       }));
     }
 
@@ -87,6 +97,7 @@ const AwarenessCategoryForm = ({
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={closeHandler}
     >
+      <ToastContainer/>
       <div
         className="bg-white rounded-md w-[400px]"
         onClick={(e) => e.stopPropagation()}

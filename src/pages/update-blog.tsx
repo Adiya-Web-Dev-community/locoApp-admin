@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -61,22 +60,22 @@ const UpdateBlog = () => {
   };
   const HandleUpdate = useCallback(async () => {
     console.log(state);
-    // try {
-    //   const response = await updatePost({
-    //     path: `/blog/update-blog/${id}`,
-    //     data: state,
-    //   });
-    //   if (response?.data?.success) {
-    //     toast.success(response?.data?.message, {
-    //       autoClose: 3000,
-    //     });
+    try {
+      const response = await updatePost({
+        path: `/blog/update-blog/${id}`,
+        data: state,
+      });
+      if (response?.data?.success) {
+        toast.success(response?.data?.message, {
+          autoClose: 3000,
+        });
 
-    //   } else {
-    //     toast.error("Failed to Update main category");
-    //   }
-    // } catch (error) {
-    //   console.error("Update failed:", error);
-    // }
+      } else {
+        toast.error("Failed to Update main category");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
   }, [id, state, updatePost]);
   return (
     <div className="p-5  w-full bg-[#e7e5e592]">

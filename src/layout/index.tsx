@@ -1,13 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import Sidebar from "./sidebar";
 import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import Header from "../components/navigation/Header";
 import SideBar from "../components/navigation/SideBar";
-interface Props {
-  children?: React.ReactNode;
-}
-const Layout = ({ children }: Props) => {
+
+const Layout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState({
     large: false,
     small: false,
@@ -52,12 +49,6 @@ const Layout = ({ children }: Props) => {
         </div>
       </div>
     </main>
-    // <div className="flex flex-row ">
-    //   <ToastContainer />
-    //   <Sidebar />
-    //   <div className="h-screen overflow-auto ">{children}</div>
-    //   <Outlet />
-    // </div>
   );
 };
 export default Layout;

@@ -62,7 +62,7 @@ const [isExternal,setIsExternal]=useState(false)
     }
   };
   const navigate = useNavigate();
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e:React.FormEvent) => {
     e.preventDefault();
     try {
         const response = await updatePost({

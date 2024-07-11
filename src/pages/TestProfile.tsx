@@ -1,28 +1,48 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
 import { Link, useParams } from "react-router-dom";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import { toast } from "react-toastify";
-import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { toast, ToastContainer } from "react-toastify";
 import { MdOutlineQuiz } from "react-icons/md";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { IoIosSend } from "react-icons/io";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import QuizQuestion from "../forms/QuizQuestion";
 import TestQuestion from "../forms/TestQuestion";
-
+import { TestQuestionsType } from "../types";
+interface stateProps{
+  condition: boolean,
+  isCreat: boolean,
+  data: {
+    _id:string,
+    name:string[],
+    options:string[],
+    predicted_result:string,
+    actualresult:string,
+    isTrue:boolean,
+    answer_description:string
+  },
+  testId: string,
+}
 const TestProfile = () => {
   const { id } = useParams();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading,  isError } = useGetDataQuery({
     url: `/test/${id}`,
   });
 
   console.log(data, "pagination");
 
-  const [isQuestionForm, setQuestionForm] = useState({
+  const [isQuestionForm, setQuestionForm] = useState<stateProps>({
     condition: false,
     isCreat: false,
-    data: null,
+    data: {
+      _id:"",
+      name:[],
+      options:[],
+      predicted_result:"",
+      actualresult:"",
+      isTrue:false,
+      answer_description:""
+    },
     testId: "",
   });
 
@@ -42,7 +62,15 @@ const TestProfile = () => {
       ...prev,
       condition: false,
       isCreat: false,
-      data: null,
+      data: {
+        _id:"",
+        name:[],
+        options:[],
+        predicted_result:"",
+        actualresult:"",
+        isTrue:false,
+        answer_description:""
+      },
       testId: "",
     }));
   };
@@ -76,7 +104,7 @@ const TestProfile = () => {
     });
   };
 
-  const deletHandler = (id) => {
+  const deletHandler = (id:string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -85,7 +113,7 @@ const TestProfile = () => {
     }));
   };
 
-  const updateHandler = (testData) => {
+  const updateHandler = (testData:TestQuestionsType) => {
     setQuestionForm((prev) => ({
       ...prev,
       condition: true,
@@ -108,7 +136,7 @@ const TestProfile = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -119,9 +147,10 @@ const TestProfile = () => {
   };
   return (
     <>
+    <ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+       
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -229,7 +258,7 @@ const TestProfile = () => {
                       Check Internet connection or Contact to Admin
                     </p>
                   ) : data?.questions.length !== 0 ? (
-                    currentQuestion?.map((question, i) => (
+                    currentQuestion?.map((question:TestQuestionsType, i:number) => (
                       <section
                         key={i}
                         className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuizQuestion group hover:bg-gray-50"
@@ -273,7 +302,7 @@ const TestProfile = () => {
                           </button>
                           <button
                             className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                            onClick={() => deletHandler(question._id)}
+                            onClick={() => deletHandler(question?._id)}
                           >
                             Delete
                           </button>

@@ -60,9 +60,11 @@ export interface videosTypes{
     _id:string;
     title:string;
     slug:string;
+    thumnail:string;
+   
     category:string;
     url:string;
-    tags:string;
+    tags:string[];
     dectription:string;
     updatedAt:string;
     createdAt:string;
@@ -101,4 +103,88 @@ export interface AwarenessType {
     content:string,
     createdAt:string
   }
+export interface AwarenessTypes {
+    _id: string,
+    category: string,
+    createdAt: string,
+    description: string,
+    image: string
+    title: string
+}
+
+export interface QuestionsType{
+    _id: string,
+    name:string,
+    options:string[],
+    predicted_result:string,
+    actualresult:string,
+    isTrue:boolean,
+    answer_description:string,
+}
+export interface quiztypes{
+    _id: string,
+    title:string,
+    isComplete:boolean,
+    instructions:string,
+    score:number,
+    rightanswers:number,
+    wronganswers:number,
+    questions:[QuestionsType]
+    createdAt: string,
+} 
+export interface sponsorProductsType{
+    _id:string,
+    name:string,
+    image:string,
+    description:string,
+    active:boolean,
+    link:string,
+    sponsorname:string,
+    createdAt: string,
+}
+export interface SponsorCompanytypes{
+    _id: string,
+    name:string,
+    type:string,
+    image:string,
+    link:string,
+    video:string,
+    description:string,
+    active:boolean,
+    products:[sponsorProductsType],
+    createdAt: string,
+} 
+export interface TestQuestionsType{
+    _id: string,
+    name:string[],
+    options:string[],
+    predicted_result:string,
+    actualresult:string,
+    isTrue:boolean,
+    answer_description:string,
+}
+export interface Testtypes{
+    _id: string,
+    title:string,
+    isComplete:boolean,
+    instructions:string,
+    score:number,
+    rightanswers:number,
+    wronganswers:number,
+    questions:[TestQuestionsType]
+    createdAt: string,
+} 
+
+export interface awarenessCategoryType{
+    createdAt:string;
+    name:string;
+    _id:string;
+}
+
+export type RootState = {
+    authToken: {
+      userToken: string | null; 
+
+    };
   
+  };

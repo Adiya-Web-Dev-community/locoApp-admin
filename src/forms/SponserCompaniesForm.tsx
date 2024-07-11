@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { FaCaretDown } from "react-icons/fa";
 import { TiArrowBackOutline } from "react-icons/ti";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
 import uploadImage from "../firebase_image/image";
 import uploadVideo from "../firebase_video/video";
@@ -33,7 +33,7 @@ const SponserCompaniesForm = () => {
 
   console.log(id);
 
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data,  isError } = useGetDataQuery({
     url: `/sponsor/company/${id}`,
   });
 
@@ -113,8 +113,8 @@ const SponserCompaniesForm = () => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setCompaniesData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -137,21 +137,17 @@ const SponserCompaniesForm = () => {
 
   //for Image Data
 
-  const handleImageChange = async (event: React.ChangeEvent) => {
-    // const selectedFile = event.target.files[0];
-
-    const selectedFile = event.target?.files?.[0];
-
-    if (selectedFile) {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      const selectedFile = files[0];
+  
       const imageUrl = await uploadImage(
-        event.target.files[0].name,
-
-        event.target.files[0],
-
+        selectedFile.name,
+        selectedFile,
         setProgressStatus
       );
-
-      console.log(imageUrl, selectedFile, "<<frommodal?>>");
+  
       setCompaniesData((prev) => ({
         ...prev,
         image: imageUrl,
@@ -236,6 +232,7 @@ const SponserCompaniesForm = () => {
 
   return (
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
+      <ToastContainer/>
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
         onSubmit={submitHandler}

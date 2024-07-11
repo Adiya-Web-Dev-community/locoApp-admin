@@ -24,12 +24,12 @@ const MultipleImageUploadeForm = ({ setImageData, imge }) => {
     if (imge.length !== 0) {
       setimageData({
         image: [...imge],
-        imageNames: imge.map((url) => url.split("/").pop().split("?")[0]),
+        imageNames: imge.map((url:string) => url.split("/").pop().split("?")[0]),
       });
     }
   }, [imge]);
 
-  const handleImageChange = async (event) => {
+  const handleImageChange = async (event:React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
     const folderName = "Test_Question"; // folder name
 

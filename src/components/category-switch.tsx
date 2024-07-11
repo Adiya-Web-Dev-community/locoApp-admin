@@ -231,8 +231,10 @@ const Tab2: React.FC = () => {
     subId: "",
     name: "",
   });
-
-  const [showSubCategories, setShowSubCategories] = useState({});
+  interface ShowSubCategories {
+    [key: string]: boolean;
+  }
+  const [showSubCategories, setShowSubCategories] = useState<ShowSubCategories>({});
   const [createSubCategory, setSubCategory] = useState<StateProp>({
     mainId: "",
     name: "",
@@ -286,9 +288,9 @@ const Tab2: React.FC = () => {
   const handleCancelClick = () => {
     setEditId({ mainId: "", subId: "", name: "" });
   };
-
+  
   const toggleSubCategories = (categoryId: string) => {
-    setShowSubCategories((prevState) => ({
+    setShowSubCategories((prevState: ShowSubCategories) => ({
       ...prevState,
       [categoryId]: !prevState[categoryId],
     }));
@@ -372,7 +374,7 @@ const Tab2: React.FC = () => {
                 <h2 className="text-sm font-bold">{category?.name}</h2>
                 {category?.subCategories?.length > 0 && (
                   <button onClick={() => toggleSubCategories(category?._id)}>
-                    {showSubCategories[category._id] ? (
+                    {showSubCategories[category?._id] ? (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-6 w-6"
@@ -510,6 +512,7 @@ const Tab3: React.FC = () => {
     subId: "",
     name: "",
   });
+  
   const [showSubCategories, setShowSubCategories] = useState<
     Record<string, boolean>
   >({});

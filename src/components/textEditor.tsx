@@ -4,14 +4,33 @@ interface Props {
   value: string;
   OnChangeEditor: (e: string) => void;
 }
+interface TinyMCEInstance {
+  activeEditor: {
+    editorUpload: {
+      blobCache: {
+        create(name: string, file: File, base64: string): any; // Adjust types as needed
+        add(blobInfo: any): void; // Adjust types as needed
+      };
+    };
+    insertContent(content: string): void;
+  };
+}
+
+
+declare global {
+  interface Window {
+    tinymce: TinyMCEInstance | undefined; // Use your specific interface here
+  }
+}
 const TextEditor = ({ value, OnChangeEditor }: Props) => {
   console.log(value, "from textEditor");
   const imageHandler = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+  
     input.onchange = function () {
-      const file = this.files?.[0];
+      const file = (this as HTMLInputElement).files?.[0]; // Type assertion here
       if (file) {
         const reader = new FileReader();
         reader.onload = function () {
@@ -26,6 +45,7 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
         reader.readAsDataURL(file);
       }
     };
+  
     input.click();
   };
   const videoHandler = () => {

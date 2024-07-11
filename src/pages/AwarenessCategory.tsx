@@ -2,20 +2,17 @@ import { useState } from "react";
 import AwarenessCategoryForm from "../forms/AwarenessCategoryForm";
 import { IoIosSend } from "react-icons/io";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import Loader from "../components/loader";
 import Pagination from "../components/pagination/Pagination";
 
+interface awarenessCategory {
+  _id: string;
+  name: string;
+  image: string;
+}
 const AwarenessCategory = () => {
-  const [categorysData, setCategoryData] = useState([
-    { categoryName: "Hello" },
-  ]);
-
-  // const categoryDataLatest = useSelector(
-  //   (state) => state.category.categoryData
-  // );
-
   const [isCategoryForm, setCategoryForm] = useState({
     creat: false,
     updateId: "",
@@ -38,7 +35,7 @@ const AwarenessCategory = () => {
 
   //   console.log(categorysData);
 
-  const { data, isLoading, error } = useGetDataQuery({
+  const { data, isLoading, isError } = useGetDataQuery({
     url: "/awareness/category",
   });
 
@@ -49,17 +46,8 @@ const AwarenessCategory = () => {
     id: "",
   });
 
-  console.log(data);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentCompanies, "pagination");
 
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -72,23 +60,22 @@ const AwarenessCategory = () => {
     });
   };
 
-  const deletCategory = (id) => {
-    console.log(id, "from handler");
+  const deletCategory = (id: string) => {
     setModalOpen((prev) => ({
       ...prev,
       condition: !prev.condition,
       id: id,
     }));
   };
-  const updateCategory = (category) => {
+  const updateCategory = (category: awarenessCategory) => {
     setCategoryForm((prev) => ({
       ...prev,
-      updateId: category._id,
+      updateId: category?._id,
     }));
 
     setUpdateDate((prev) => ({
       ...prev,
-      name: category.name,
+      name: category?.name,
     }));
   };
 
@@ -106,7 +93,7 @@ const AwarenessCategory = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -125,10 +112,11 @@ const AwarenessCategory = () => {
           setCategoryForm={setCategoryForm}
         />
       )}
+      <ToastContainer/>
       {isLoading && <Loader />}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+        
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -192,34 +180,45 @@ const AwarenessCategory = () => {
               ))}
             </section>
             {/* min-w-[900px] */}
-            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[600px] bg-gray-50">
-              {data?.map((category, i) => (
-                <section
-                  key={i}
-                  className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customeCategory group hover:bg-gray-50"
-                >
-                  <span>{i + 1}</span>
+            <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
+              {isLoading ? (
+           
+                <p>Loading...</p>
+              ) : isError ? (
+                <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
+                  Check Internet connection or Contact to Admin
+                </p>
+              ) : data?.length > 0 ? (
+                data?.map((category: awarenessCategory, i: number) => (
+                  <section
+                    key={i}
+                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customeCategory group hover:bg-gray-50"
+                  >
+                    <span>{i + 1}</span>
 
-                  <span className="ml-2 text-sm font-semibold text-gray-600 md:text-base">
-                    {category?.name}
-                  </span>
+                    <span className="ml-2 text-sm font-semibold text-gray-600 md:text-base">
+                      {category?.name}
+                    </span>
 
-                  <div className="flex justify-center gap-4">
-                    <button
-                      className="px-3 text-sm py-2 text-white  rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
-                      onClick={() => updateCategory(category)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="px-3 py-2 text-sm text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                      onClick={() => deletCategory(category._id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </section>
-              ))}
+                    <div className="flex justify-center gap-4">
+                      <button
+                        className="px-3 text-sm py-2 text-white  rounded-md bg-[#1f3c88] hover:bg-[#2d56bb]"
+                        onClick={() => updateCategory(category)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="px-3 py-2 text-sm text-white rounded-md bg-rose-600 hover:bg-rose-700"
+                        onClick={() => deletCategory(category?._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </section>
+                ))
+              ) : (
+                <div>No Data Found</div>
+              )}
             </div>
           </section>
           <Pagination

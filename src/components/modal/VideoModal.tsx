@@ -1,9 +1,12 @@
 import React from "react";
 import { IoClose } from "react-icons/io5";
 import ReactPlayer from "react-player";
-
-const VideoModal = ({ url, onClose }) => {
-  const handlingStopPro = (e) => {
+interface Props{
+  onClose:()=>void,
+  url:string
+}
+const VideoModal = ({ url, onClose }:Props) => {
+  const handlingStopPro = (e:React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
   };
   return (

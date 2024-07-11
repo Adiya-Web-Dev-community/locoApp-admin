@@ -6,7 +6,7 @@ import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { useState } from "react";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ImpLinkDocs } from "../types";
 import Pagination from "../components/pagination/Pagination";
@@ -14,27 +14,15 @@ import { IoIosSend } from "react-icons/io";
 
 const ImportantDocuments = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading,  isError } = useGetDataQuery({
     url: "/important_link",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  console.log(data);
-  const currentUsers = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentUsers, "pagination");
-
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
-
-  console.log(data);
-
   const [deletPost] = useDeletePostMutation();
 
   const [isModalOpen, setModalOpen] = useState({
@@ -61,7 +49,6 @@ const ImportantDocuments = () => {
   const handleConfirmDelete = () => {
     // Handle the delete action here
     toast.loading("checking Details");
-    console.log("Item deleted", isModalOpen.id);
     deletPost({
       url: `/important_link/${isModalOpen.id}`,
     })
@@ -71,7 +58,7 @@ const ImportantDocuments = () => {
           toast.success(`${res.data.message}`);
         }
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -80,22 +67,19 @@ const ImportantDocuments = () => {
       id: "",
     });
   };
+  const updateHandler = (doc:ImpLinkDocs) => {
+    navigate(`/important-document/update-documents/${doc?._id}`);
 
-  const updateHandler = (doc) => {
-    navigate(`/important-document/update-documents/${doc._id}`);
-    console.log("under process", doc);
   };
-
-  console.log("doc data>>", data);
-
   const listHeadingUsers = ["Title", "Downloadable", "Date", "Setting"];
   return (
     <>
+    <ToastContainer/>
       {isLoading && <Loader />}
 
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+        
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -160,15 +144,14 @@ const ImportantDocuments = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+               
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((document, i) => (
+                data?.map((document:ImpLinkDocs, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customImportand group hover:bg-gray-50"
@@ -213,14 +196,14 @@ const ImportantDocuments = () => {
                         onClick={() => updateHandler(document)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
                         onClick={() => deletHandler(document._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>

@@ -1,4 +1,3 @@
-import React from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { Link, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";

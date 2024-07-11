@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { useGetDataQuery, useUpdatePostMutation } from "../api";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import TextEditor from "../components/textEditor";
 import { FaCaretDown } from "react-icons/fa";
+import { QuestionsType } from "../types";
 
 interface stateProps{
   question:string,
@@ -11,7 +12,18 @@ interface stateProps{
   result:string,
   content:string,
 }
-const QuizQuestion = ({ isQuestionForm, close }) => {
+interface quizes{
+  condition:boolean,
+  isCreat:boolean,
+  quizId:string,
+  data:QuestionsType
+}
+interface Props{
+  close:()=>void,
+  isQuestionForm:quizes,
+ 
+}
+const QuizQuestion = ({ isQuestionForm, close }:Props) => {
   const [updatePost] = useUpdatePostMutation();
 
   const [quizData, setQuizData] = useState<stateProps>({
@@ -21,7 +33,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
     content: isQuestionForm?.data?.answer_description ,
   });
 
-  const { data, error, isloading, isError } = useGetDataQuery({
+  const { data, isError } = useGetDataQuery({
     url: `/quiz/question/${isQuestionForm?.data?._id}`,
   });
 
@@ -58,14 +70,13 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type, checked } = e.target;
-
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
     setQuizData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
-    // if (name === "phone" && !pattern.test(value)) setIsError(true);
-    // else setIsError(false);
+
   };
 
   //   const quizId = "";
@@ -175,6 +186,7 @@ const QuizQuestion = ({ isQuestionForm, close }) => {
       className="fixed inset-0 z-10 flex items-center justify-center px-4 sm:px-0 bg-black/40"
       onClick={close}
     >
+      <ToastContainer/>
       <div
         className="md:w-[800px] bg-white rounded-md "
         // className="w-full bg-white md:px-4 md:ml-4 md:pl-0"

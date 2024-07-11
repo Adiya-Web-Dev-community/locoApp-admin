@@ -1,44 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
-
 import { useDeletePostMutation, useGetDataQuery } from "../api";
-import loginImage from "../assets/login_2.svg";
 import Loader from "../components/loader";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { useState } from "react";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Pagination from "../components/pagination/Pagination";
 import { IoIosSend } from "react-icons/io";
-
-interface AwarenessType {
-  _id: string;
-  title: string;
-  category: string;
-
-  createdAt: string;
-  image: string;
-  action: string;
-}
+import { AwarenessTypes } from "../types";
 
 const Awareness = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading, isError } = useGetDataQuery({
     url: "/awareness",
   });
-
   const [deletPost] = useDeletePostMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  //calculation of page
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-
-  console.log(data);
-  const currentUsers = data?.slice(indexOfFirstItem, indexOfLastItem);
-
-  console.log(currentUsers, "pagination");
 
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -56,13 +36,11 @@ const Awareness = () => {
     });
   };
 
-  const updateHandler = (user) => {
-    navigate(`/users/${user._id}`);
-    console.log("under process", user);
+  const updateHandler = (user:AwarenessTypes) => {
+    navigate(`/users/${user?._id}`);
   };
 
-  const deletHandler = (id) => {
-    console.log(id, "from handler");
+  const deletHandler = (id:string) => {
     setModalOpen((prev) => ({
       ...prev,
       condition: !prev.condition,
@@ -71,9 +49,7 @@ const Awareness = () => {
   };
 
   const handleConfirmDelete = () => {
-    // Handle the delete action here
     toast.loading("checking Details");
-    console.log("Item deleted", isModalOpen.id);
     deletPost({
       url: `/awareness/${isModalOpen.id}`,
     })
@@ -84,7 +60,7 @@ const Awareness = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -94,16 +70,14 @@ const Awareness = () => {
     });
   };
 
-  console.log(data, error, "awareness");
-
   const listHeadingAwarness = ["Title", "Category", "Date", "Image", "Setting"];
   return (
     <>
       {isLoading && <Loader />}
-
+      <ToastContainer/>
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -155,7 +129,7 @@ const Awareness = () => {
             <section className="grid grid-cols-customAwarness pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {listHeadingAwarness.map((heading, index) => (
+              {listHeadingAwarness?.map((heading:string, index:number) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -168,15 +142,15 @@ const Awareness = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+             
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : (
-                data?.map((awar, i) => (
+                data?.length>0?
+                data?.map((awar:AwarenessTypes, i:number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customAwarness group hover:bg-gray-50"
@@ -223,18 +197,18 @@ const Awareness = () => {
                         onClick={() => updateHandler(awar)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
-                        onClick={() => deletHandler(awar._id)}
+                        onClick={() => deletHandler(awar?._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>
-                ))
+                )):<div>No Data Found</div>
               )}
             </div>
           </section>

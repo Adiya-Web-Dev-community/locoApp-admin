@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductsLoading = () => {
   const productsDummyData = [1, 2]; // Adjust the number of dummy rows as needed
   return productsDummyData.map((_, index) => (

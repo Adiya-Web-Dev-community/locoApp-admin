@@ -1,40 +1,28 @@
-import  { useState } from "react";
+import { useState } from "react";
 import Pagination from "../components/pagination/Pagination";
 import EditICONSVG from "../assets/SVG/editICON";
 import DeleteICONSVG from "../assets/SVG/deleteICON";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import Loader from "../components/loader";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { Link } from "react-router-dom";
 import { IoIosSend } from "react-icons/io";
-
 import { PiEye } from "react-icons/pi";
-import CreatTest from "../forms/CreatTest";
-import TestQuestion from "../forms/TestQuestion";
 import { DailyTask } from "../types";
 import Task from "../forms/Task";
 
 const DalyTasks = () => {
-  //   const navigate = useNavigate();
-  const { data, isLoading, error, isError } = useGetDataQuery({
+  const { data, isLoading, isError } = useGetDataQuery({
     url: "/daily-task",
   });
 
-  console.log("daily task data>>>>",data)
+  console.log("daily task data>>>>", data);
   const [deletPost] = useDeletePostMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   //calculation of page
-
-  
-
-
- 
-
-
-
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -45,9 +33,6 @@ const DalyTasks = () => {
     title: "",
     content: "",
   });
-
-
-
 
   const [isModalOpen, setModalOpen] = useState({
     condition: false,
@@ -61,17 +46,16 @@ const DalyTasks = () => {
     });
   };
 
-  const updateHandler = (task:DailyTask) => {
+  const updateHandler = (task: DailyTask) => {
     setTaskForm((prev) => ({
       ...prev,
       updateId: task._id,
       title: task?.title,
       content: task?.content,
     }));
-   
   };
 
-  const deletHandler = (id:string) => {
+  const deletHandler = (id: string) => {
     console.log(id, "from handler");
     setModalOpen((prev) => ({
       ...prev,
@@ -81,7 +65,6 @@ const DalyTasks = () => {
   };
 
   const handleConfirmDelete = () => {
-    // Handle the delete action here
     toast.loading("checking Details");
     console.log("Item deleted", isModalOpen.id);
     deletPost({
@@ -94,7 +77,7 @@ const DalyTasks = () => {
         }
         console.log(res);
       })
-      .catch((error) => {
+      .catch(() => {
         toast.dismiss();
         toast.error("Not successfull to delete");
       });
@@ -103,14 +86,7 @@ const DalyTasks = () => {
       id: "",
     });
   };
-
-  console.log(data, error, "awareness");
-
-  const listHeadingAwarness = [
-    "Title",
-    "view",
-    "Setting",
-  ];
+  const listHeadingAwarness = ["Title", "view", "Setting"];
 
   const handlingCrateQuiz = () => {
     setTaskForm((prev) => ({
@@ -121,28 +97,20 @@ const DalyTasks = () => {
     }));
   };
 
-
-
   return (
     <>
       {isLoading && <Loader />}
-
+      <ToastContainer/>
       {(isTakForm.creat || isTakForm.updateId) && (
-        <Task
-          isTestForm={isTakForm}
-          setTestForm={setTaskForm}
-        />
+        <Task isTestForm={isTakForm} setTestForm={setTaskForm} />
       )}
-     
-
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          isOpen={isModalOpen}
+          
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
       )}
-
       <section
         className={`  md:pl-0 p-4 h-full  w-full rounded-md   mx-auto [&::-webkit-scrollbar]:hidden `}
       >
@@ -151,7 +119,7 @@ const DalyTasks = () => {
         >
           <div className="flex items-center mb-2 md:mb-6">
             <h1 className=" text-[28px] font-bold md:text-4xl text-gray-600 font-mavenPro">
-             Daily Task
+              Daily Task
             </h1>
           </div>
           <div className="flex justify-between mb-4">
@@ -162,9 +130,6 @@ const DalyTasks = () => {
                 className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
                              bg-slate-50 focus:border-gray-100
                           shadow-inner rounded-[0.26rem] outline-none `}
-                // value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
-                // onFocus={() => setCurrentPage(1)}
               />
             </div>
             <div className="relative flex items-center self-end ">
@@ -186,7 +151,7 @@ const DalyTasks = () => {
             <section className="grid grid-cols-customQuiz pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {listHeadingAwarness?.map((heading, index) => (
+              {listHeadingAwarness?.map((heading:string, index:number) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -199,16 +164,14 @@ const DalyTasks = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
               {isLoading ? (
-                // Loading element for the table
-                // <CompaniesLoading />
+                
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
-              ) : (
-                data?.length>0?
-                data?.map((item:DailyTask, i:number) => (
+              ) : data?.length > 0 ? (
+                data?.map((item: DailyTask, i: number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuiz group hover:bg-gray-50"
@@ -235,30 +198,36 @@ const DalyTasks = () => {
                         onClick={() => updateHandler(item)}
                       >
                         {/* Edit */}
-                        <EditICONSVG heignt={18} width={18} fill={"white"} />
+                        <EditICONSVG height={18} width={18} fill={"white"} />
                       </button>
                       <button
                         className="px-3 py-2 text-sm font-semibold text-white rounded-md bg-rose-600 hover:bg-rose-700"
                         onClick={() => deletHandler(item?._id)}
                       >
                         {/* Delete */}
-                        <DeleteICONSVG heignt={18} width={18} fill={"white"} />
+                        <DeleteICONSVG height={18} width={18} fill={"white"} />
                       </button>
                     </div>
                   </section>
-                )):<div className="flex justify-center">
-                    <h1 className="flex items-center content-center justify-center ">Data Not Found</h1>
+                ))
+              ) : (
+                <div className="flex justify-center">
+                  <h1 className="flex items-center content-center justify-center ">
+                    Data Not Found
+                  </h1>
                 </div>
               )}
             </div>
           </section>
 
-         {data?.length>0&& <Pagination
-            currentPage={currentPage}
-            apiData={data}
-            itemsPerPage={itemsPerPage}
-            handleClick={handleClick}
-          />}
+          {data?.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              apiData={data}
+              itemsPerPage={itemsPerPage}
+              handleClick={handleClick}
+            />
+          )}
         </section>
       </section>
     </>

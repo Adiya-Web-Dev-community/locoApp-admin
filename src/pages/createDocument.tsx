@@ -55,7 +55,7 @@ const [isExternal,setIsExternal]=useState(false)
     e.preventDefault();
     try {
       const response = await createPost({
-        data: value,
+        data: {...value},
         path: `/important_link/create`,
       });
 
