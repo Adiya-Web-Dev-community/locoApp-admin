@@ -4,24 +4,39 @@ interface Props {
   value: string;
   OnChangeEditor: (e: string) => void;
 }
+interface BlobInfo {
+  blobUri(): string;
+}
+
+interface BlobCache {
+  create(name: string, file: File, base64: string): BlobInfo;
+  add(blobInfo: BlobInfo): void;
+}
+
+interface EditorUpload {
+  blobCache: BlobCache;
+}
+
+interface ActiveEditor {
+  editorUpload: EditorUpload;
+  insertContent(content: string): void;
+}
+
 interface TinyMCEInstance {
-  activeEditor: {
-    editorUpload: {
-      blobCache: {
-        create(name: string, file: File, base64: string): any; // Adjust types as needed
-        add(blobInfo: any): void; // Adjust types as needed
-      };
-    };
-    insertContent(content: string): void;
-  };
+  activeEditor: ActiveEditor;
 }
 
 
 declare global {
   interface Window {
-    tinymce: TinyMCEInstance | undefined; // Use your specific interface here
+    tinymce: TinyMCEInstance ;
   }
 }
+interface FilePickerMeta {
+  filetype: string;
+}
+
+
 const TextEditor = ({ value, OnChangeEditor }: Props) => {
   console.log(value, "from textEditor");
   const imageHandler = () => {
@@ -30,19 +45,25 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
     input.setAttribute("accept", "image/*");
   
     input.onchange = function () {
-      const file = (this as HTMLInputElement).files?.[0]; // Type assertion here
-      if (file) {
+      const file = (this as HTMLInputElement).files?.[0]; 
+      if (file && window.tinymce?.activeEditor?.editorUpload?.blobCache) {
         const reader = new FileReader();
         reader.onload = function () {
           const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;
-          const base64 = reader.result?.toString().split(",")[1];
-          const blobInfo = blobCache.create(file.name, file, base64);
-          blobCache.add(blobInfo);
-          window.tinymce.activeEditor.insertContent(
-            `<img src="${blobInfo.blobUri()}" alt="${file.name}" />`
-          );
+          const base64 = reader.result?.toString()?.split(",")[1]; 
+          if (file.name && base64) {
+            const blobInfo = blobCache.create(file.name, file, base64);
+            blobCache.add(blobInfo);
+            window.tinymce.activeEditor.insertContent(
+              `<img src="${blobInfo.blobUri()}" alt="${file.name}" />`
+            );
+          } else {
+            console.error("File name or base64 data is undefined.");
+          }
         };
         reader.readAsDataURL(file);
+      } else {
+        console.error("TinyMCE is not initialized or file is not selected.");
       }
     };
   
@@ -53,7 +74,7 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
     input.setAttribute("type", "file");
     input.setAttribute("accept", "video/*");
     input.onchange = function () {
-      const file = this.files?.[0];
+      const file = (this as HTMLInputElement).files?.[0]; 
       if (file) {
         const reader = new FileReader();
         reader.onload = function () {
@@ -66,26 +87,26 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
     };
     input.click();
   };
-  const audioHandler = () => {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "audio/*");
-    input.click();
+  // const audioHandler = () => {
+  //   const input = document.createElement("input");
+  //   input.setAttribute("type", "file");
+  //   input.setAttribute("accept", "audio/*");
+  //   input.click();
 
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function () {
-          const audioSrc = reader.result as string;
-          window.tinymce.activeEditor?.insertContent(
-            `<audio controls src="${audioSrc}" title="${file.name}"></audio>`
-          );
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-  };
+  //   input.onchange = async () => {
+  //     const file = input.files?.[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = function () {
+  //         const audioSrc = reader.result as string;
+  //         window.tinymce.activeEditor?.insertContent(
+  //           `<audio controls src="${audioSrc}" title="${file.name}"></audio>`
+  //         );
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   };
+  // };
   const plugins = [
     'advlist autolink lists link image charmap print preview anchor',
     'searchreplace visualblocks code fullscreen',
@@ -107,10 +128,10 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
           menubar: "file edit view insert format tools table",
           plugins: plugins.join(" "),
           toolbar: toolbar.join(" "),
-          file_picker_callback: (callback, value, meta) => {
-            if (meta.filetype === "image") {
+          file_picker_callback: (callback, _value, meta: FilePickerMeta) => {
+            if (meta && meta.filetype === "image") {
               imageHandler();
-            } else if (meta.filetype === "media") {
+            } else if (meta && meta.filetype === "media") {
               videoHandler();
             }
           },
