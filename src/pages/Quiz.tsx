@@ -12,7 +12,19 @@ import CreatQuiz from "../forms/CreatQuiz";
 import QuizQuestion from "../forms/QuizQuestion";
 import { PiEye } from "react-icons/pi";
 import { quiztypes } from "../types";
-
+interface QuestionData {
+  _id:string
+  name: string;
+  options: string[];
+  predicted_result: string;
+  answer_description: string;
+}
+interface QuestionFormState {
+  condition: boolean;
+  isCreat: boolean;
+  data: QuestionData;
+  quizId: string;
+}
 const Quiz = () => {
   const { data, isLoading,  isError } = useGetDataQuery({
     url: "/quiz",
@@ -32,18 +44,19 @@ const Quiz = () => {
   });
 
 
-  const [isQuestionForm, setQuestionForm] = useState({
+  const [isQuestionForm, setQuestionForm] = useState<QuestionFormState>({
     condition: false,
     isCreat: false,
-    data: null,
+    data: {
+      _id:"",
+      name:"",
+      options:[],
+      predicted_result:"",
+      answer_description:""
+    },
     quizId: "",
   });
-
-  const [updateData, setUpdateDate] = useState({
-    title: "",
-    instructions: "",
-    completd: false,
-  });
+ 
 
   const [isModalOpen, setModalOpen] = useState({
     condition: false,
@@ -61,12 +74,6 @@ const Quiz = () => {
     setQuizForm((prev) => ({
       ...prev,
       updateId: quiz._id,
-    }));
-    setUpdateDate((prev) => ({
-      ...prev,
-      title: quiz.title,
-      instructions: quiz.instructions,
-      completd: quiz.isComplete,
     }));
   };
 
@@ -116,11 +123,7 @@ const Quiz = () => {
       ...prev,
       creat: !prev.creat,
     }));
-    setUpdateDate({
-      title: "",
-      instructions: "",
-      completd: false,
-    });
+  
   };
 
 
@@ -138,7 +141,13 @@ const Quiz = () => {
       ...prev,
       condition: false,
       isCreat: false,
-      data: null,
+      data: {
+        _id:"",
+        name:"",
+        options:[],
+        predicted_result:"",
+        answer_description:""
+      },
       quizId: "",
     }));
   };
@@ -151,7 +160,7 @@ const Quiz = () => {
         <CreatQuiz
           isQuizForm={isQuizForm}
           setQuizForm={setQuizForm}
-          singleQuiz={updateData}
+    
         />
       )}
       {isQuestionForm.condition && (

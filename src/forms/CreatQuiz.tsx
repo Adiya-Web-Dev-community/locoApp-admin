@@ -13,13 +13,8 @@ interface Props{
     updateId:string
   },
   setQuizForm:React.Dispatch<React.SetStateAction<quizform>>,
-  singleQuiz:{
-    title:string,
-    completd:boolean,
-    instructions:string
-  }
 }
-const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }:Props) => {
+const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
  
 
   const { data, isError } = useGetDataQuery({
@@ -36,7 +31,6 @@ const CreatQuiz = ({ isQuizForm, setQuizForm, singleQuiz }:Props) => {
   });
 
   useEffect(() => {
-    console.log("i am working");
     if (isUpdate && !isError) {
       setquizDataForm((prev) => ({
         ...prev,

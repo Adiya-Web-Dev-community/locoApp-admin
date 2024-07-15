@@ -17,18 +17,36 @@ interface Props{
   },
  
 }
+interface StateProps {
+  image: string[];
+  imageSrc: File[];
+  options: string[];
+  result: string;
+  content: string;
+}
+
 const TestQuestion = ({ isQuestionForm, close }:Props) => {
 
-  console.log("isQuestionForm>>>",isQuestionForm)
   const [updatePost] = useUpdatePostMutation();
 
-  const [testData, settestData] = useState({
+  const [testData, settestData] = useState<StateProps>({
     image: isQuestionForm?.data?.name || [],
     imageSrc: [],
     options: isQuestionForm?.data?.options || [],
     result: isQuestionForm?.data?.predicted_result || "",
     content: isQuestionForm?.data?.answer_description || "",
   });
+  
+
+  // useState(() => {
+  //   settestData({
+  //     image: isQuestionForm?.data?.name || [],
+  //     imageSrc: [],
+  //     options: isQuestionForm?.data?.options || [],
+  //     result: isQuestionForm?.data?.predicted_result || "",
+  //     content: isQuestionForm?.data?.answer_description || "",
+  //   });
+  // }, []);
 
   console.log(testData);
 
@@ -226,18 +244,7 @@ const TestQuestion = ({ isQuestionForm, close }:Props) => {
                   </div>
                 </div>
 
-                {/* [
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Reset%20password-pana.svg?alt=media&token=dfc0281b-cf16-4834-a289-f92d370472dd",
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Login-cuate%20(1).svg?alt=media&token=471ba61a-037d-4718-b518-0a9256572bd1",
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Forgot%20password-pana%20(2).svg?alt=media&token=9e8934b9-9e58-4be9-88bb-01c763539041"
-]
-
-[
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Reset%20password-pana.svg?alt=media&token=dfc0281b-cf16-4834-a289-f92d370472dd",
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Login-cuate%20(1).svg?alt=media&token=471ba61a-037d-4718-b518-0a9256572bd1",
-    "https://firebasestorage.googleapis.com/v0/b/test-01-47043.appspot.com/o/your_folder_name%2Fimage_1720547523575_683%20Forgot%20password-pana%20(2).svg?alt=media&token=9e8934b9-9e58-4be9-88bb-01c763539041"
-] */}
-
+         
                 <div className="relative">
                   <div
                     className="flex justify-between p-2 pl-4 font-medium text-gray-400 bg-green-100 border-transparent rounded-md cursor-pointer focus:border-blue-200"

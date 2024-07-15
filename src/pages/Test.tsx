@@ -37,15 +37,18 @@ const Test = () => {
   const [isQuestionForm, setQuestionForm] = useState({
     condition: false,
     isCreat: false,
-    data: null,
+    data: {
+      _id:"",
+      name:[],
+      options:[],
+      predicted_result:"",
+      actualresult:"",
+      isTrue:false,
+      answer_description:""
+    },
     testId: "",
   });
 
-  const [updateData, setUpdateDate] = useState({
-    title: "",
-    instructions: "",
-    completd: false,
-  });
 
   const [isModalOpen, setModalOpen] = useState({
     condition: false,
@@ -64,12 +67,6 @@ const Test = () => {
     setTestForm((prev) => ({
       ...prev,
       updateId: quiz._id,
-    }));
-    setUpdateDate((prev) => ({
-      ...prev,
-      title: quiz?.title,
-      instructions: quiz?.instructions,
-      completd: quiz?.isComplete,
     }));
   };
 
@@ -119,11 +116,6 @@ const Test = () => {
       ...prev,
       creat: !prev.creat,
     }));
-    setUpdateDate({
-      title: "",
-      instructions: "",
-      completd: false,
-    });
   };
 
   const questionFormHandler = (test:Testtypes) => {
@@ -140,7 +132,15 @@ const Test = () => {
       ...prev,
       condition: false,
       isCreat: false,
-      data: null,
+      data: {
+        _id:"",
+        name:[],
+        options:[],
+        predicted_result:"",
+        actualresult:"",
+        isTrue:false,
+        answer_description:""
+      },
       testId: "",
     }));
   };
@@ -153,7 +153,7 @@ const Test = () => {
         <CreatTest
           isTestForm={isTestForm}
           setTestForm={setTestForm}
-          singleTest={updateData}
+         
         />
       )}
       {isQuestionForm.condition && (

@@ -13,14 +13,10 @@ interface Props{
     updateId:string
   },
   setTestForm:React.Dispatch<React.SetStateAction<CategoryForm>>,
-  singleTest:{
-    completd:boolean,
-    title:string,
-    instructions:string
-  }
+ 
 }
 
-const CreatTest = ({ isTestForm, setTestForm, singleTest }:Props) => {
+const CreatTest = ({ isTestForm, setTestForm }:Props) => {
  
 
   const { data,  isError } = useGetDataQuery({

@@ -8,8 +8,23 @@ import { TiArrowBackOutline } from "react-icons/ti";
 import { IoIosSend } from "react-icons/io";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
 import QuizQuestion from "../forms/QuizQuestion";
-import { QuestionsType } from "../types";
 
+interface QuestionData {
+  _id:string
+  name: string;
+  options: string[];
+  predicted_result: string;
+  answer_description: string;
+}
+
+interface QuestionsType extends QuestionData {}
+
+interface QuestionFormState {
+  condition: boolean;
+  isCreat: boolean;
+  data: QuestionData;
+  quizId: string;
+}
 const QuizProfile = () => {
   const { id } = useParams();
   const { data, isLoading,  isError } = useGetDataQuery({
@@ -18,10 +33,16 @@ const QuizProfile = () => {
 
 
 
-  const [isQuestionForm, setQuestionForm] = useState({
+  const [isQuestionForm, setQuestionForm] = useState<QuestionFormState>({
     condition: false,
     isCreat: false,
-    data: null,
+    data: {
+      _id:"",
+      name:"",
+      options:[],
+      predicted_result:"",
+      answer_description:""
+    },
     quizId: "",
   });
 
@@ -41,7 +62,13 @@ const QuizProfile = () => {
       ...prev,
       condition: false,
       isCreat: false,
-      data: null,
+      data: {
+        _id:"",
+        name:"",
+        options:[],
+        predicted_result:"",
+        answer_description:""
+      },
       quizId: "",
     }));
   };
@@ -84,7 +111,7 @@ const QuizProfile = () => {
     }));
   };
 
-  const updateHandler = (quizData) => {
+  const updateHandler = (quizData:QuestionsType) => {
     setQuestionForm((prev) => ({
       ...prev,
       condition: true,

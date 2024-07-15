@@ -32,9 +32,7 @@ declare global {
     tinymce: TinyMCEInstance ;
   }
 }
-interface FilePickerMeta {
-  filetype: string;
-}
+
 
 
 const TextEditor = ({ value, OnChangeEditor }: Props) => {
@@ -128,7 +126,11 @@ const TextEditor = ({ value, OnChangeEditor }: Props) => {
           menubar: "file edit view insert format tools table",
           plugins: plugins.join(" "),
           toolbar: toolbar.join(" "),
-          file_picker_callback: (callback, _value, meta: FilePickerMeta) => {
+          file_picker_callback: (
+            _callback,
+            _value,
+            meta
+          ) => {
             if (meta && meta.filetype === "image") {
               imageHandler();
             } else if (meta && meta.filetype === "media") {

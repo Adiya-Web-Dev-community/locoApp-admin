@@ -5,10 +5,25 @@ interface StateProps {
   image: string[];
   imageNames: string[];
 }
-const MultipleImageUploadeForm = ({ setImageData, imge }) => {
+
+
+
+interface SetImageData {
+  image: string[];
+  imageSrc: File[];
+  options: string[];
+  result: string;
+  content: string;
+}
+
+interface Props {
+  imge: string[];
+  setImageData: React.Dispatch<React.SetStateAction<SetImageData>>;
+}
+const MultipleImageUploadeForm = ({ setImageData, imge }:Props) => {
   console.log(imge);
 
-  const extractImageName = (url) => {
+  const extractImageName = (url:string) => {
     const parts = url.split(/\/|%2F/);
     const imagePart = parts[parts.length - 1];
     return imagePart.split("?")[0];
@@ -18,13 +33,16 @@ const MultipleImageUploadeForm = ({ setImageData, imge }) => {
     image: imge.length !== 0 ? [...imge] : [],
     imageNames: imge.length !== 0 ? imge.map(extractImageName) : [],
   });
-  const [progressStatus, setProgressStatus] = useState(null);
+  const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
   useEffect(() => {
     if (imge.length !== 0) {
       setimageData({
         image: [...imge],
-        imageNames: imge.map((url:string) => url.split("/").pop().split("?")[0]),
+        imageNames: imge.map((url: string) => {
+          const parts = url.split("/").pop()?.split("?");
+          return parts ? parts[0] : "";
+        }),
       });
     }
   }, [imge]);
@@ -73,7 +91,7 @@ const MultipleImageUploadeForm = ({ setImageData, imge }) => {
         placeholder="Image URL"
         required
       />
-      {progressStatus !== null && progressStatus !== "" && (
+      {progressStatus !== null && (
         <div className="absolute inset-0 z-10 flex items-end">
           <div
             className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
