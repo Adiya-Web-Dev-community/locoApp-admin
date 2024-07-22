@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-  useCreatePostMutation,
-  useGetDataQuery,
-  useUpdatePostMutation,
-} from "../api";
+import { useGetDataQuery, useUpdatePostMutation } from "../api";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import uploadFile from "../firebase_file/file";
 import { TiArrowBackOutline } from "react-icons/ti";
@@ -19,7 +15,7 @@ interface Props {
   imageSrc: string;
 }
 
-const OldCreatDocuments = () => {
+const CreatDocuments = () => {
   const { id } = useParams();
   // const [createPost] = useCreatePostMutation();
   const [updatePost] = useUpdatePostMutation();
@@ -48,15 +44,18 @@ const OldCreatDocuments = () => {
   const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
   useEffect(() => {
-    if (isUpdate && isError) {
+    console.log("running");
+    if (isUpdate && !isError) {
+      console.log("updatd");
       setValue({
-        link: data?.link,
-        donwloadable: data?.donwloadable,
-        title: data?.title,
-        imageSrc: data?.image?.substring(
-          data?.image?.lastIndexOf("%"),
-          data?.image?.lastIndexOf("/") + 1
-        ),
+        link: data?.link || "",
+        donwloadable: data?.donwloadable || "",
+        title: data?.title || "",
+        imageSrc:
+          data?.link?.substring(
+            data?.link?.lastIndexOf("%2F"),
+            data?.link?.lastIndexOf("/") + 1
+          ) || "",
       });
     }
   }, [isUpdate, isError, data]);
@@ -78,11 +77,11 @@ const OldCreatDocuments = () => {
     }
   };
   const navigate = useNavigate();
-  //@ts-expect-error not define event specification use oly for prevent default event
-  const handleCreate = async (e) => {
+
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
+    toast.loading("Checking Details");
     try {
-      toast.loading("Checking Details");
       const response = await updatePost({
         data: { ...value },
         method: isUpdate && !isError ? "PUT" : "POST",
@@ -94,15 +93,8 @@ const OldCreatDocuments = () => {
 
       if (response?.data?.success) {
         toast.dismiss();
-        toast.success(response.data.message, {
-          autoClose: 3000,
-        });
+        toast.success(response.data.message);
 
-        // setValue({
-        //   link: "",
-        //   title: "",
-        //   donwloadable: false,
-        // });
         clearhandler();
       } else {
         toast.dismiss();
@@ -122,10 +114,10 @@ const OldCreatDocuments = () => {
       imageSrc: "",
     });
 
-    // navigate("/important-document");
+    navigate("/important-document");
   };
 
-  console.log(value);
+  console.log(value, id, data, isUpdate ? "Put" : "Post");
 
   return (
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
@@ -157,7 +149,7 @@ const OldCreatDocuments = () => {
               {isExternal ? (
                 <div className="flex flex-col w-full gap-1">
                   <input
-                    value={value?.link}
+                    value={value?.link && value?.link}
                     onChange={(e) => OnchangeValue("link", e.target.value)}
                     type="text"
                     placeholder="Enter Url"
@@ -203,7 +195,11 @@ const OldCreatDocuments = () => {
                   )}
                 </div>
               )}
-              <div className="flex w-full gap-2 mb-2">
+
+              {/* file input to text input */}
+
+              {/* download able  */}
+              <div className="flex items-center order-2 w-full gap-2 md:order-1 ">
                 <label htmlFor="" className="mb-1 font-medium text-gray-500">
                   Download Able
                 </label>
@@ -216,7 +212,7 @@ const OldCreatDocuments = () => {
                   type="checkbox"
                 />
               </div>
-              <div className="flex w-full gap-2 ">
+              <div className="flex order-1 w-full gap-2 md:order-2">
                 <label htmlFor="" className="mb-1 font-medium text-gray-500">
                   External URL
                 </label>
@@ -360,4 +356,4 @@ const OldCreatDocuments = () => {
   // );
 };
 
-export default OldCreatDocuments;
+export default CreatDocuments;

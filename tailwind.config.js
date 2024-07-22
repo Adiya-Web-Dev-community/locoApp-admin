@@ -25,6 +25,7 @@ export default {
         customCompanies:
           "40px 1.4fr 1fr 0.6fr 1fr 2fr 1fr 1fr 1fr 0.8fr 0.8fr ",
         customeCategory: "40px 3fr  0.8fr",
+        customDaily: "40px 4fr 1fr   0.6fr",
       },
     },
   },

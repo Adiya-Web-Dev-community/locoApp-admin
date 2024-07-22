@@ -3,9 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 import { RxCross1, RxHamburgerMenu } from "react-icons/rx";
-import { MdDirectionsSubway,  } from "react-icons/md";
-
-
+import { MdDirectionsSubway } from "react-icons/md";
 
 import BlogICONSVG from "../../assets/SVG/blogICON";
 import CategoryICONSVG from "../../assets/SVG/categoryICON";
@@ -86,7 +84,7 @@ const sidebarData: SidebarItem[] = [
     path: "/daily-task",
     icon: QuizIcon,
   },
-  
+
   // {
   //   name: "Railway History",
   //   path: "/history",
@@ -109,19 +107,21 @@ const sidebarData: SidebarItem[] = [
   // },
 ];
 
-interface subProps{ large:boolean,
-    small:boolean}
-
-
-interface Props{
-  isOpen:subProps
-  onToggleSidebarLarge:()=>void,
-  onToggleSidebarSmall:()=>void,
+interface subProps {
+  large: boolean;
+  small: boolean;
 }
-const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }:Props) => {
 
-
-
+interface Props {
+  isOpen: subProps;
+  onToggleSidebarLarge: () => void;
+  onToggleSidebarSmall: () => void;
+}
+const SideBar = ({
+  isOpen,
+  onToggleSidebarLarge,
+  onToggleSidebarSmall,
+}: Props) => {
   return (
     <section
       className={` h-screen border-r border-gray-200  ${
@@ -189,11 +189,12 @@ const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }:Props) =
             isOpen.large ? "p-4" : "  p-2 pt-4 pl-4 "
           }  overflow-y-auto  [&::-webkit-scrollbar]:hidden `}
         >
-          {sidebarData.map((sideData) => {
+          {sidebarData.map((sideData, i) => {
             const isActive = location.pathname.includes(sideData.path);
 
             return (
               <NavLink
+                key={i}
                 to={`${sideData.path}`}
                 className={({ isActive }) =>
                   ` relative group rounded-md border-l-4 transition-all duration-500  flex font-medium items-center
@@ -205,9 +206,6 @@ const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }:Props) =
                     isActive
                       ? " border-blue-800 bg-blue-200 text-blue-800 font-semibold"
                       : "hover:bg-blue-200 hover:text-gray-800 text-gray-400 border-transparent"
-                    //   isActive
-                    //     ? "bg-gradient-to-r from-emerald-800  font-semibold"
-                    //     : "hover:from-emerald-700 hover:bg-gradient-to-r  hover:text-gray-800 text-gray-400"
                   }`
                 }
               >
@@ -233,57 +231,6 @@ const SideBar = ({ isOpen, onToggleSidebarLarge, onToggleSidebarSmall }:Props) =
               </NavLink>
             );
           })}
-
-          {/* <NavLink
-            to={"/category"}
-            className={({ isActive }) =>
-              ` relative group rounded-md flex  font-medium items-center
-                      ${
-                        isOpen.large ? "m-0 p-1 justify-center" : "m-1 p-2 "
-                      } h-[2.7rem]   ${
-                isActive
-                  ? "bg-gradient-to-r from-emerald-800 text-white font-semibold"
-                  : "hover:from-emerald-700 hover:bg-gradient-to-r  hover:text-white text-gray-400"
-              }`
-            }
-            onClick={handlingCategory}
-          >
-            <MdOutlineCategory className="w-6 h-6" />
-            <span
-              className={`mx-1 p-1  text-[15px] font-montserrat ${
-                isOpen.large ? "hidden" : ""
-              } `}
-            >
-              Category
-            </span>
-          </NavLink> */}
-
-          {/* <NavLink
-            to={"/companies"}
-            className={({ isActive }) =>
-              ` relative group rounded-md flex font-medium items-center
-                    ${
-                      isOpen.large
-                        ? "m-0 p-1 justify-center"
-                        : "m-1 p-2 w-[95%]"
-                    } h-[2.7rem]   ${
-                isActive
-                  ? " bg-gradient-to-r from-emerald-800 text-white font-semibold"
-                  : "hover:from-emerald-700 hover:bg-gradient-to-r  hover:text-white text-gray-400"
-              }`
-            }
-            // onClick={() => handleDispatch()}
-          >
-            <RiBuilding2Line className="w-6 h-6" />
-
-            <span
-              className={`mx-1 p-1  text-[15px] font-montserrat ${
-                isOpen.large ? "hidden" : ""
-              } `}
-            >
-              Company
-            </span>
-          </NavLink> */}
         </div>
       </section>
       <button

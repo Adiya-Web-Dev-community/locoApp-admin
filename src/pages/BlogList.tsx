@@ -1,9 +1,8 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { useDeletePostMutation, useGetDataQuery } from "../api";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import  { useState } from "react";
+import { useState } from "react";
 import Loader from "../components/loader";
 import Pagination from "../components/pagination/Pagination";
 import { IoIosSend } from "react-icons/io";
@@ -21,6 +20,15 @@ const BlogList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  //calculation of page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentCompanies = response?.data?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -46,7 +54,7 @@ const BlogList = () => {
       id: id,
     }));
   };
-  const updateblog = (blog:BlogSTyepes) => {
+  const updateblog = (blog: BlogSTyepes) => {
     navigate(`/creat-blog/blogs-list/update-blog/${blog?._id}`);
   };
 
@@ -72,15 +80,13 @@ const BlogList = () => {
     });
   };
 
-
   const blogHeadings = ["Image", "Title", "Date", "Setting"];
   return (
     <>
       {isLoading && <Loader />}
-      <ToastContainer/>
+      <ToastContainer />
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-         
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -130,7 +136,7 @@ const BlogList = () => {
             <section className="grid grid-cols-customBlog pb-2 p-2  gap-4   min-w-[900px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {blogHeadings?.map((heading:string, index:number) => (
+              {blogHeadings?.map((heading: string, index: number) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -143,15 +149,13 @@ const BlogList = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[900px] bg-gray-50">
               {isLoading ? (
-                
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
-              ) : (
-                response?.data?.length>0?
-                response?.data?.map((blog:BlogSTyepes, i:number) => (
+              ) : response?.data?.length > 0 ? (
+                currentCompanies?.map((blog: BlogSTyepes, i: number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customBlog group hover:bg-gray-50"
@@ -197,7 +201,9 @@ const BlogList = () => {
                       </button>
                     </div>
                   </section>
-                )):<div>Data Not Found</div>
+                ))
+              ) : (
+                <div>Data Not Found</div>
               )}
             </div>
           </section>
