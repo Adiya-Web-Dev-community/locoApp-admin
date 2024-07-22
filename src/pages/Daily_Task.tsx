@@ -23,6 +23,11 @@ const DalyTasks = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   //calculation of page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
+
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -86,7 +91,7 @@ const DalyTasks = () => {
       id: "",
     });
   };
-  const listHeadingAwarness = ["Title", "view", "Setting"];
+  const listHeadingDailyTask = ["Title", "view", "Setting"];
 
   const handlingCrateQuiz = () => {
     setTaskForm((prev) => ({
@@ -100,13 +105,12 @@ const DalyTasks = () => {
   return (
     <>
       {isLoading && <Loader />}
-      <ToastContainer/>
+      <ToastContainer />
       {(isTakForm.creat || isTakForm.updateId) && (
         <Task isTestForm={isTakForm} setTestForm={setTaskForm} />
       )}
       {isModalOpen.condition && (
         <ConfirmDeleteModal
-          
           onClose={handleCloseModal}
           onConfirm={handleConfirmDelete}
         />
@@ -148,10 +152,10 @@ const DalyTasks = () => {
           <section
             className={`w-full overflow-auto   border-2 [&::-webkit-scrollbar]:hidden rounded-lg border-gray-200 shadow-md bg-white`}
           >
-            <section className="grid grid-cols-customQuiz pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
+            <section className="grid grid-cols-customDaily pb-2 p-2  gap-4   min-w-[800px] font-medium md:font-semibold bg-white font-mavenPro">
               <p className="pl-2 md:text-lg">SrNo.</p>
 
-              {listHeadingAwarness?.map((heading:string, index:number) => (
+              {listHeadingDailyTask?.map((heading: string, index: number) => (
                 <p
                   key={index}
                   className={`   md:text-lg ${
@@ -164,23 +168,20 @@ const DalyTasks = () => {
             </section>
             <div className=" h-[380px] overflow-y-auto [&::-webkit-scrollbar]:hidden min-w-[800px] bg-gray-50">
               {isLoading ? (
-                
                 <p>Loading...</p>
               ) : isError ? (
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
               ) : data?.length > 0 ? (
-                data?.map((item: DailyTask, i: number) => (
+                currentCompanies?.map((item: DailyTask, i: number) => (
                   <section
                     key={i}
-                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customQuiz group hover:bg-gray-50"
+                    className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customDaily group hover:bg-gray-50"
                   >
                     <span>{i + 1}</span>
 
-                    <span
-                      className={`  font-semibold text-center  rounded-full  `}
-                    >
+                    <span className={`  font-semibold ml-14  rounded-full  `}>
                       {item?.title ? item?.title : "---"}
                     </span>
                     <div className="grid items-center justify-center ">
