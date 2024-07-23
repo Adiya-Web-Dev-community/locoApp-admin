@@ -3,13 +3,9 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
-import {
-  
-  useGetDataQuery,
-  useUpdatePostMutation,
-} from "../api";
+import { useGetDataQuery, useUpdatePostMutation } from "../api";
 import { VideoCategorys } from "../types";
-import {  toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../components/loader";
 import uploadVideo from "../firebase_video/video";
@@ -18,23 +14,22 @@ import { MdOutlineOndemandVideo } from "react-icons/md";
 import { FaCaretDown, FaRegImage } from "react-icons/fa";
 import uploadImage from "../firebase_image/image";
 
-
-interface stateProps{
-  title: string,
-  slug: string,
-  category: string,
-  url: string,
-  tags: string[],
-  description: string,
-  thumnail: string,
-  imageTitle: string,
+interface stateProps {
+  title: string;
+  slug: string;
+  category: string;
+  url: string;
+  tags: string[];
+  description: string;
+  thumnail: string;
+  imageTitle: string;
 }
 const UploadVideo = () => {
   const { id } = useParams();
 
   const [updatePost] = useUpdatePostMutation();
 
-  const { data,  isError } = useGetDataQuery({
+  const { data, isError } = useGetDataQuery({
     url: `/video/get-video-byid/${id}`,
   });
 
@@ -241,7 +236,7 @@ const UploadVideo = () => {
   console.log(data, "for category");
   return (
     <div className="w-full md:px-4 md:ml-4 md:pl-0">
-      <ToastContainer/>
+      <ToastContainer />
       {isLoadingCategory && <Loader />}
       <form
         className="w-full h-[calc(100vh-6rem)] overflow-hidden   rounded-md"
@@ -284,7 +279,7 @@ const UploadVideo = () => {
                     isOpen.category ? "max-h-60" : "hidden"
                   } custom-scrollbar`}
                 >
-                  {categoryData?.map((video:VideoCategorys, i:number) => (
+                  {categoryData?.map((video: VideoCategorys, i: number) => (
                     <li
                       key={i}
                       className={`p-2 mb-2 text-sm text-[#DEE1E2]  rounded-md cursor-pointer hover:bg-blue-200/60 ${
@@ -298,14 +293,6 @@ const UploadVideo = () => {
                 </ul>
               </div>
 
-              {/* <textarea
-              value={companiesData.discription}
-              onChange={handleChange}
-              name="discription"
-              className="w-full h-24 py-4 pl-4 font-medium bg-green-100 border border-transparent border-gray-400 rounded-md outline-none md:col-span-2 focus:border-blue-200 "
-              placeholder="Write Details"
-              required
-            /> */}
               <div className="flex w-full col-span-1 gap-5 md:col-span-2 ">
                 <ReactQuill
                   theme="snow"
@@ -316,15 +303,6 @@ const UploadVideo = () => {
                   className="w-full bg-green-100 border-none rounded-md "
                 />
               </div>
-              {/* <input
-                value={state?.tags}
-                type="text"
-                onChange={handleChange}
-                name="tags"
-                className="w-full h-10 pl-4 font-medium bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
-                placeholder="Add Tags"
-                required
-              /> */}
 
               {/* add tags */}
               <div className="">

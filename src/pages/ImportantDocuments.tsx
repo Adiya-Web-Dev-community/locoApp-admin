@@ -6,7 +6,7 @@ import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { useState } from "react";
 import ConfirmDeleteModal from "../components/modal/DeleteModal";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ImpLinkDocs } from "../types";
 import Pagination from "../components/pagination/Pagination";
@@ -24,7 +24,9 @@ const ImportantDocuments = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
-  const currentCompanies = data?.slice(indexOfFirstItem, indexOfLastItem);
+  const currentDocuments = Array.isArray(data)
+    ? data.slice(indexOfFirstItem, indexOfLastItem)
+    : data.mesaage;
   const handleClick = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -151,8 +153,13 @@ const ImportantDocuments = () => {
                 <p className="flex items-center justify-center w-full h-full font-medium text-center text-rose-800">
                   Check Internet connection or Contact to Admin
                 </p>
+              ) : typeof currentDocuments === "string" ? (
+                <p className="flex items-center justify-center h-full font-bold text-gray-600">
+                  {currentDocuments} "Add More Document"
+                </p>
               ) : (
-                currentCompanies?.map((document: ImpLinkDocs, i: number) => (
+                data?.length > 0 &&
+                currentDocuments?.map((document: ImpLinkDocs, i: number) => (
                   <section
                     key={i}
                     className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customImportand group hover:bg-gray-50"

@@ -3,29 +3,33 @@ import { useGetDataQuery, useUpdatePostMutation } from "../api";
 import { toast } from "react-toastify";
 import { TiArrowBackOutline } from "react-icons/ti";
 import TextEditor from "../components/textEditor";
+import { FaCaretDown } from "react-icons/fa";
+import { QuizAndTestCategoryType } from "../types";
 interface quizform {
   creat: boolean;
   updateId: string;
 }
-interface Props{
-  isQuizForm:{
-    creat:boolean,
-    updateId:string
-  },
-  setQuizForm:React.Dispatch<React.SetStateAction<quizform>>,
+interface Props {
+  isQuizForm: {
+    creat: boolean;
+    updateId: string;
+  };
+  setQuizForm: React.Dispatch<React.SetStateAction<quizform>>;
 }
-const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
- 
-
+const CreatQuiz = ({ isQuizForm, setQuizForm }: Props) => {
   const { data, isError } = useGetDataQuery({
     url: `/quiz/${isQuizForm?.updateId}`,
   });
-  
+
+  const [isOpen, setOpen] = useState({
+    category: false,
+  });
+
   const isUpdate = Object.keys(data || [])?.length !== 0;
- 
 
   const [quizDataForm, setquizDataForm] = useState({
     title: data?.title ? data?.title : "",
+    category: data?.category ? data?.category : "",
     instructions: data?.instructions ? data?.instructions : "",
     completed: data?.isComplete ? data?.isComplete : false,
   });
@@ -43,7 +47,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
 
   const [updatePost] = useUpdatePostMutation();
 
-  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setquizDataForm((prev) => ({
       ...prev,
       [e?.target?.name]:
@@ -51,7 +55,7 @@ const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
     }));
   };
 
-  const submiteHandler = async (e:React.FormEvent) => {
+  const submiteHandler = async (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log(quizDataForm);
@@ -95,7 +99,19 @@ const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
     }
   };
 
-  const handleEditorChange = (name:string, value:string) => {
+  const selectOption = (field: string, value: string) => {
+    console.log(value);
+    setquizDataForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+    setOpen((prev) => ({
+      ...prev,
+      [field]: false,
+    }));
+  };
+
+  const handleEditorChange = (name: string, value: string) => {
     setquizDataForm((prev) => ({
       ...prev,
       [name]: value,
@@ -118,10 +134,26 @@ const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
     setquizDataForm({
       title: "",
       instructions: "",
+      category: "",
       completed: false,
     });
     console.log(quizDataForm);
   };
+
+  const categoryData = [
+    {
+      name: "latest",
+      _id: "latest01",
+    },
+    {
+      name: "old",
+      _id: "old01",
+    },
+    {
+      name: "newstes",
+      _id: "newstes01",
+    },
+  ];
 
   return (
     <div
@@ -157,6 +189,54 @@ const CreatQuiz = ({ isQuizForm, setQuizForm }:Props) => {
                   placeholder={"Add Title"}
                   required
                 />
+
+                {/* category of Quiz and Test */}
+                <div className="relative">
+                  <div
+                    className="flex justify-between p-2 pl-4 font-medium text-gray-400 border border-gray-400 rounded-md cursor-pointer focus:border-blue-200"
+                    onClick={() =>
+                      setOpen({ ...isOpen, category: !isOpen.category })
+                    }
+                  >
+                    <p
+                      className={`${
+                        quizDataForm?.category !== "" && "text-gray-800"
+                      }`}
+                    >
+                      {quizDataForm?.category !== ""
+                        ? quizDataForm?.category
+                        : "Select Category"}
+                    </p>
+                    <FaCaretDown
+                      className={`m-1 transition-all duration-300 ${
+                        isOpen.category ? "rotate-180 text-blue-400" : ""
+                      }`}
+                    />
+                  </div>
+                  <ul
+                    className={`mt-2 p-2 rounded-md w-32 text-white bg-gray-800 shadow-lg absolute z-10 ${
+                      isOpen.category ? "max-h-60" : "hidden"
+                    } custom-scrollbar`}
+                  >
+                    {categoryData?.map(
+                      (caetory: QuizAndTestCategoryType, i: number) => (
+                        <li
+                          key={i}
+                          className={`p-2 mb-2 text-sm rounded-md cursor-pointer hover:bg-blue-200/60 ${
+                            quizDataForm.category === caetory?.name
+                              ? "bg-rose-400"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            selectOption("category", caetory?.name)
+                          }
+                        >
+                          <span>{caetory?.name}</span>
+                        </li>
+                      )
+                    )}
+                  </ul>
+                </div>
                 {/* <input
                 value={quizDataForm?.instructions}
                 type="text"

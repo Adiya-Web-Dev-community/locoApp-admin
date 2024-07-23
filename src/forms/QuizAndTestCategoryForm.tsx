@@ -18,7 +18,7 @@ interface Props {
   };
 }
 
-const VideoCategoryForm = ({
+const QuizAndTestCategoryForm = ({
   isCategoryForm,
   setCategoryForm,
   singleCategory,
@@ -41,39 +41,36 @@ const VideoCategoryForm = ({
     e.preventDefault();
 
     console.log(categoryDataForm);
-    try {
-      const payload = {
-        category: categoryDataForm?.categoryName,
-      };
+    // try {
+    //   const payload = {
+    //     category: categoryDataForm?.categoryName,
+    //   };
 
-      console.log(payload, isCategoryForm.creat);
+    //   console.log(payload, isCategoryForm.creat);
 
-      const response = await updatePost({
-        data: payload,
-        method: isCategoryForm.creat ? "POST" : "PUT",
-        path: isCategoryForm.creat
-          ? `/video/create-category`
-          : `/video/update-category/${isCategoryForm.updateId}`,
-
-        //   "/awareness/category/create"
-        //   : `/awareness/category/${isCategoryForm.updateId}`,
-      });
-      console.log(response);
-      if (response?.data?.success) {
-        toast.dismiss();
-        toast.success(response?.data?.message, {
-          autoClose: 5000,
-        });
-        closeHandler();
-      } else {
-        toast.dismiss();
-        toast.error("Failed to create main category");
-      }
-    } catch (error) {
-      toast.dismiss();
-      console.error("Error creating main category:", error);
-      toast.error("An error occurred");
-    }
+    //   const response = await updatePost({
+    //     data: payload,
+    //     method: isCategoryForm.creat ? "POST" : "PUT",
+    //     // path: isCategoryForm.creat
+    //     //   ? `/video/create-category`
+    //     //   : `/video/update-category/${isCategoryForm.updateId}`,
+    //   });
+    //   console.log(response);
+    //   if (response?.data?.success) {
+    //     toast.dismiss();
+    //     toast.success(response?.data?.message, {
+    //       autoClose: 5000,
+    //     });
+    //     closeHandler();
+    //   } else {
+    //     toast.dismiss();
+    //     toast.error("Failed to create main category");
+    //   }
+    // } catch (error) {
+    //   toast.dismiss();
+    //   console.error("Error creating main category:", error);
+    //   toast.error("An error occurred");
+    // }
   };
 
   const closeHandler = () => {
@@ -110,7 +107,7 @@ const VideoCategoryForm = ({
           <div className="p-6 px-8 rounded font-montserrat">
             <div className="flex pb-2">
               <h2 className=" md:text-4xl text-[28px] font-bold text-gray-700 font-mavenPro">
-                Video Category Form
+                Quiz&Test Category Form
               </h2>
               <button onClick={closeHandler}>
                 <TiArrowBackOutline className="w-10 h-10 ml-4 hover:text-orange-600 text-sky-600" />
@@ -154,4 +151,4 @@ const VideoCategoryForm = ({
   );
 };
 
-export default VideoCategoryForm;
+export default QuizAndTestCategoryForm;

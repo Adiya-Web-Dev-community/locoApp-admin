@@ -34,6 +34,7 @@ import TestProfile from "./pages/TestProfile";
 import Video from "./pages/videos";
 import DalyTasks from "./pages/Daily_Task";
 import CreatDocuments from "./pages/CreatDocuments";
+import QuizAndTestCategory from "./pages/QuizAndTestCategory";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -92,7 +93,6 @@ function App() {
               path: "videocategory",
               element: <VideoCategory />,
             },
-
             {
               path: "users",
               element: <UserList />,
@@ -170,6 +170,10 @@ function App() {
             {
               path: "quiz",
               element: <Quiz />,
+            },
+            {
+              path: "qt-category",
+              element: <QuizAndTestCategory />,
             },
             {
               path: "quiz/:id",
