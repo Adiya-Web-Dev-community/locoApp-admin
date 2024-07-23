@@ -80,6 +80,11 @@ const sidebarData: SidebarItem[] = [
     icon: TestIcon,
   },
   {
+    name: "Quiz & Test Category",
+    path: "/qt-category",
+    icon: TestIcon,
+  },
+  {
     name: "Daily Task",
     path: "/daily-task",
     icon: QuizIcon,

@@ -11,9 +11,14 @@ import DeleteICONSVG from "../assets/SVG/deleteICON";
 import EditICONSVG from "../assets/SVG/editICON";
 import { BlogCategory, subSubCategories, subcategory } from "../types";
 import Loader from "./loader";
+import uploadImage from "../firebase_image/image";
 
 interface Props {
   value: string;
+}
+interface Image {
+  thumnail: string;
+  imageSrc: string;
 }
 const Switches = ({ value }: Props) => {
   const route = React.useMemo(() => {
@@ -42,11 +47,21 @@ const Tab1: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState<string>("");
   const [createData, setCreateData] = useState<string>("");
+  const [categoryImage, setCategoryImage] = useState<Image>({
+    thumnail: "",
+    imageSrc: "",
+  });
 
-  const handleEditClick = (id: string, name: string) => {
+  const handleEditClick = (id: string, name: string, image: string) => {
     setEditingId(id);
     setEditingName(name);
+    setCategoryImage({
+      thumnail: image,
+      imageSrc: image,
+    });
   };
+
+  const [progressStatus, setProgressStatus] = useState<number | null>(null);
 
   const handleSaveClick = async () => {
     try {
@@ -74,10 +89,32 @@ const Tab1: React.FC = () => {
     setEditingName("");
   };
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target?.files?.[0];
+    if (selectedFile) {
+      try {
+        const imageUrl = await uploadImage(
+          selectedFile.name,
+          selectedFile,
+          setProgressStatus
+        );
+        setCategoryImage({
+          ...categoryImage,
+          thumnail: imageUrl,
+          imageSrc: selectedFile.name,
+        });
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast.error("Error uploading image");
+      }
+    }
+  };
+
   const handleClickCreate = async () => {
     try {
       const response = await createPost({
         data: { name: createData },
+        // data: { name: createData, image: categoryImage },
         path: "main-category",
       });
 
@@ -124,8 +161,9 @@ const Tab1: React.FC = () => {
           <h3 className="text-[18px] font-bold text-gray-600">
             Create Main Category
           </h3>
-          <div className="flex flex-col gap-1">
-            <label className="text-gray-600 font-bold text-[15px] mb-1">
+
+          <div className="grid gap-3">
+            <label className="text-gray-600 font-bold text-[15px]">
               Main Category
             </label>
             <input
@@ -134,10 +172,49 @@ const Tab1: React.FC = () => {
                 setCreateData(e.target.value)
               }
               // className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
-              className="w-full h-10 pl-4 font-medium text-gray-700 bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
+              className="w-full h-8 pl-2 font-medium text-gray-700 bg-blue-100 border border-transparent rounded-md outline-none placeholder:pl-2 focus:border-blue-200 "
               type="text"
+              placeholder="Enter Title"
             />
+            <div className="relative w-full h-full">
+              <input
+                type="file"
+                name="image"
+                onChange={handleImageChange}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className={`px-4 py-1 pl-24 relative ${
+                  progressStatus ? "pb-1" : ""
+                } w-full text-base bg-blue-100 focus:border-blue-200 border-transparent border rounded-md text-gray-400 cursor-pointer flex items-center justify-between`}
+              >
+                <p
+                  className={`${
+                    categoryImage.imageSrc ? "text-gray-700" : "text-gray-400"
+                  }`}
+                >
+                  {categoryImage.imageSrc || "Choose a file"}
+                </p>
+                <span className="text-gray-400 text-[15px] absolute top-0 h-full flex items-center left-0 rounded-tl-md rounded-bl-md px-3 font-medium bg-blue-200">
+                  Browse
+                </span>
+              </label>
+              {progressStatus !== null && progressStatus !== 0 && (
+                <>
+                  <div className="absolute inset-0 z-10 flex items-end">
+                    <div
+                      className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                      style={{ width: `${progressStatus}%` }}
+                      // style={{ width: `${100}%` }}
+                    ></div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
+
           <div className="flex justify-end">
             <button
               onClick={handleClickCreate}
@@ -165,8 +242,48 @@ const Tab1: React.FC = () => {
                         type="text"
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
-                        className="flex-1 px-2 py-1 mr-2 border rounded"
+                        // className="flex-1 px-2 py-1 mr-2 border rounded"
+                        className="w-full h-8 pl-2 font-medium text-gray-700 bg-blue-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                       />
+                      <div className="relative w-full h-full">
+                        <input
+                          type="file"
+                          name="image"
+                          onChange={handleImageChange}
+                          className="hidden"
+                          id="file-upload"
+                        />
+                        <label
+                          htmlFor="file-upload"
+                          className={`px-4 py-1 pl-24 relative ${
+                            progressStatus ? "pb-1" : ""
+                          } w-full text-base bg-blue-100 focus:border-blue-200 border-transparent border rounded-md text-gray-400 cursor-pointer flex items-center justify-between`}
+                        >
+                          <p
+                            className={`${
+                              categoryImage.imageSrc
+                                ? "text-gray-700"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            {categoryImage.imageSrc || "Choose a file"}
+                          </p>
+                          <span className="text-gray-400 text-[15px] absolute top-0 h-full flex items-center left-0 rounded-tl-md rounded-bl-md px-3 font-medium bg-blue-200">
+                            Browse
+                          </span>
+                        </label>
+                        {progressStatus !== null && progressStatus !== 0 && (
+                          <>
+                            <div className="absolute inset-0 z-10 flex items-end">
+                              <div
+                                className="h-1 bg-blue-400 rounded-md mx-[1px] mb-[1px]"
+                                style={{ width: `${progressStatus}%` }}
+                                // style={{ width: `${100}%` }}
+                              ></div>
+                            </div>
+                          </>
+                        )}
+                      </div>
                       <div className="flex justify-end">
                         <button
                           onClick={handleSaveClick}
@@ -196,7 +313,9 @@ const Tab1: React.FC = () => {
                           />
                         </button>
                         <button
-                          onClick={() => handleEditClick(item?._id, item?.name)}
+                          onClick={() =>
+                            handleEditClick(item?._id, item?.name, item?.image)
+                          }
                         >
                           <EditICONSVG
                             height={20}
@@ -344,7 +463,7 @@ const Tab2: React.FC = () => {
             value={createSubCategory?.mainId}
             onChange={(e) => handleChangesValue("mainId", e.target.value)}
           >
-            <option value="">select</option>
+            <option value="">Select</option>
             {data?.data?.map((category: BlogCategory, index: number) => {
               return (
                 <option key={index} value={category?._id}>
@@ -364,6 +483,7 @@ const Tab2: React.FC = () => {
             // className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
             className="w-full h-8 pl-4 font-medium text-gray-700 bg-blue-100 border border-transparent rounded-md outline-none focus:border-blue-200"
             type="text"
+            placeholder="Enter Title"
           />
         </div>
 
@@ -675,7 +795,7 @@ const Tab3: React.FC = () => {
             value={createSubCategory.mainId}
             onChange={(e) => handleChangesValue("mainId", e.target.value)}
           >
-            <option value="">select</option>
+            <option value="">Select</option>
             {data?.data?.map((category: BlogCategory, index: number) => (
               <option key={index} value={category?._id}>
                 {category?.name}
@@ -693,7 +813,7 @@ const Tab3: React.FC = () => {
             value={createSubCategory.subId}
             onChange={(e) => handleChangesValue("subId", e.target.value)}
           >
-            <option value="">select</option>
+            <option value="">Select</option>
             {subData?.map((category: BlogCategory, index: number) => (
               <option key={index} value={category?._id}>
                 {category?.name}
@@ -711,6 +831,7 @@ const Tab3: React.FC = () => {
             // className="border border-[#6e6d6d5b] outline-none rounded-[7px] px-2 py-1"
             className="w-full h-8 pl-4 font-medium text-gray-700 bg-blue-100 border border-transparent rounded-md outline-none focus:border-blue-200"
             type="text"
+            placeholder="Enter Title"
           />
         </div>
         <div className="flex justify-end">
@@ -1165,6 +1286,7 @@ const Tab4: React.FC = () => {
             className="w-full h-8 pl-2 font-medium text-gray-700 bg-blue-100 border border-transparent rounded-md outline-none focus:border-blue-200"
             // className="border border-[#6e6d6d5b] outline-none  px-2 py-1"
             type="text"
+            placeholder="Enter Title"
           />
         </div>
 
