@@ -1,10 +1,6 @@
 // App.js
 import "./App.css";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Navigate,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Navigate, } from "react-router-dom";
 import Login from "./pages/login";
 import Layout from "./layout";
 import Create_Category from "./pages/create-category";
@@ -35,6 +31,9 @@ import Video from "./pages/videos";
 import DalyTasks from "./pages/Daily_Task";
 import CreatDocuments from "./pages/CreatDocuments";
 import QuizAndTestCategory from "./pages/QuizAndTestCategory";
+import UpdateSetting from "./pages/UpdateSetting";
+import AddAppSetting from "./pages/AddAppSetting";
+import Report from "./pages/Report";
 
 function App() {
   const token = localStorage.getItem("user");
@@ -186,6 +185,22 @@ function App() {
             {
               path: "test/:id",
               element: <TestProfile />,
+            },
+            {
+              path: "update",
+              element: <UpdateSetting />,
+            },
+            {
+              path: "add-update",
+              element: <AddAppSetting />,
+            },
+            {
+              path: "update/:id",
+              element: <AddAppSetting />,
+            },
+            {
+              path: "report",
+              element: <Report />,
             },
           ],
         },
