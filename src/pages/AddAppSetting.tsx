@@ -10,7 +10,9 @@ function AddAppSetting() {
     const { id } = useParams();
     const navigate = useNavigate();
     const basUrl = import.meta.env.VITE_API_BASE_URL
-    const token = localStorage.getItem("user");
+    // const token = localStorage.getItem("user");
+
+    const [updatePost] = useUpdatePostMutation();
 
 
     /* const { data: updateAwar, isError: isErrorAwar } = useGetDataQuery({
@@ -28,6 +30,7 @@ function AddAppSetting() {
         versionName: '',
         comment: '',
         url: '',
+        appName: ''
     })
     // console.log("update: ", updateAwar.data);
 
@@ -60,28 +63,30 @@ function AddAppSetting() {
         evt.preventDefault();
 
         toast.loading("Checking Details");
-        if (id) {
-            return await axios.put(`${basUrl}/setting/update/${id}`, setting).then((response: any) => {
-                toast.success("App Setting Updated Successfully");
-                navigate(-1);
-            }).catch((error: any) => {
-                toast.error("Failed to Update App Setting");
-            })
-        } else {
-            return await axios.post(`${basUrl}/setting/add`, setting).then((response: any) => {
-                toast.success("App Setting Added Successfully");
-                navigate(-1);
-            }).catch((error: any) => {
-                toast.error("Failed to Add App Setting");
-            })
+        try {
+            toast.loading("Checking Details");
+
+            const response = await updatePost({
+                data: setting,
+                method: id ? "PUT" : "POST",
+                path: id ? `/setting/update/${id}` : "/setting/add",
+            });
+
+            console.log(response);
+
+            if (response?.data?.success) {
+                toast.dismiss();
+                toast.success(response?.data?.message, { autoClose: 5000, });
+                clearhandler();
+            } else {
+                toast.dismiss();
+                toast.error(`Failed to ${id ? "Update Blog" : "Create Blog"} create Blog`);
+            }
+        } catch (error) {
+            toast.dismiss();
+            console.error(`Error ${id ? "Updating Blog" : "Creating Blog"} :`, error);
+            toast.error("An error occurred");
         }
-        /* return await axios.post(`${basUrl}/setting/add`, {
-            headers: {
-                Authorization: `${token}`,
-            },
-        }) */
-
-
     }
 
     const clearhandler = () => {
@@ -101,6 +106,10 @@ function AddAppSetting() {
                     </div>
                     <div className="h-[calc(100vh-12rem)] w-full overflow-y-auto  [&::-webkit-scrollbar]:hidden font-mavenPro">
                         <div className="grid items-center grid-cols-1 gap-4 py-4 md:grid-cols-2">
+                            <input value={setting.appName} onChange={handleChange} name="appName" type="text" placeholder="Enter App Name"
+                                className="w-full h-10 pl-4 font-medium text-gray-700 bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
+                                required
+                            />
                             <input value={setting.versionName} onChange={handleChange} name="versionName" type="number" placeholder="Enter Version Name"
                                 className="w-full h-10 pl-4 font-medium text-gray-700 bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                                 required
@@ -116,14 +125,14 @@ function AddAppSetting() {
                             <input value={setting.comment} onChange={handleChange} name="comment" type="text" placeholder="Enter comment"
                                 className="w-full h-10 pl-4 font-medium text-gray-700 bg-green-100 border border-transparent rounded-md outline-none focus:border-blue-200 "
                             />
-
-
-
-
                         </div>
 
+
+
+
+
                         <div className="flex">
-                            <button className="px-4 py-2 text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb] disabled:bg-gray-400" type="submit" disabled={!setting?.versionName || !setting?.versionCode || !setting?.url}>{id ? "Update" : "Submit"}</button>
+                            <button className="px-4 py-2 text-white rounded-md bg-[#1f3c88] hover:bg-[#2d56bb] disabled:bg-gray-400" type="submit" disabled={!setting?.appName || !setting?.versionName || !setting?.versionCode || !setting?.url}>{id ? "Update" : "Submit"}</button>
                             <button className="px-4 py-2 ml-8 text-white rounded-md bg-rose-600 hover:bg-rose-700" type="button" onClick={clearhandler}>Cancel</button>
                         </div>
                     </div>

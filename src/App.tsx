@@ -34,9 +34,13 @@ import QuizAndTestCategory from "./pages/QuizAndTestCategory";
 import UpdateSetting from "./pages/UpdateSetting";
 import AddAppSetting from "./pages/AddAppSetting";
 import Report from "./pages/Report";
+import AddDailyTask from "./pages/AddDailyTask";
 
 function App() {
   const token = localStorage.getItem("user");
+  console.log("user: ", localStorage.getItem("user"));
+  console.log("token: ", token);
+
   const isValidToken = token ? true : false;
   console.log("Tokaen in Storage>>>", isValidToken);
   const route = createBrowserRouter([
@@ -119,6 +123,14 @@ function App() {
             {
               path: "daily-task",
               element: <DalyTasks />,
+            },
+            {
+              path: "create-daily-task",
+              element: <AddDailyTask />,
+            },
+            {
+              path: "update-daily-task/:id",
+              element: <AddDailyTask />,
             },
             {
               path: "awareness",

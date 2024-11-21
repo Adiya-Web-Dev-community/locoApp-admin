@@ -11,21 +11,22 @@ function UpdateSetting() {
     const basUrl = import.meta.env.VITE_API_BASE_URL
     const token = localStorage.getItem("user");
     const [deletPost] = useDeletePostMutation();
-    const [isLoading, setIsLoading] = useState(true)
+    // const [isLoading, setIsLoading] = useState(true)
     const navigate = useNavigate()
-    /* const { data, isLoading, isError } = useGetDataQuery({
-        url: "/setting",
-    }); */
-    const [isError, setIsError] = useState(false)
 
-    const [data, setData] = useState([])
+    const { data, isLoading, isError } = useGetDataQuery({ url: "/setting" });
+
+
+    // const [isError, setIsError] = useState(false)
+
+    // const [data, setData] = useState([])
 
     const [isModalOpen, setModalOpen] = useState({
         condition: false,
         id: "",
     });
 
-    const getAllSetting = async () => {
+    /* const getAllSetting = async () => {
         return await axios.get(`${basUrl}/setting`).then((response: any) => {
             setData(response.data)
             setIsLoading(false)
@@ -34,13 +35,13 @@ function UpdateSetting() {
             toast.error("Failed to get App Setting")
             setIsLoading(false)
         })
-    }
+    } */
 
     useEffect(() => {
-        getAllSetting()
+        // getAllSetting()
     }, [isLoading])
 
-    const blogHeadings = ["Version Code", "Version Name", "comment", "url", "Created At", "Action"];
+    const blogHeadings = ["appName", "Version Code", "Version Name", "comment", "url", "Created At", "Action"];
 
     const updateblog = (id: string) => {
         navigate(`/update/${id}`);
@@ -55,22 +56,6 @@ function UpdateSetting() {
     };
 
 
-    const handleConfirmDelete = () => {
-        toast.loading("Checking Details");
-        deletPost({ url: `setting/delete/${isModalOpen.id}` }).then((res) => {
-            if (res.data.success) {
-                toast.dismiss();
-                toast.success(`${res.data.message}`);
-                getAllSetting()
-            }
-            console.log(res);
-        }).catch(() => {
-            toast.dismiss();
-            toast.error("Not successful to delete");
-        });
-        setModalOpen({ condition: false, id: "" });
-    };
-
     const deletblog = (id: string) => {
         console.log(id, "from handler");
         setModalOpen((prev) => ({
@@ -80,6 +65,25 @@ function UpdateSetting() {
         }));
     };
 
+    const handleConfirmDelete = () => {
+        // Handle the delete action here
+        toast.loading("checking Details");
+        // console.log("Item deleted", isModalOpen.id);
+        deletPost({ url: `/setting/delete/${isModalOpen.id}`, }).then((res) => {
+            if (res.data.success) {
+                toast.dismiss();
+                toast.success(`${res.data.message}`);
+            }
+            console.log(res);
+        }).catch(() => {
+            toast.dismiss();
+            toast.error("Not successfull to delete");
+        });
+        setModalOpen({
+            condition: false,
+            id: "",
+        });
+    };
 
 
     /* data?.data?.map((item, ind) => {
@@ -139,6 +143,7 @@ function UpdateSetting() {
                                     <section key={i} className="grid items-center gap-6 py-2 pl-6 pr-4 border-t-2 border-gray-200 grid-cols-customSetting group hover:bg-gray-50">
                                         <span>{i + 1}</span>
 
+                                        <span className="font-semibold text-center rounded-full">{blog?.appName}</span>
                                         <span className="font-semibold text-center rounded-full">{blog?.versionCode}</span>
 
                                         <span className="font-semibold text-center rounded-full">{blog?.versionName}</span>

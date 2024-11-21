@@ -149,24 +149,10 @@ const SideBar = ({
     // onClick={onToggleSidebarSmall}
     >
       {/* <section className="relative w-full" onClick={handlingPropogation}> */}
-      <section
-        className={`
-    cursor-default h-full bg-white shadow-md overflow-clip   ${isOpen.small ? "w-full sm:w-64" : ""
-          }`}
-      >
-        <div
-          className={` ${isOpen.large ? "justify-center" : isOpen.small ? "" : "pl-6"
-            } flex w-full gap-2 px-3  pt-6 `}
-        >
-          <button
-            onClick={onToggleSidebarLarge}
-            className={`${isOpen.small ? "hidden" : ""}`}
-          >
-            {!isOpen.large ? (
-              <RxHamburgerMenu className="w-6 h-6 text-gray-400" />
-            ) : (
-              <RxCross1 className="w-6 h-6 text-gray-400" />
-            )}
+      <section className={`cursor-default h-full bg-white shadow-md overflow-clip   ${isOpen.small ? "w-full sm:w-64" : ""}`}>
+        <div className={` ${isOpen.large ? "justify-center" : isOpen.small ? "" : "pl-6"} flex w-full gap-2 px-3  pt-6 `}>
+          <button onClick={onToggleSidebarLarge} className={`${isOpen.small ? "hidden" : ""}`}>
+            {!isOpen.large ? (<RxHamburgerMenu className="w-6 h-6 text-gray-400" />) : (<RxCross1 className="w-6 h-6 text-gray-400" />)}
           </button>
           {/* <div className={`w-full ml-12 ${isOpen.large ? "hidden" : ""}`}> */}
           <div className={`w-full ml-4 ${isOpen.large ? "hidden" : ""}`}>
@@ -197,27 +183,17 @@ const SideBar = ({
           /> */}
         </div>
 
-        <div
-          className={`w-full h-[calc(100vh-6rem)] mt-2 ${isOpen.large ? "p-4" : "  p-2 pt-4 pl-4 "
-            }  overflow-y-auto  [&::-webkit-scrollbar]:hidden `}
-        >
+        <div className={`w-full h-[calc(100vh-6rem)] mt-2 ${isOpen.large ? "p-4" : "  p-2 pt-4 pl-4 "}  overflow-y-auto  [&::-webkit-scrollbar]:hidden `}>
           {sidebarData.map((sideData, i) => {
             const isActive = location.pathname.includes(sideData.path);
 
             return (
-              <NavLink
-                key={i}
-                to={`${sideData.path}`}
-                className={({ isActive }) =>
+              <NavLink key={i} to={`${sideData.path}`} className={
+                ({ isActive }) =>
                   ` relative group rounded-md border-l-4 transition-all duration-500  flex font-medium items-center
-                    ${isOpen.large
-                    ? "m-0 p-1 justify-center"
-                    : "m-1 p-2 w-[95%]"
-                  } h-[2.7rem]   ${isActive
-                    ? " border-blue-800 bg-blue-200 text-blue-800 font-semibold"
-                    : "hover:bg-blue-200 hover:text-gray-800 text-gray-400 border-transparent"
-                  }`
-                }
+                    ${isOpen.large ? "m-0 p-1 justify-center" : "m-1 p-2 w-[95%]"
+                  } h-[2.7rem]   ${isActive ? " border-blue-800 bg-blue-200 text-blue-800 font-semibold" : "hover:bg-blue-200 hover:text-gray-800 text-gray-400 border-transparent"}`
+              }
               >
                 {/* {sideData.icon} */}
                 {/* {React.isValidElement(sideData.icon)
@@ -225,18 +201,9 @@ const SideBar = ({
                   fill: isActive ? "blue" : "#9ca3af",
                 })
               : null} */}
-                <sideData.icon
-                  width={20}
-                  height={20}
-                  fill={isActive ? "blue" : "#9ca3af"}
-                />
+                <sideData.icon width={20} height={20} fill={isActive ? "blue" : "#9ca3af"} />
 
-                <span
-                  className={`mx-1 p-1  text-sm font-montserrat ${isOpen.large ? "hidden" : ""
-                    } `}
-                >
-                  {sideData.name}
-                </span>
+                <span className={`mx-1 p-1  text-sm font-montserrat ${isOpen.large ? "hidden" : ""} `}>{sideData.name}</span>
               </NavLink>
             );
           })}
