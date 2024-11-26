@@ -20,6 +20,9 @@ const Test = () => {
     url: "/test",
   });
 
+  // console.log("data: ", data);
+
+
   const [deletPost] = useDeletePostMutation();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -162,7 +165,7 @@ const Test = () => {
           isQuestionForm={isQuestionForm}
           //   setQuestionForm={setQuestionForm}
           close={closeHandler}
-          //   singleQuestionData={updateData}
+        //   singleQuestionData={updateData}
         />
       )}
 
@@ -192,9 +195,9 @@ const Test = () => {
                 className={` p-2 text-sm md:text-base  sm:px-4 py-1 border-[2px] border-transparent 
                              bg-slate-50 focus:border-gray-100
                           shadow-inner rounded-[0.26rem] outline-none `}
-                // value={searchQuery}
-                // onChange={(e) => setSearchQuery(e.target.value)}
-                // onFocus={() => setCurrentPage(1)}
+              // value={searchQuery}
+              // onChange={(e) => setSearchQuery(e.target.value)}
+              // onFocus={() => setCurrentPage(1)}
               />
             </div>
             <div className="relative flex items-center self-end ">
@@ -219,9 +222,8 @@ const Test = () => {
               {listHeadingTest.map((heading, index) => (
                 <p
                   key={index}
-                  className={`   md:text-lg ${
-                    index !== 0 ? "justify-self-center" : "ml-20"
-                  }`}
+                  className={`   md:text-lg ${index !== 0 ? "justify-self-center" : "ml-20"
+                    }`}
                 >
                   {heading.charAt(0).toUpperCase() + heading.slice(1)}
                 </p>

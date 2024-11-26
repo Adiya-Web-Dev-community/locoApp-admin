@@ -27,7 +27,8 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
     // Add your logout logic here
     console.log("Logged out");
     setLogoutModal(true);
-    // localStorage.removeItem("admin");
+    localStorage.removeItem("admin");
+    // localStorage.removeItem("user")
     // navigate("/login");
   };
 
@@ -91,7 +92,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
           !isOpen.large
             ? "md:w-[calc(100vw-15.4rem)]"
             : "lg:w-[calc(100%-5.4rem)]"
-        } h-20   z-10`}
+          } h-20   z-10`}
       >
         <div className="grid w-full h-full grid-cols-2 mx-4 md:grid-cols-1 md:mr-6 md:mx-0 ">
           {/* <nav className="flex h-full mx-4 text-gray-600 bg-white rounded-md shadow-sm md:mx-0 md:mr-4 font-montserrat"> */}
@@ -130,9 +131,8 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
             {/* notification */}
             <div className="relative flex items-center">
               <IoMdNotifications
-                className={`${
-                  showNotification ? "text-blue-400" : "text-blue-300"
-                } cursor-pointer w-7 h-7 hover:text-blue-400`}
+                className={`${showNotification ? "text-blue-400" : "text-blue-300"
+                  } cursor-pointer w-7 h-7 hover:text-blue-400`}
                 onClick={handlingNotification}
               />
               <span className="absolute flex w-2 h-2 top-1 right-1">
@@ -143,7 +143,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
             {showNotification && (
               <div
                 className="absolute -left-32 grid  top-[3.7rem] z-[53]"
-                // style={{ width: "170px" }}
+              // style={{ width: "170px" }}
               >
                 {/* <div className="border-t-transparent justify-self-end border-transparent border-t-0 border-b-white border-[12px] h-0 w-0 "></div> */}
                 <div className="w-[170px] md:w-[174.5px] h-[80px] overflow-y-scroll [&::-webkit-scrollbar]:hidden  relative z-50 bg-white rounded-md shadow-lg">
@@ -157,14 +157,14 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
 
                   <button
                     className="flex items-center w-full px-4 pt-2 pb-2 text-sm font-bold border-t border-gray-200 hover:bg-blue-50"
-                    // onClick={handleUpdateProfile}
+                  // onClick={handleUpdateProfile}
                   >
                     {/* <FaUserCog className="w-5 h-5 " /> */}
                     <span className="pl-2 text-xs md:text-sm">Second</span>
                   </button>
                   <button
                     className="flex items-center w-full px-4 pt-2 pb-2 text-sm font-bold border-t border-gray-200 hover:bg-blue-50"
-                    // onClick={handleUpdateProfile}
+                  // onClick={handleUpdateProfile}
                   >
                     {/* <FaUserCog className="w-5 h-5 " /> */}
                     <span className="pl-2 text-xs md:text-sm">Third</span>
@@ -186,7 +186,7 @@ const Header = ({ onToggleSidebarSmall, isOpen }: Props) => {
             <div
               className={`flex items-center  gap-4 p-1  cursor-pointer rounded-md z-4  `}
               onClick={profilePannelHanlder}
-              // style={{ width: "178px" }}
+            // style={{ width: "178px" }}
             >
               {/* <img src="" alt=""/> */}
               <div className={`flex items-center justify-center p-1`}>
